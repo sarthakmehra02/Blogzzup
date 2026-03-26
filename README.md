@@ -1,145 +1,106 @@
-# ✨ BlogForge AI V2
+<div align="center">
 
-> India's most powerful AI blog engine — from keyword to ranked blog post in under 10 minutes. Now with **V2 Glassmorphism UI** and **Gemini 2.0 Flash** engine.
+<img src="public/favicon.svg" width="80" alt="BlogForge AI logo" />
 
-![BlogForge AI](https://img.shields.io/badge/Gemini%202.0%20Flash-Powered-purple?style=for-the-badge&logo=google)
-![React](https://img.shields.io/badge/React-18-blue?style=for-the-badge&logo=react)
-![Vite](https://img.shields.io/badge/Vite-5-yellow?style=for-the-badge&logo=vite)
-![Firebase](https://img.shields.io/badge/Firebase-Auth-orange?style=for-the-badge&logo=firebase)
+# ✦ BlogForge AI ✦
+### The Premium Autonomous Content Engine for Modern SaaS
 
----
+[![GitHub Release](https://img.shields.io/github/v/release/nmnroy/blogforge-ai?style=for-the-badge&color=7C3AED)](https://github.com/nmnroy/blogforge-ai)
+[![React 19](https://img.shields.io/badge/React-19-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://react.dev)
+[![Vite 8](https://img.shields.io/badge/Vite-8-646CFF?style=for-the-badge&logo=vite&logoColor=white)](https://vitejs.dev)
+[![License: MIT](https://img.shields.io/badge/License-MIT-10B981?style=for-the-badge)](LICENSE)
 
-## 🚀 What is BlogForge AI?
+**BlogForge AI** is a state-of-the-art content automation platform that transforms single keywords into high-ranking, 2,500+ word blog posts. Built for scale, it leverages a sophisticated 7-stage AI pipeline to handle research, SEO optimization, and publishing autonomously.
 
-BlogForge AI is a premium full-stack SaaS platform that automates your entire SEO content pipeline. Powered by **Gemini 2.0 Flash**, it combines high-speed generation with deep SEO intelligence to help you dominate SERPs in record time.
+[Explore the Code](https://github.com/nmnroy/blogforge-ai/tree/main/src) · [Report Bug](https://github.com/nmnroy/blogforge-ai/issues) · [Request Feature](https://github.com/nmnroy/blogforge-ai/issues)
 
----
-
-## ✨ Key Features (V2 Dashboard)
-
-### 🤖 SEO & Research Modules
-| Feature | Description |
-|---|---|
-| **SERP Gap Scanner** | Finds missing topics in top 10 competitor results |
-| **Live SEO Scorer** | 10-metric real-time scoring including NLP & AI detection risk |
-| **Keyword Planner** | AI-driven intent mapping and volume estimation |
-| **Competitor Spy** | Deep-dive analysis of any URL's content strategy |
-| **Cluster Map** | Visualises your topical authority universe |
-
-### ✍️ Content & Editing
-| Feature | Description |
-|---|---|
-| **AI Blog Generator** | Long-form (2,500+ words) SEO-optimised generation |
-| **Premium Blog Editor** | Glassmorphism-rich distraction-free writing environment |
-| **My Blogs Library** | Centralised vault for all your content assets |
-| **Brand Voice Control** | Custom AI training on your unique writing style |
-
-### 🔄 Publishing & Analytics
-| Feature | Description |
-|---|---|
-| **Auto-Publisher** | One-click export to WordPress, Webflow, and Shopify |
-| **Content Calendar** | Visual drag-and-drop planning for your team |
-| **Traffic Tracker** | Live monitoring of organic growth and rankings |
-| **ROI Dashboard** | Track conversion value of every published word |
+</div>
 
 ---
 
-## 🏗️ Tech Stack
+## 🔱 The 7-Stage AI Pipeline
+BlogForge doesn't just "write." It executes a multi-agent architectural flow to ensure human-grade quality:
 
-- **Frontend**: React 18 + Vite 5
-- **Styling**: Vanilla CSS (glassmorphism dark design system)
-- **AI Engine**: Google Gemini 2.0 Flash (`gemini-2.0-flash`)
-  - Optimized for low-latency SEO scanning and high-accuracy generation.
-- **Authentication**: Firebase Auth (Google Sign-In)
-- **State/Persistence**: React state + `localStorage`
-- **Icons**: Lucide React
+1.  **🔍 SERP Intent Analysis**: Scans top competitors to find content gaps.
+2.  **🏗️ Semantic Architecture**: Builds a hierarchical H2/H3 outline for maximum "Topic Authority."
+3.  **🧊 Draft Synthesis**: Generates raw, high-density content blocks.
+4.  **📈 SEO Injection**: Naturally integrates LSI keywords and entity-based optimization.
+5.  **🎨 Narrative Polishing**: Applies brand voice, tone, and readability adjustments.
+6.  **🔗 Internal Link Mapping**: (Beta) Suggests logical internal links to existing content.
+7.  **🚀 CMS Deployment**: Formats and pushes directly to WordPress, Webflow, or Shopify.
 
 ---
 
-## 🛠️ Getting Started
+## 🔥 Key Features
 
-### Prerequisites
-- Node.js 18+
-- npm or yarn
+- **🧠 Autonomous Intelligence**: One keyword is all you need. The system does the rest.
+- **🗺️ Topic Cluster Map**: Visualise your content universe to build ultimate site authority.
+- **📊 Real-time SEO Scoring**: A dynamic 10-metric score that updates as the AI writes.
+- **🎙️ Brand Voice DNA**: Clone your writing style by providing samples or style guides.
+- **🌍 Global Geo-Targeting**: Localize content for specific cities or regions with one click.
+- **🌓 Premium Dark Mode UI**: A "Glassmorphism" design system built for professional content teams.
 
-### Installation
+---
 
+## 🏗️ Technical Architecture
+
+### **Core Stack**
+- **Frontend**: React 19 (Concurrent Mode) + Vite 8
+- **Styling**: Vanilla CSS Design Token System (`tokens.css`)
+- **Animations**: CSS Variables + Micro-interaction Engine (`interactions.css`)
+- **Backend/AI**: Google Gemini Pro 1.5 API
+- **Auth**: Firebase Authentication (Google OAuth)
+
+### **Design System**
+The UI follows a precise token-based architecture ensuring high performance and accessible aesthetics:
+- **`tokens.css`**: Centralized colors, spacing, and fluid typography.
+- **`interactions.css`**: Sublte hover states and transition logic.
+- **`a11y.css`**: WCAG 2.1 compliant focus and contrast overrides.
+
+---
+
+## 🛠️ Setup & Installation
+
+### 1. Clone & Install
 ```bash
-# Clone the repo
 git clone https://github.com/nmnroy/blogforge-ai.git
 cd blogforge-ai
-
-# Install dependencies
 npm install
+```
 
-# Start dev server
+### 2. Configure Environment
+Create a `.env` file or update the config in `App.jsx` and `BlogEditor.jsx`:
+- **Firebase**: [Get config from Firebase Console](https://console.firebase.google.com)
+- **Gemini AI**: [Generate API Key from AI Studio](https://aistudio.google.com/app/apikey)
+
+### 3. Run Development
+```bash
 npm run dev
 ```
 
-Open [http://localhost:5173](http://localhost:5173) in your browser.
-
-### Firebase Setup (Google Sign-In)
-
-1. Create a project at [console.firebase.google.com](https://console.firebase.google.com)
-2. Enable **Google Sign-In** under Authentication → Sign-in methods
-3. Register a **Web App** and copy your config
-4. In `index.html`, replace the placeholder values in the Firebase config block:
-
-```js
-const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_AUTH_DOMAIN",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_STORAGE_BUCKET",
-  messagingSenderId: "YOUR_SENDER_ID",
-  appId: "YOUR_APP_ID"
-};
-```
-
-> **Note:** Without Firebase config, the app falls back to a dev mode that skips authentication and loads the dashboard directly.
-
-### Gemini API
-The Gemini API key is already configured for demo purposes. For production, move it to a **server-side proxy** or environment variable to prevent key exposure.
-
 ---
 
-## 📁 Project Structure
+## 📁 Repository Structure
 
-```
-blogforge-ai/
-├── public/
-│   └── pipeline.png          # How It Works section asset
-├── src/
-│   ├── App.jsx               # Main SPA — marketing site + routing
-│   ├── Dashboard.jsx         # Full dashboard with all 12 modules
-│   └── index.css             # Global design system (glassmorphism)
-├── index.html                # Firebase SDK + config injection
-├── vite.config.js
-└── package.json
+```text
+src/
+├── components/          # Reusable UI primitives
+├── features/            # Modular feature logic (Editor, Map, Planner)
+├── tokens.css           # Global Design Tokens
+├── interactions.css     # Motion & Interaction Logic
+├── App.jsx              # Application Shell & Shared Layouts
+└── main.jsx             # React Entry Point
 ```
 
 ---
 
-## 🎨 Design System
+## 📄 License & Attribution
+Distributed under the MIT License. See `LICENSE` for more information.
 
-- **Theme**: Dark glassmorphism (V2 Design System)
-- **Fluid UI**: Dynamic scaling and micro-interactions
-- **Tokens**: Design-token driven architecture (`tokens.css`)
-- **Primary Accent**: `#7C3AED` (violet)
-- **Secondary Accent**: `#06B6D4` (cyan)
-- **Font**: Inter & Outfit (Google Fonts)
+Built with 💜 by [NMN Roy](https://github.com/nmnroy) · Powered by Google Gemini & React 19.
 
 ---
 
-- [x] Firebase Authentication (Google Sign-In)
-- [x] V2 Glassmorphism UI Implementation
-- [ ] Supabase/Firebase Firestore backend for blog persistence
-- [ ] Real WordPress REST API / Webflow CMS publishing
-- [ ] Google Search Console integration for live traffic data
-- [ ] AI image generation per blog post
-
----
-
-## 📄 License
-
-MIT © 2025 BlogForge AI
+<div align="center">
+⭐ **If you find this project useful, please give it a star on GitHub!**
+</div>
