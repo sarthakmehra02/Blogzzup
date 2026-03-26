@@ -3605,3 +3605,88 @@ html {
   opacity: 0.5;
   cursor: not-allowed;
 }
+
+/* =====================================================================
+   Blog Action Menu & Toast System
+   ===================================================================== */
+.action-menu { position:relative; display:inline-block; }
+.action-dropdown { 
+  display:none; 
+  position:absolute; 
+  right:0; 
+  top:100%; 
+  background:#1E293B; 
+  border:1px solid rgba(255,255,255,0.1); 
+  border-radius:10px; 
+  padding:6px; 
+  min-width:160px; 
+  z-index:1000; 
+  box-shadow:0 8px 32px rgba(0,0,0,0.4); 
+  animation: slideDown 0.15s ease-out;
+}
+.action-dropdown.open { display:block; }
+.action-dropdown button { 
+  display:block; 
+  width:100%; 
+  text-align:left; 
+  background:none; 
+  border:none; 
+  color:#94A3B8; 
+  font-size:13px; 
+  padding:8px 12px; 
+  border-radius:6px; 
+  cursor:pointer; 
+  transition:all 0.15s; 
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.action-dropdown button:hover { background:rgba(124,58,237,0.15); color:white; }
+.action-dropdown button.danger:hover { background:rgba(239,68,68,0.1); color:#EF4444; }
+
+@keyframes slideDown {
+  from { opacity:0; transform:translateY(-8px); }
+  to { opacity:1; transform:translateY(0); }
+}
+
+/* Toast System */
+#toast-container {
+  position:fixed;
+  top:24px;
+  right:24px;
+  z-index:9999;
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+  pointer-events:none;
+}
+.toast {
+  pointer-events:auto;
+  background:#1E293B;
+  border:1px solid rgba(255,255,255,0.1);
+  color:white;
+  padding:12px 20px;
+  border-radius:12px;
+  box-shadow:0 12px 40px rgba(0,0,0,0.5);
+  display:flex;
+  align-items:center;
+  gap:12px;
+  min-width:300px;
+  font-size:14px;
+  font-weight:500;
+  animation: toastIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  border-left: 4px solid #7C3AED;
+}
+.toast.success { border-left-color: #10B981; }
+.toast.error { border-left-color: #EF4444; }
+.toast.warning { border-left-color: #F59E0B; }
+.toast.info { border-left-color: #3B82F6; }
+
+@keyframes toastIn {
+  from { transform:translateX(100%); opacity:0; }
+  to { transform:translateX(0); opacity:1; }
+}
+@keyframes toastOut {
+  from { transform:translateX(0); opacity:1; }
+  to { transform:translateX(100%); opacity:0; }
+}

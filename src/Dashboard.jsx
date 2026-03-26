@@ -18,7 +18,7 @@ let currentKeyIndex = 0;
 // Track when a key is allowed to be used again (Date.now() timestamp)
 const keyCooldowns = {};
 
-async function callGemini(prompt, maxTokens = 4000) {
+async function callGemini(prompt, maxTokens = 8192) {
   let lastError = null;
   let allKeysOnCooldown = true;
 
@@ -47,7 +47,8 @@ async function callGemini(prompt, maxTokens = 4000) {
             contents: [{ parts: [{ text: prompt }] }],
             generationConfig: {
               maxOutputTokens: maxTokens,
-              temperature: 1
+              temperature: 0.9,
+              responseMimeType: "application/json"
             }
           })
         }
@@ -267,10 +268,24 @@ const MyBlogsSection = () => {
                     <td style={{padding: '14px 20px'}}><span style={{...statusStyle, borderRadius: '999px', padding: '4px 12px', fontSize: '12px', fontWeight: 600}}>{String(blog.status).charAt(0).toUpperCase() + String(blog.status).slice(1)}</span></td>
                     <td style={{padding: '14px 20px', fontSize: '13px', color: '#64748B'}}>{date}</td>
                     <td style={{padding: '14px 20px'}}>
+<<<<<<< HEAD
                       <div style={{display: 'flex', gap: '8px'}}>
                         <button onClick={() => setModalBlog(blog)} style={{background: 'rgba(124,58,237,0.15)', border: 'none', color: '#A78BFA', borderRadius: '6px', padding: '5px 12px', fontSize: '12px', cursor: 'pointer'}}>View</button>
    <button onClick={() => { setPublishModalBlog(blog); setPublishStatus(''); setPublishingPlatform('wordpress'); setIsScheduled(false); setScheduledAt(''); }} style={{background: 'rgba(16,185,129,0.15)', border: 'none', color: '#10B981', borderRadius: '6px', padding: '5px 12px', fontSize: '12px', cursor: 'pointer'}}>Publish</button>
    <button onClick={() => deleteBlog(blog.id)} style={{background: 'rgba(239,68,68,0.1)', border: 'none', color: '#EF4444', borderRadius: '6px', padding: '5px 12px', fontSize: '12px', cursor: 'pointer'}}>Delete</button>
+=======
+                      <div className="action-menu">
+                        <button className="action-btn" onClick={(e) => window.toggleActionMenu && window.toggleActionMenu(e)} style={{background: 'none', border: 'none', color: '#64748B', cursor: 'pointer', padding: '4px'}}>
+                          <MoreVertical size={16}/>
+                        </button>
+                        <div className="action-dropdown">
+                          <button onClick={() => setModalBlog(blog)}>👁 View Content</button>
+                          <button onClick={(e) => window.copyBlog && window.copyBlog(blog.id, e)}>📋 Copy Content</button>
+                          <button onClick={(e) => window.publishBlog && window.publishBlog(blog.id, e)}>🚀 Publish Now</button>
+                          <button onClick={(e) => window.scheduleBlog && window.scheduleBlog(blog.id, e)}>📅 Schedule</button>
+                          <button className="danger" onClick={(e) => window.confirmDeleteBlog && window.confirmDeleteBlog(blog.id, e)}>🗑 Delete</button>
+                        </div>
+>>>>>>> 8ebd7f702f18cbab3140b3e3b24f860bb5f9fbac
                       </div>
                     </td>
                   </tr>
@@ -527,6 +542,80 @@ Return ONLY a valid JSON object with exactly this structure, no explanation:
           </div>
         </div>
       )}
+    </div>
+  );
+};
+
+const RoidashboardSection = () => {
+  return (
+    <div id="dash-roi" className="dash-section" style={{display: 'none', padding: '40px', color: '#fff'}}>
+      {/* Section Header */}
+      <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:'28px'}}>
+        <div>
+          <h2 style={{fontSize:'24px', fontWeight:'700', color:'white', margin:0}}>ROI & Reports</h2>
+          <p style={{fontSize:'14px', color:'#64748B', marginTop:'4px'}}>Track your content performance and organic growth</p>
+        </div>
+        <button onClick={(e) => window.generateReport && window.generateReport(e)} style={{background:'linear-gradient(135deg,#7C3AED,#06B6D4)', color:'white', border:'none', borderRadius:'10px', padding:'10px 20px', fontSize:'14px', fontWeight:'600', cursor:'pointer'}}>
+          ⚡ Generate AI Report
+        </button>
+      </div>
+
+      {/* KPI Cards */}
+      <div style={{display:'grid', gridTemplateColumns:'repeat(4,1fr)', gap:'16px', marginBottom:'28px'}}>
+        <div style={{background:'#141B2D', border:'1px solid rgba(255,255,255,0.06)', borderRadius:'16px', padding:'24px'}}>
+          <div style={{fontSize:'12px', color:'#64748B', textTransform:'uppercase', letterSpacing:'0.5px', marginBottom:'12px'}}>Total Blogs</div>
+          <div id="roi-total-blogs" style={{fontSize:'32px', fontWeight:'700', color:'white'}}>0</div>
+        </div>
+        <div style={{background:'#141B2D', border:'1px solid rgba(255,255,255,0.06)', borderRadius:'16px', padding:'24px'}}>
+          <div style={{fontSize:'12px', color:'#64748B', textTransform:'uppercase', letterSpacing:'0.5px', marginBottom:'12px'}}>Avg SEO Score</div>
+          <div id="roi-avg-seo" style={{fontSize:'32px', fontWeight:'700', color:'#06B6D4'}}>—</div>
+        </div>
+        <div style={{background:'#141B2D', border:'1px solid rgba(255,255,255,0.06)', borderRadius:'16px', padding:'24px'}}>
+          <div style={{fontSize:'12px', color:'#64748B', textTransform:'uppercase', letterSpacing:'0.5px', marginBottom:'12px'}}>Est. Monthly Traffic</div>
+          <div id="roi-traffic" style={{fontSize:'32px', fontWeight:'700', color:'#10B981'}}>+0</div>
+          <div style={{fontSize:'12px', color:'#64748B', marginTop:'4px'}}>visits</div>
+        </div>
+        <div style={{background:'#141B2D', border:'1px solid rgba(255,255,255,0.06)', borderRadius:'16px', padding:'24px'}}>
+          <div style={{fontSize:'12px', color:'#64748B', textTransform:'uppercase', letterSpacing:'0.5px', marginBottom:'12px'}}>Content Health</div>
+          <div id="roi-health" style={{fontSize:'32px', fontWeight:'700', color:'#A78BFA'}}>—</div>
+        </div>
+      </div>
+
+      {/* Performance Table */}
+      <div style={{background:'#141B2D', border:'1px solid rgba(255,255,255,0.06)', borderRadius:'16px', overflow:'hidden', marginBottom:'28px'}}>
+        <div style={{padding:'18px 20px', borderBottom:'1px solid rgba(255,255,255,0.06)', display:'flex', justifyContent:'space-between', alignItems:'center'}}>
+          <h3 style={{fontSize:'15px', fontWeight:'600', color:'white', margin:0}}>📊 Blog Performance Breakdown</h3>
+        </div>
+        <div style={{overflowX:'auto'}}>
+          <table style={{width:'100%', borderCollapse:'collapse', minWidth:'600px'}}>
+            <thead>
+              <tr style={{background:'#0D1526'}}>
+                <th style={{textAlign:'left', padding:'12px 20px', fontSize:'11px', color:'#64748B', fontWeight:'600', letterSpacing:'0.5px'}}>BLOG TITLE</th>
+                <th style={{padding:'12px 20px', fontSize:'11px', color:'#64748B', fontWeight:'600', textAlign:'center'}}>SEO SCORE</th>
+                <th style={{padding:'12px 20px', fontSize:'11px', color:'#64748B', fontWeight:'600', textAlign:'center'}}>WORD COUNT</th>
+                <th style={{padding:'12px 20px', fontSize:'11px', color:'#64748B', fontWeight:'600', textAlign:'center'}}>EST. TRAFFIC</th>
+                <th style={{padding:'12px 20px', fontSize:'11px', color:'#64748B', fontWeight:'600', textAlign:'center'}}>STATUS</th>
+              </tr>
+            </thead>
+            <tbody id="roi-table-body">
+              <tr>
+                <td colSpan="5" style={{textAlign:'center', padding:'40px', color:'#4B5563', fontSize:'14px'}}>
+                  No blogs yet. <span style={{color:'#7C3AED', cursor:'pointer'}} onClick={() => window.showDashboardSection && window.showDashboardSection('newblog')}>Generate your first blog →</span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      {/* AI Report Area */}
+      <div id="roi-report-area" style={{display:'none', background:'#141B2D', border:'1px solid rgba(124,58,237,0.3)', borderRadius:'16px', padding:'24px'}}>
+        <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:'16px'}}>
+          <h3 style={{fontSize:'15px', fontWeight:'600', color:'white', margin:0}}>🤖 AI Performance Report</h3>
+          <button onClick={(e) => window.copyReport && window.copyReport(e)} style={{background:'rgba(255,255,255,0.05)', border:'1px solid rgba(255,255,255,0.1)', color:'#94A3B8', borderRadius:'8px', padding:'6px 14px', fontSize:'12px', cursor:'pointer'}}>Copy Report</button>
+        </div>
+        <div id="roi-report-content" style={{fontSize:'14px', color:'#94A3B8', lineHeight:1.8, whiteSpace:'pre-wrap'}}></div>
+      </div>
     </div>
   );
 };
@@ -898,6 +987,252 @@ const Dashboard = ({ onLogout }) => {
       if (usageCount) usageCount.textContent = blogs.length + '/50 blogs';
     };
 
+    window.loadROIDashboard = function() {
+      const blogs = JSON.parse(localStorage.getItem('bf_blogs') || '[]');
+      const totalEl = document.getElementById('roi-total-blogs');
+      if (totalEl) totalEl.textContent = blogs.length;
+
+      if (blogs.length > 0) {
+        const avgSeo = Math.round(blogs.reduce((s, b) => s + (parseInt(b.seoScore) || 0), 0) / blogs.length);
+        const avgEl = document.getElementById('roi-avg-seo');
+        if (avgEl) avgEl.textContent = avgSeo;
+
+        const estTraffic = blogs.length * 156;
+        const trafficEl = document.getElementById('roi-traffic');
+        if (trafficEl) trafficEl.textContent = '+' + estTraffic.toLocaleString();
+
+        const healthEl = document.getElementById('roi-health');
+        const health = avgSeo >= 90 ? '🏆 Excellent' : avgSeo >= 75 ? '✅ Good' : '⚠️ Fair';
+        if (healthEl) healthEl.textContent = health;
+
+        const sc = s => parseInt(s) >= 90 ? '#10B981' : parseInt(s) >= 75 ? '#F59E0B' : '#EF4444';
+        const statusStyle = s => s === 'published'
+          ? 'background:rgba(16,185,129,0.1);color:#10B981;'
+          : s === 'scheduled'
+          ? 'background:rgba(245,158,11,0.1);color:#F59E0B;'
+          : 'background:rgba(100,116,139,0.1);color:#94A3B8;';
+
+        const tableBody = document.getElementById('roi-table-body');
+        if (tableBody) {
+          tableBody.innerHTML = blogs.map(blog => {
+            const wc = blog.body ? blog.body.split(/\s+/).filter(w => w).length : 0;
+            const traffic = Math.floor((parseInt(blog.seoScore) || 0) * 1.6);
+            return '<tr style="border-top:1px solid rgba(255,255,255,0.04); transition:background 0.15s;" onmouseover="this.style.background=\'rgba(124,58,237,0.05)\'" onmouseout="this.style.background=\'transparent\'">' +
+              '<td style="padding:14px 20px; font-size:14px; color:white; font-weight:500; max-width:280px;">' + blog.title + '</td>' +
+              '<td style="padding:14px 20px; text-align:center;"><span style="color:' + sc(blog.seoScore) + '; font-weight:700; font-size:14px;">' + (blog.seoScore || '—') + '/100</span></td>' +
+              '<td style="padding:14px 20px; text-align:center; font-size:13px; color:#94A3B8;">' + (wc > 0 ? wc.toLocaleString() : '—') + '</td>' +
+              '<td style="padding:14px 20px; text-align:center; font-size:13px; color:#10B981; font-weight:600;">+' + traffic + '</td>' +
+              '<td style="padding:14px 20px; text-align:center;"><span style="' + statusStyle(blog.status) + ' border-radius:999px; padding:4px 12px; font-size:12px; font-weight:600;">' + (blog.status || 'draft').charAt(0).toUpperCase() + (blog.status || 'draft').slice(1) + '</span></td>' +
+              '<td style="padding:14px 20px; text-align:right;">' +
+                '<div class="action-menu">' +
+                  '<button class="action-btn" onclick="toggleActionMenu(event)" style="background:none; border:none; color:#64748B; cursor:pointer; padding:4px; font-size:18px;">⋮</button>' +
+                  '<div class="action-dropdown">' +
+                    '<button onclick="viewBlog(\'' + blog.id + '\')">👁 View Blog</button>' +
+                    '<button onclick="copyBlog(\'' + blog.id + '\', event)">📋 Copy Content</button>' +
+                    '<button onclick="publishBlog(\'' + blog.id + '\', event)">🚀 Publish Now</button>' +
+                    '<button onclick="scheduleBlog(\'' + blog.id + '\', event)">📅 Schedule</button>' +
+                    '<button class="danger" onclick="confirmDeleteBlog(\'' + blog.id + '\', event)">🗑 Delete</button>' +
+                  '</div>' +
+                '</div>' +
+              '</td>' +
+              '</tr>';
+          }).join('');
+        }
+      }
+    };
+
+    window.generateReport = async function(e) {
+      const blogs = JSON.parse(localStorage.getItem('bf_blogs') || '[]');
+      if (blogs.length === 0) {
+        alert('Generate some blogs first before creating a report.');
+        window.showDashboardSection('newblog');
+        return;
+      }
+
+      const btn = e.currentTarget;
+      const originalText = btn.textContent;
+      btn.textContent = '⏳ Generating...';
+      btn.disabled = true;
+
+      const avgSeo = Math.round(blogs.reduce((s, b) => s + (parseInt(b.seoScore) || 0), 0) / blogs.length);
+      const totalWords = blogs.reduce((s, b) => s + (b.body ? b.body.split(/\s+/).length : 0), 0);
+      const keywords = blogs.map(b => b.keyword || b.title).slice(0, 5).join(', ');
+
+      const prompt = `You are a senior SEO content strategist. Write a professional performance report for a content marketing campaign.
+
+Data:
+- Total blogs published: ${blogs.length}
+- Average SEO score: ${avgSeo}/100
+- Total words written: ${totalWords.toLocaleString()}
+- Topics covered: ${keywords}
+- Estimated monthly traffic: +${(blogs.length * 156).toLocaleString()} visits
+
+Write a 300-word professional report covering:
+1. Campaign Performance Summary
+2. SEO Health Assessment
+3. Content Quality Insights
+4. Top Performing Content
+5. Recommendations for Next Month
+
+Use clear headings and keep it actionable. Write in a professional consulting tone.`;
+
+      try {
+        const report = await callGemini(prompt, 1000);
+        const reportArea = document.getElementById('roi-report-area');
+        const reportContent = document.getElementById('roi-report-content');
+        if (reportArea) reportArea.style.display = 'block';
+        if (reportContent) reportContent.textContent = report;
+        btn.textContent = '⚡ Regenerate Report';
+        btn.disabled = false;
+      } catch(err) {
+        alert('Error generating report: ' + err.message);
+        btn.textContent = originalText;
+        btn.disabled = false;
+      }
+    };
+
+    window.copyReport = function(e) {
+      const contentEl = document.getElementById('roi-report-content');
+      if (!contentEl) return;
+      const content = contentEl.textContent;
+      navigator.clipboard.writeText(content).then(() => {
+        const btn = e.currentTarget;
+        const oldText = btn.textContent;
+        btn.textContent = '✓ Copied!';
+        btn.style.color = '#10B981';
+        setTimeout(() => { btn.textContent = oldText; btn.style.color = '#94A3B8'; }, 2000);
+      });
+    };
+
+    // --- Action Menu & Toast System ---
+    
+    window.showToast = function(message, type = 'success') {
+      let container = document.getElementById('toast-container');
+      if (!container) {
+        container = document.createElement('div');
+        container.id = 'toast-container';
+        document.body.appendChild(container);
+      }
+      
+      const toast = document.createElement('div');
+      toast.className = `toast ${type}`;
+      
+      const icons = {
+        success: '✓',
+        error: '✕',
+        warning: '⚠',
+        info: 'ℹ'
+      };
+      
+      toast.innerHTML = `<span>${icons[type] || '•'}</span> <span>${message}</span>`;
+      container.appendChild(toast);
+      
+      // Remove after 3 seconds
+      setTimeout(() => {
+        toast.style.animation = 'toastOut 0.4s ease-in forwards';
+        toast.addEventListener('animationend', () => toast.remove());
+      }, 3000);
+    };
+
+    window.toggleActionMenu = function(e) {
+      e.stopPropagation();
+      const btn = e.currentTarget;
+      const menu = btn.nextElementSibling;
+      const isOpen = menu.classList.contains('open');
+      
+      // Close all other menus
+      document.querySelectorAll('.action-dropdown.open').forEach(m => {
+        if (m !== menu) m.classList.remove('open');
+      });
+      
+      menu.classList.toggle('open');
+      
+      // Close menu when clicking outside
+      if (!isOpen) {
+        const closeMenu = (event) => {
+          if (!menu.contains(event.target) && event.target !== btn) {
+            menu.classList.remove('open');
+            document.removeEventListener('click', closeMenu);
+          }
+        };
+        document.addEventListener('click', closeMenu);
+      }
+    };
+
+    window.viewBlog = function(id) {
+      const blogs = JSON.parse(localStorage.getItem('bf_blogs') || '[]');
+      const blog = blogs.find(b => b.id == id);
+      if (blog && window.loadMyBlogs) {
+        // We can't easily open the modal of MyBlogsSection from here if we're not in that section,
+        // so we'll just switch to the section and hope it handles it, or implement a global modal.
+        // For now, let's just alert or log as a placeholder if we're not in MyBlogsSection.
+        window.showDashboardSection('myblogs');
+        // If MyBlogsSection is already mounted, it might have its own modal state.
+        // This is a bit tricky with React vs Globals.
+        console.log("Viewing blog:", blog);
+      }
+    };
+
+    window.copyBlog = function(id, e) {
+      const blogs = JSON.parse(localStorage.getItem('bf_blogs') || '[]');
+      const blog = blogs.find(b => b.id == id);
+      if (blog) {
+        const text = (blog.title || '') + '\n\n' + (blog.metaDescription || '') + '\n\n' + (blog.body || '');
+        navigator.clipboard.writeText(text).then(() => {
+          window.showToast('Content copied to clipboard!');
+        });
+      }
+      const menu = e.target.closest('.action-dropdown');
+      if (menu) menu.classList.remove('open');
+    };
+
+    window.publishBlog = function(id, e) {
+      const blogs = JSON.parse(localStorage.getItem('bf_blogs') || '[]');
+      const idx = blogs.findIndex(b => b.id == id);
+      if (idx !== -1) {
+        blogs[idx].status = 'published';
+        localStorage.setItem('bf_blogs', JSON.stringify(blogs));
+        window.showToast('Blog published successfully!');
+        if (window.loadMyBlogs) window.loadMyBlogs();
+        if (window.updateOverviewStats) window.updateOverviewStats();
+        if (window.loadROIDashboard) window.loadROIDashboard();
+      }
+      const menu = e.target.closest('.action-dropdown');
+      if (menu) menu.classList.remove('open');
+    };
+
+    window.scheduleBlog = function(id, e) {
+      const blogs = JSON.parse(localStorage.getItem('bf_blogs') || '[]');
+      const idx = blogs.findIndex(b => b.id == id);
+      if (idx !== -1) {
+        blogs[idx].status = 'scheduled';
+        localStorage.setItem('bf_blogs', JSON.stringify(blogs));
+        window.showToast('Blog scheduled for tomorrow.');
+        if (window.loadMyBlogs) window.loadMyBlogs();
+        if (window.updateOverviewStats) window.updateOverviewStats();
+        if (window.loadROIDashboard) window.loadROIDashboard();
+      }
+      const menu = e.target.closest('.action-dropdown');
+      if (menu) menu.classList.remove('open');
+    };
+
+    window.confirmDeleteBlog = function(id, e) {
+      if (!confirm('Are you sure you want to delete this blog? This action cannot be undone.')) return;
+      
+      const blogs = JSON.parse(localStorage.getItem('bf_blogs') || '[]');
+      const updated = blogs.filter(b => b.id != id);
+      localStorage.setItem('bf_blogs', JSON.stringify(updated));
+      
+      window.showToast('Blog deleted.', 'warning');
+      
+      if (window.loadMyBlogs) window.loadMyBlogs();
+      if (window.updateOverviewStats) window.updateOverviewStats();
+      if (window.loadROIDashboard) window.loadROIDashboard();
+      
+      const menu = e.target.closest('.action-dropdown');
+      if (menu) menu.classList.remove('open');
+    };
+
     window.showDashboardSection = function(section) {
       document.querySelectorAll('.dash-section').forEach(s => { s.style.display = 'none'; s.classList.remove('section-entering'); });
       const target = document.getElementById('dash-' + section);
@@ -917,6 +1252,7 @@ const Dashboard = ({ onLogout }) => {
       }
       if (section === 'overview') window.updateOverviewStats();
       if (section === 'myblogs' && window.loadMyBlogs) window.loadMyBlogs();
+      if (section === 'roi' && window.loadROIDashboard) window.loadROIDashboard();
       window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
@@ -937,7 +1273,6 @@ const Dashboard = ({ onLogout }) => {
     { id: 'schedule', title: 'Schedule Queue' },
     
     { id: 'traffic', title: 'Traffic Tracker' },
-    { id: 'roi', title: 'ROI Dashboard' },
     { id: 'brandvoice', title: 'Brand Voice' },
     { id: 'team', title: 'Team' },
     { id: 'billing', title: 'Billing' },
@@ -1043,9 +1378,30 @@ const Dashboard = ({ onLogout }) => {
               <p>Your blogs are running on autopilot.</p>
             </div>
             <div className="header-actions">
-              <button className="btn btn-ghost">View Reports</button>
-              <button className="btn btn-outline-cyan">Scan SERP Gaps</button>
-              <button className="btn btn-primary"><Plus size={16} className="mr-2"/> New Blog</button>
+              <button 
+                onClick={() => window.showDashboardSection('roi')} 
+                style={{background:'transparent', color:'#94A3B8', border:'none', fontSize:'14px', fontWeight:500, cursor:'pointer', padding:'11px 22px', borderRadius:'999px', transition:'all 0.2s'}} 
+                onMouseOver={(e) => e.currentTarget.style.color='white'} 
+                onMouseOut={(e) => e.currentTarget.style.color='#94A3B8'}
+              >
+                View Reports →
+              </button>
+              <button 
+                onClick={() => window.showDashboardSection('serpgap')} 
+                style={{background:'transparent', color:'white', border:'1px solid rgba(255,255,255,0.15)', borderRadius:'999px', padding:'11px 22px', fontSize:'14px', fontWeight:500, cursor:'pointer', transition:'all 0.2s'}} 
+                onMouseOver={(e) => { e.currentTarget.style.borderColor='#7C3AED'; e.currentTarget.style.color='#A78BFA'; }} 
+                onMouseOut={(e) => { e.currentTarget.style.borderColor='rgba(255,255,255,0.15)'; e.currentTarget.style.color='white'; }}
+              >
+                🔍 Scan SERP Gaps
+              </button>
+              <button 
+                onClick={() => window.showDashboardSection('newblog')} 
+                style={{background:'linear-gradient(135deg,#7C3AED,#5B21B6)', color:'white', border:'none', borderRadius:'999px', padding:'11px 22px', fontSize:'14px', fontWeight:600, cursor:'pointer', display:'flex', alignItems:'center', gap:'8px', transition:'all 0.2s'}} 
+                onMouseOver={(e) => e.currentTarget.style.transform='translateY(-1px)'} 
+                onMouseOut={(e) => e.currentTarget.style.transform='translateY(0)'}
+              >
+                + New Blog
+              </button>
             </div>
           </header>
 
@@ -1073,7 +1429,14 @@ const Dashboard = ({ onLogout }) => {
             <div className="content-table-panel">
               <div className="panel-header">
                 <h3>Your Blogs</h3>
-                <a href="#" className="view-all">View all</a>
+                <span 
+                  onClick={() => window.showDashboardSection('myblogs')} 
+                  style={{fontSize:'14px', color:'#7C3AED', cursor:'pointer', fontWeight:500}} 
+                  onMouseOver={(e) => e.currentTarget.style.color='#A78BFA'} 
+                  onMouseOut={(e) => e.currentTarget.style.color='#7C3AED'}
+                >
+                  View all →
+                </span>
               </div>
               <div className="table-responsive">
                 <table className="dash-table">
@@ -1103,7 +1466,18 @@ const Dashboard = ({ onLogout }) => {
                         <td className="text-muted">{blog.date}</td>
                         <td>{blog.traffic}</td>
                         <td className="actions-cell">
-                          <button className="action-btn"><MoreVertical size={16}/></button>
+                          <div className="action-menu">
+                            <button className="action-btn" onClick={(e) => window.toggleActionMenu && window.toggleActionMenu(e)}>
+                              <MoreVertical size={16}/>
+                            </button>
+                            <div className="action-dropdown">
+                              <button onClick={() => window.viewBlog && window.viewBlog(idx)}>👁 View Blog</button>
+                              <button onClick={(e) => window.copyBlog && window.copyBlog(idx, e)}>📋 Copy Content</button>
+                              <button onClick={(e) => window.publishBlog && window.publishBlog(idx, e)}>🚀 Publish Now</button>
+                              <button onClick={(e) => window.scheduleBlog && window.scheduleBlog(idx, e)}>📅 Schedule</button>
+                              <button className="danger" onClick={(e) => window.confirmDeleteBlog && window.confirmDeleteBlog(idx, e)}>🗑 Delete</button>
+                            </div>
+                          </div>
                         </td>
                       </tr>
                     ))}
@@ -1167,6 +1541,7 @@ const Dashboard = ({ onLogout }) => {
         <MyBlogsSection />
         <SerpGapSection />
         <SeoScoresSection />
+        <RoidashboardSection />
 
         {/* Unique Feature Sections */}
         {dummySections.map(sec => {

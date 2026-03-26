@@ -259,20 +259,67 @@ Write a comprehensive, SEO-optimized blog post with these specifications:
 
 Format your response as valid JSON with exactly these fields:
 {
-  "title": "SEO-optimized H1 title (include keyword, under 60 chars)",
-  "metaDescription": "Compelling meta description under 155 chars with keyword and CTA",
-  "seoScore": <number between 85-98>,
-  "body": "Full blog post in markdown format with H2s, H3s, bullet points, and natural keyword usage. Minimum ${wordCount} words. Include an introduction, 5-7 main sections, and a conclusion with CTA."
+  "title": "SEO-optimized blog title with keyword, under 60 chars",
+  "metaDescription": "Meta description under 155 chars with keyword and CTA",
+  "seoScore": 92,
+  "body": "Full blog content here"
 }
 
-IMPORTANT: Return ONLY the JSON object. No preamble, no explanation, no markdown code blocks.`;
+STRICT RULES for the body field:
+- Use \\n for line breaks inside the JSON string
+- Do NOT use actual newlines inside the JSON string
+- Do NOT use unescaped double quotes inside the body
+- Keep body under 3000 words to stay within token limits
+- Use ## for H2 headings, ### for H3 headings
+- Return ONLY the raw JSON object, nothing else before or after`;
 
     try {
-      const cleaned  = await callGemini(prompt, 4000);
+      const cleaned  = await callGemini(prompt, 8192);
       clearInterval(interval);
       setProgress({ pct: 100, text: 'Complete! ✓' });
 
-      const blogData = JSON.parse(cleaned);
+      let blogData;
+      try {
+        blogData = JSON.parse(cleaned);
+      } catch (parseErr) {
+        // Gemini truncated the JSON — extract fields manually
+        const extractField = (text, field) => {
+          const regex = new RegExp('"' + field + '"\\s*:\\s*"((?:[^"\\\\]|\\\\.)*)');
+          const match = text.match(regex);
+          return match ? match[1].replace(/\\n/g, '\n').replace(/\\"/g, '"') : '';
+        };
+        
+        const titleMatch = cleaned.match(/"title"\s*:\s*"([^"]+)"/);
+        const metaMatch = cleaned.match(/"metaDescription"\s*:\s*"([^"]+)"/);
+        const seoMatch = cleaned.match(/"seoScore"\s*:\s*(\d+)/);
+        
+        // For body — extract everything between "body": " and the truncation point
+        const bodyStart = cleaned.indexOf('"body"');
+        let body = '';
+        if (bodyStart !== -1) {
+          const afterBody = cleaned.substring(bodyStart + 8);
+          const firstQuote = afterBody.indexOf('"');
+          if (firstQuote !== -1) {
+            body = afterBody.substring(firstQuote + 1)
+              .replace(/\\n/g, '\n')
+              .replace(/\\"/g, '"')
+              .replace(/\\"$/, '')
+              .replace(/\\$/, '');
+            // Clean truncated end
+            const lastGoodSentence = body.lastIndexOf('.');
+            if (lastGoodSentence > body.length * 0.7) {
+              body = body.substring(0, lastGoodSentence + 1);
+            }
+          }
+        }
+        
+        blogData = {
+          title: titleMatch ? titleMatch[1] : 'Generated Blog',
+          metaDescription: metaMatch ? metaMatch[1] : '',
+          seoScore: seoMatch ? parseInt(seoMatch[1]) : 82,
+          body: body || 'Content was generated but could not be fully parsed. Please try again.'
+        };
+      }
       const wordCountActual = blogData.body.split(' ').length;
       const readTime        = Math.ceil(wordCountActual / 200);
       const id              = Date.now();
