@@ -108,7 +108,31 @@ const MyBlogsSection = () => {
 
 
   const loadMyBlogs = () => {
-    const saved = JSON.parse(localStorage.getItem('bf_blogs') || '[]');
+    let saved = JSON.parse(localStorage.getItem('bf_blogs') || '[]');
+    // Check if we need to refresh old demo data (Oct 2026) to March 2026
+    const hasOldData = saved.some(b => b.id === 'db1' || b.id === 'db2');
+    if (saved.length === 0 || hasOldData) {
+      // Inject standard demo blogs for MARCH 2026
+      saved = [
+        {
+          id: 'db1_mar', title: '10 AI Tools Disrupting Martech in India', seoScore: '94', status: 'published',
+          createdAt: '2026-03-12T10:00:00Z', views: '1,240', keyword: 'martech ai india', body: '# 10 AI Tools...'
+        },
+        {
+          id: 'db2_mar', title: 'How to Automate SEO with Generative AI', seoScore: '88', status: 'published',
+          createdAt: '2026-03-10T14:30:00Z', views: '890', keyword: 'automate seo ai', body: '# How to Automate...'
+        },
+        {
+          id: 'db3_mar', title: 'Top 5 Tier-2 Cities for Tech Startups', seoScore: '96', status: 'scheduled',
+          scheduledAt: '2026-03-15T09:00:00Z', views: '---', keyword: 'tier 2 cities startups', body: '# Top 5 Tier-2 Cities...'
+        },
+        {
+          id: 'db4_mar', title: "Understanding Google's Helpful Content Update", seoScore: '91', status: 'scheduled',
+          scheduledAt: '2026-03-18T16:00:00Z', views: '---', keyword: 'google helpful content update', body: '# Understanding Google...'
+        }
+      ];
+      localStorage.setItem('bf_blogs', JSON.stringify(saved));
+    }
     setBlogs(saved);
   };
 
@@ -192,7 +216,8 @@ const MyBlogsSection = () => {
               filteredBlogs.map((blog) => {
                 const scoreColor = blog.seoScore >= 90 ? '#10B981' : blog.seoScore >= 75 ? '#F59E0B' : '#EF4444';
                 const statusStyle = blog.status === 'published' ? {background: 'rgba(16,185,129,0.1)', color: '#10B981'} : blog.status === 'scheduled' ? {background: 'rgba(245,158,11,0.1)', color: '#F59E0B'} : {background: 'rgba(100,116,139,0.1)', color: '#94A3B8'};
-                const date = new Date(blog.createdAt).toLocaleDateString('en-IN', { day:'numeric', month:'short', year:'numeric' });
+                const displayDate = blog.status === 'scheduled' ? (blog.scheduledAt || blog.createdAt) : blog.createdAt;
+                const date = new Date(displayDate).toLocaleDateString('en-IN', { day:'numeric', month:'short', year:'numeric' });
                 return (
                   <tr key={blog.id} style={{borderTop: '1px solid rgba(255,255,255,0.04)', transition: 'background 0.15s'}} onMouseOver={e => e.currentTarget.style.background = 'rgba(124,58,237,0.05)'} onMouseOut={e => e.currentTarget.style.background = 'transparent'}>
                     <td onClick={() => setModalBlog(blog)} style={{padding: '14px 20px', fontSize: '14px', color: 'white', fontWeight: 500, maxWidth: '280px', cursor: 'pointer', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}>
@@ -440,7 +465,7 @@ const RoidashboardSection = () => {
       <div style={{display:'grid', gridTemplateColumns:'repeat(4,1fr)', gap:'16px', marginBottom:'28px'}}>
         <div style={{background:'#141B2D', border:'1px solid rgba(255,255,255,0.06)', borderRadius:'16px', padding:'24px'}}>
           <div style={{fontSize:'12px', color:'#64748B', textTransform:'uppercase', letterSpacing:'0.5px', marginBottom:'12px'}}>Total Blogs</div>
-          <div id="roi-total-blogs" style={{fontSize:'32px', fontWeight:'700', color:'white'}}>0</div>
+          <div id="roi-total-blogs" style={{fontSize:'32px', fontWeight:'700', color:'white'}}>152</div>
         </div>
         <div style={{background:'#141B2D', border:'1px solid rgba(255,255,255,0.06)', borderRadius:'16px', padding:'24px'}}>
           <div style={{fontSize:'12px', color:'#64748B', textTransform:'uppercase', letterSpacing:'0.5px', marginBottom:'12px'}}>Avg SEO Score</div>
@@ -448,7 +473,7 @@ const RoidashboardSection = () => {
         </div>
         <div style={{background:'#141B2D', border:'1px solid rgba(255,255,255,0.06)', borderRadius:'16px', padding:'24px'}}>
           <div style={{fontSize:'12px', color:'#64748B', textTransform:'uppercase', letterSpacing:'0.5px', marginBottom:'12px'}}>Est. Monthly Traffic</div>
-          <div id="roi-traffic" style={{fontSize:'32px', fontWeight:'700', color:'#10B981'}}>+0</div>
+          <div id="roi-traffic" style={{fontSize:'32px', fontWeight:'700', color:'#10B981'}}>+14,250</div>
           <div style={{fontSize:'12px', color:'#64748B', marginTop:'4px'}}>visits</div>
         </div>
         <div style={{background:'#141B2D', border:'1px solid rgba(255,255,255,0.06)', borderRadius:'16px', padding:'24px'}}>
@@ -822,7 +847,30 @@ const Dashboard = ({ onLogout }) => {
   const [scheduledAt, setScheduledAt] = useState('');
 
   const loadDashboardBlogs = () => {
-    const saved = JSON.parse(localStorage.getItem('bf_blogs') || '[]');
+    let saved = JSON.parse(localStorage.getItem('bf_blogs') || '[]');
+    const hasOldData = saved.some(b => b.id === 'db1' || b.id === 'db2');
+    if (saved.length === 0 || hasOldData) {
+      // Inject standard demo blogs for MARCH 2026
+      saved = [
+        {
+          id: 'db1_mar', title: '10 AI Tools Disrupting Martech in India', seoScore: '94', status: 'published',
+          createdAt: '2026-03-12T10:00:00Z', views: '1,240', keyword: 'martech ai india', body: '# 10 AI Tools...'
+        },
+        {
+          id: 'db2_mar', title: 'How to Automate SEO with Generative AI', seoScore: '88', status: 'published',
+          createdAt: '2026-03-10T14:30:00Z', views: '890', keyword: 'automate seo ai', body: '# How to Automate...'
+        },
+        {
+          id: 'db3_mar', title: 'Top 5 Tier-2 Cities for Tech Startups', seoScore: '96', status: 'scheduled',
+          scheduledAt: '2026-03-15T09:00:00Z', views: '---', keyword: 'tier 2 cities startups', body: '# Top 5 Tier-2 Cities...'
+        },
+        {
+          id: 'db4_mar', title: "Understanding Google's Helpful Content Update", seoScore: '91', status: 'scheduled',
+          scheduledAt: '2026-03-18T16:00:00Z', views: '---', keyword: 'google helpful content update', body: '# Understanding Google...'
+        }
+      ];
+      localStorage.setItem('bf_blogs', JSON.stringify(saved));
+    }
     setBlogs(saved);
   };
 
@@ -939,7 +987,7 @@ const Dashboard = ({ onLogout }) => {
         if (totalEl) totalEl.textContent = '152';
         if (avgEl) avgEl.textContent = '94';
         if (trafficEl) trafficEl.textContent = '+14,250';
-        if (topEl) topEl.textContent = '10 AI Marketing Tools for 2026';
+        if (topEl) topEl.textContent = '10 AI Martech Tools Disrupting India';
       }
 
       const usageBar = document.getElementById('plan-usage-bar');

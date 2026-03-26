@@ -271,73 +271,10 @@
   --content-padding:      clamp(1.5rem, 4vw, 3rem);
 }
 
-/* ─────────────────────────────────────────────
-   10. DARK MODE (semantic token inversion)
+/* 10. DARK MODE (semantic token inversion)
    All components adapt automatically — no ad-hoc overrides needed.
    ───────────────────────────────────────────── */
-/* Light mode — explicit opt-in via attribute */
-[data-theme="light"] {
-  --bg-base:     #f8fafc;
-  --bg-surface:  #ffffff;
-  --bg-elevated: #f1f5f9;
-  --bg-overlay:  #e2e8f0;
-  --bg-input:    #ffffff;
-
-  --text-primary:   #0f172a;
-  --text-secondary: #1e293b;
-  --text-muted:     #475569;
-  --text-subtle:    #64748b;
-  --text-disabled:  #94a3b8;
-
-  --border-subtle:  rgba(0, 0, 0, 0.06);
-  --border-default: rgba(0, 0, 0, 0.1);
-  --border-strong:  rgba(0, 0, 0, 0.2);
-
-  --glass-bg:       rgba(255, 255, 255, 0.7);
-  --glass-border:   rgba(0, 0, 0, 0.08);
-  --glass-bg-hover: rgba(255, 255, 255, 0.9);
-
-  --shadow-xs:         0 1px 2px rgba(0, 0, 0, 0.08);
-  --shadow-sm:         0 2px 4px rgba(0, 0, 0, 0.1);
-  --shadow-md:         0 4px 12px rgba(0, 0, 0, 0.1);
-  --shadow-lg:         0 8px 24px rgba(0, 0, 0, 0.12);
-  --shadow-xl:         0 16px 48px rgba(0, 0, 0, 0.16);
-  --shadow-card:       0 2px 12px rgba(0, 0, 0, 0.08);
-  --shadow-card-hover: 0 8px 32px rgba(0, 0, 0, 0.14);
-}
-
-/* Light mode — auto detect via OS/browser preference */
-@media (prefers-color-scheme: light) {
-  :root {
-    --bg-base:     #f8fafc;
-    --bg-surface:  #ffffff;
-    --bg-elevated: #f1f5f9;
-    --bg-overlay:  #e2e8f0;
-    --bg-input:    #ffffff;
-
-    --text-primary:   #0f172a;
-    --text-secondary: #1e293b;
-    --text-muted:     #475569;
-    --text-subtle:    #64748b;
-    --text-disabled:  #94a3b8;
-
-    --border-subtle:  rgba(0, 0, 0, 0.06);
-    --border-default: rgba(0, 0, 0, 0.1);
-    --border-strong:  rgba(0, 0, 0, 0.2);
-
-    --glass-bg:       rgba(255, 255, 255, 0.7);
-    --glass-border:   rgba(0, 0, 0, 0.08);
-    --glass-bg-hover: rgba(255, 255, 255, 0.9);
-
-    --shadow-xs:         0 1px 2px rgba(0, 0, 0, 0.08);
-    --shadow-sm:         0 2px 4px rgba(0, 0, 0, 0.1);
-    --shadow-md:         0 4px 12px rgba(0, 0, 0, 0.1);
-    --shadow-lg:         0 8px 24px rgba(0, 0, 0, 0.12);
-    --shadow-xl:         0 16px 48px rgba(0, 0, 0, 0.16);
-    --shadow-card:       0 2px 12px rgba(0, 0, 0, 0.08);
-    --shadow-card-hover: 0 8px 32px rgba(0, 0, 0, 0.14);
-  }
-}
+/* Light mode PURGED - Obsidian Core Only */
 
 /* ─────────────────────────────────────────────
    11. GLOBAL RESETS
