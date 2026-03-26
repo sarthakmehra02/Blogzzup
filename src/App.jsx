@@ -36,7 +36,8 @@ import {
   ShieldCheck,
   Menu,
   X,
-  ArrowUp
+  ArrowUp,
+  ArrowLeft
 } from 'lucide-react';
 import './index.css';
 
@@ -821,15 +822,146 @@ const PricingPage = () => {
   );
 };
 
+const BlogDetailView = ({ post, onBack }) => {
+  return (
+    <div className="container blog-detail-container">
+      <button className="blog-back-btn" onClick={onBack}>
+        <ArrowLeft size={18} /> Back to Blog
+      </button>
+      
+      <img src={post.image} alt={post.title} className="blog-hero-img" />
+      
+      <article className="blog-article">
+        <span className="blog-tag">{post.tag}</span>
+        <h1>{post.title}</h1>
+        <div className="blog-meta" style={{marginBottom: '3rem'}}>
+          <span>📅 Mar 2026</span>
+          <span>⏱ {post.readTime}</span>
+          <span>👤 By BlogForge AI</span>
+        </div>
+        
+        <div className="blog-content">
+          {post.content.map((p, i) => (
+            <div key={i}>
+              {p.type === 'h2' ? <h2>{p.text}</h2> : <p>{p.text}</p>}
+            </div>
+          ))}
+        </div>
+      </article>
+    </div>
+  );
+};
+
 const BlogPage = () => {
+  const [selectedPost, setSelectedPost] = useState(null);
+
   const posts = [
-    { title: "How BlogForge AI is Disrupting Martech in India", tag: "AI & SEO", emoji: "🤖", grad: "linear-gradient(135deg,#1E0B4B,#2D1B69)" },
-    { title: "How to Get 10x Organic Traffic Without Writing a Single Blog", tag: "Growth", emoji: "📈", grad: "linear-gradient(135deg,#0C2340,#1E3A5F)" },
-    { title: "The 7-Stage Prompt Architecture That Beats Human Writers", tag: "SEO Tips", emoji: "🔍", grad: "linear-gradient(135deg,#0B3D2E,#1A5940)" },
-    { title: "Why GEO Optimization is the Next Frontier for Indian Startups", tag: "GEO", emoji: "🌍", grad: "linear-gradient(135deg,#3D1A0B,#5C2810)" },
-    { title: "Content Cluster Maps: The Secret Weapon of Top SEO Agencies", tag: "Strategy", emoji: "🗺️", grad: "linear-gradient(135deg,#1A0B3D,#2D1A5C)" },
-    { title: "How a Delhi SaaS Startup Got 50,000 Monthly Visitors in 90 Days", tag: "Case Study", emoji: "🚀", grad: "linear-gradient(135deg,#0B1A3D,#1A2D5C)" }
+    { 
+      id: 1,
+      title: "The 2026 SEO Blueprint: Why Cluster Mapping is the New Backlinking", 
+      tag: "AI & SEO Strategy", 
+      emoji: "🗺️", 
+      image: "/assets/blog/seo_blueprint.png",
+      readTime: "8 min read",
+      grad: "linear-gradient(135deg,#1E0B4B,#2D1B69)",
+      content: [
+        { type: 'p', text: "In the rapidly evolving landscape of search engine optimization, traditional backlinking strategies are no longer the sole foundation of authority. As we head into 2026, Google's algorithms have shifted focus towards 'Topical Authority' and 'Semantic Relevance' over simple volume-based metrics." },
+        { type: 'h2', text: "The Shift to Topical Authority" },
+        { type: 'p', text: "Cluster mapping is the process of visually and strategically organizing your content into 'Pillars' and 'Clusters'. A pillar page serves as the comprehensive anchor for a broad topic, while cluster pages deep-dive into specific long-tail keywords that link back to the pillar." },
+        { type: 'p', text: "This structure signals to search engines that your site is a definitive resource on the subject, creating a web of internal links that is far more resilient than sporadic external backlinks. When your site is structured this way, every new post strengthens the authority of the entire domain, rather than standing alone." },
+        { type: 'h2', text: "Why AI-Driven Mapping is Essential" },
+        { type: 'p', text: "Manually mapping out content ecosystems used to take agencies weeks of research and spreadsheet management. With BlogForge AI, we analyze live SERP data to identify the exact semantic gaps in your niche, building your cluster map in seconds." },
+        { type: 'p', text: "Our engine looks at the top 100 ranking pages, extracts their entity relationships, and identifies topics that aren't being fully addressed. This allows you to build a content moat that competitors find nearly impossible to breach without significant manual effort." }
+      ]
+    },
+    { 
+      id: 2,
+      title: "From 8 Hours to 8 Minutes: How AI is Rescuing the Modern Content Marketer", 
+      tag: "Productivity", 
+      emoji: "⚡", 
+      image: "/assets/blog/ai_productivity.png",
+      readTime: "6 min read",
+      grad: "linear-gradient(135deg,#0C2340,#1E3A5F)",
+      content: [
+        { type: 'p', text: "Content fatigue is real. The modern marketer is expected to be a researcher, writer, editor, SEO specialist, and publisher all at once. Traditionally, producing a high-quality, 2,500-word SEO article would take a dedicated professional anywhere from 6 to 8 hours of focused work." },
+        { type: 'h2', text: "The Content Bottleneck" },
+        { type: 'p', text: "The bottleneck isn't just the writing; it's the research. Identifying what competitors are doing, finding the right NLP keywords, and structuring the H-tags takes more time than the actual typing. By the time many writers get to the body content, they are already mentally exhausted, leading to generic results." },
+        { type: 'h2', text: "Enter the One-Click Workflow" },
+        { type: 'p', text: "BlogForge AI collapses this entire pipeline. By using a 7-stage prompt architecture, we handle the boring parts—the research and the SEO optimization—leaving you to simply review and hit publish. We're not just making writing faster; we're redefining the marketer's role from 'creator' to 'director'." },
+        { type: 'p', text: "In a world where speed is a competitive advantage, the ability to iterate on content strategies in real-time is invaluable. Instead of waiting a month for a content agency to deliver four posts, you can now produce an entire content series in a single afternoon, responding to market trends while they are still relevant." }
+      ]
+    },
+    { 
+      id: 3,
+      title: "Hyper-Local Dominance: Leveraging GEO Optimization for Indian Tier-1 Markets", 
+      tag: "GEO Special", 
+      emoji: "🏙️", 
+      image: "/assets/blog/geo_opt.png",
+      readTime: "10 min read",
+      grad: "linear-gradient(135deg,#0B3D2E,#1A5940)",
+      content: [
+        { type: 'p', text: "India's digital growth is no longer confined to Bangalore and Mumbai. Startups are finding massive opportunities in Tier-1 and Tier-2 cities, but ranking for localized search terms requires a level of customization that most global AI tools fail to provide." },
+        { type: 'h2', text: "The Power of Localized Search" },
+        { type: 'p', text: "When a user in Delhi searches for a service, they see different results than someone in Chennai. GEO optimization means automatically infusing your content with local context, landmarks, and regional keywords without sounding like a bot. This builds immediate trust with the user who feels the content was written specifically for their local needs." },
+        { type: 'h2', text: "Scaling to 500 Cities" },
+        { type: 'p', text: "BlogForge's GEO Optimizer allows you to generate city-specific versions of your landing pages and blog posts. Imagine having 500 unique, high-quality blog posts targeting 500 different Indian cities, all generated and published in a single afternoon." },
+        { type: 'p', text: "This strategy allows you to capture long-tail traffic that is often high-intent. A user searching for 'marketing agency in Indiranagar' is much closer to a conversion than someone searching for 'global marketing agencies'. We give you the tools to win those local battles at scale." }
+      ]
+    },
+    { 
+      id: 4,
+      title: "The Soul of the Machine: How to Train AI to Mimic Your Unique Founder Voice", 
+      tag: "Brand Voice", 
+      emoji: "🎙️", 
+      image: "/assets/blog/brand_voice.png",
+      readTime: "7 min read",
+      grad: "linear-gradient(135deg,#3D1A0B,#5C2810)",
+      content: [
+        { type: 'p', text: "The biggest fear founders have with AI content is that it sounds 'soulless'. Generic AI writing is easy to spot—it's polite, repetitive, and lacks an opinion. To stand out in 2026, your content needs to reflect your unique 'Founder Voice'—the perspective that made your company special in the first place." },
+        { type: 'h2', text: "Injecting Personality into Pixels" },
+        { type: 'p', text: "Your brand isn't just what you sell; it's how you talk. Are you provocative? Authoritative? Friendly? We've built Brand Voice Control modules that allow you to feed your past newsletters, social posts, and manifestos directly into the AI to analyze your unique stylistic fingerprint." },
+        { type: 'h2', text: "Setting Constraints" },
+        { type: 'p', text: "Mimicking a voice is about what you *don't* say as much as what you do. Our tool lets you set negative keywords and stylistic constraints (e.g., 'Never use emojis' or 'Always use short, punchy sentences') to ensure every blog post feels like it came from your keyboard. This coherence across all channels is what builds lasting brand equity." },
+        { type: 'p', text: "By automating the drafting process while maintaining your voice, you can spend more time on strategic thinking and high-level editing, ensuring that every piece of content that leaves your dashboard is a true representation of your brand's philosophy." }
+      ]
+    },
+    { 
+      id: 5,
+      title: "Beyond Generative AI: The Rise of Autonomous Content Agents in Digital Marketing", 
+      tag: "Tech Trends", 
+      emoji: "🤖", 
+      image: "/assets/blog/autonomous_agents.png",
+      readTime: "9 min read",
+      grad: "linear-gradient(135deg,#1A0B3D,#2D1A5C)",
+      content: [
+        { type: 'p', text: "We are moving past the 'Chatbot' era. The future of content marketing doesn't involve you typing prompts into a box. It involves Autonomous Content Agents—AI that monitors your niche, spots trends, and suggests content before you even know it's needed. This is the shift from 'Generative' to 'Agentic' AI." },
+        { type: 'h2', text: "The 24/7 Marketing Department" },
+        { type: 'p', text: "Autonomous agents don't just write; they think. They can analyze your analytics, notice a drop in traffic for a specific keyword, and automatically draft a replacement article to regain your ranking. They can monitor competitor moves and suggest counter-strategies, acting as a proactive partner in your marketing department." },
+        { type: 'h2', text: "Connecting the Dots" },
+        { type: 'p', text: "At BlogForge, we're building the infrastructure for this autonomous future. By connecting your Google Search Console and CMS, our agents can operate as a self-healing content ecosystem that compounds in value while you sleep. The goal isn't just to produce more content, but to produce the *right* content at the exact moment it's needed by the market." }
+      ]
+    },
+    { 
+      id: 6,
+      title: "Case Study: How 'BuildFast Delhi' Scaled from 0 to 100k Monthly Visits in 90 Days", 
+      tag: "Success Story", 
+      emoji: "🚀", 
+      image: "/assets/blog/success_story.png",
+      readTime: "12 min read",
+      grad: "linear-gradient(135deg,#0B1A3D,#1A2D5C)",
+      content: [
+        { type: 'p', text: "Meet Rakesh, the founder of BuildFast Delhi. Like many entrepreneurs, he had a great product but zero organic visibility. Agencies quoted him 6 months and 5 lakhs to 'start seeing results'. He didn't have that kind of time or budget, and was close to giving up on organic search entirely." },
+        { type: 'h2', text: "The Strategy: Volume + Velocity" },
+        { type: 'p', text: "Using BlogForge, Rakesh didn't just publish one blog a week. He used our automation tools to publish three high-quality blogs *a day*. By leveraging our SERP Gap Scanner, he targeted thousands of low-difficulty long-tail keywords that competitors were ignoring because they were too labor-intensive to target manually." },
+        { type: 'h2', text: "The Results" },
+        { type: 'p', text: "Within 30 days, BuildFast was ranking for 450 long-tail keywords. By day 90, they hit the 100,000 monthly visitor mark, leading to a 400% increase in inbound leads and a significant decrease in their cost-per-acquisition. Total cost? Less than a single month's agency retainer. Rakesh's story proves that with the right AI tools, David can indeed beat Goliath in the search results." }
+      ]
+    }
   ];
+
+  if (selectedPost) {
+    return <BlogDetailView post={selectedPost} onBack={() => { setSelectedPost(null); window.scrollTo(0, 0); }} />;
+  }
 
   return (
     <div className="container" style={{paddingTop: '8rem', paddingBottom: '8rem'}}>
@@ -842,7 +974,7 @@ const BlogPage = () => {
         {posts.map((post, i) => (
           <div key={i} className="blog-card">
             <div className="blog-thumb" style={{background: post.grad}}>
-              {post.emoji}
+               <img src={post.image} alt={post.title} style={{width:'100%', height:'100%', objectFit:'cover', opacity: 0.8}} />
             </div>
             <div className="blog-body">
               <div>
@@ -851,9 +983,9 @@ const BlogPage = () => {
               <h3 className="blog-title">{post.title}</h3>
               <div className="blog-meta">
                 <span>📅 Mar 2026</span>
-                <span>⏱ 7 min read</span>
+                <span>⏱ {post.readTime}</span>
               </div>
-              <div className="blog-read-more">Read More →</div>
+              <div className="blog-read-more" onClick={() => { setSelectedPost(post); window.scrollTo(0, 0); }}>Read More →</div>
             </div>
           </div>
         ))}
@@ -1575,10 +1707,7 @@ function App() {
       </div>
 
       <div className="page-section" id="page-blog" style={{ display: 'none' }}>
-        <div className="container" style={{padding: '12rem 0 8rem', textAlign: 'center', minHeight: '60vh'}}>
-          <h2 className="section-title">Blog <span className="title-accent-violet">Updates</span></h2>
-          <p className="section-subtitle">Read the latest news and guides from BlogForge AI.</p>
-        </div>
+        <BlogPage />
       </div>
 
       <div className="page-section" id="page-auth" style={{ display: 'none' }}>

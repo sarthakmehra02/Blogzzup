@@ -8,7 +8,7 @@
 [![Vite 8](https://img.shields.io/badge/Vite-8-646CFF?style=for-the-badge&logo=vite&logoColor=white)](https://vitejs.dev)
 [![License: MIT](https://img.shields.io/badge/License-MIT-10B981?style=for-the-badge)](LICENSE)
 
-**BlogForge AI** is a state-of-the-art content automation platform that transforms single keywords into high-ranking, 2,500+ word blog posts. Built for scale, it leverages a sophisticated 7-stage AI pipeline to handle research, SEO optimization, and publishing autonomously.
+**BlogForge AI** is a state-of-the-art content automation platform that transforms single keywords into high-ranking, 2,500+ word blog posts. Built for scale, it leverages a sophisticated 7-stage AI pipeline to handle research, SEO optimization, and localized GEO-targeting autonomously.
 
 [Explore the Code](https://github.com/nmnroy/blogforge-ai/tree/main/src) · [Report Bug](https://github.com/nmnroy/blogforge-ai/issues) · [Request Feature](https://github.com/nmnroy/blogforge-ai/issues)
 
@@ -33,13 +33,14 @@ BlogForge executes a multi-agent architectural flow to ensure human-grade qualit
 
 ## 🔥 Key Features
 
-- **🧠 Autonomous Intelligence**: One keyword is all you need. The system does the rest.
-- **📊 Real-time SEO Scoring**: A dynamic 10-metric score that updates as the AI writes.
-- **🗺️ Topic Cluster Map**: Visualise your content universe to build ultimate site authority.
-- **🎙️ Brand Voice DNA**: Clone your writing style by providing samples.
-- **🌍 Geo-Targeting**: Localize content for specific cities or regions with one click.
-- **🌓 Obsidian Core UI**: A premium "Glassmorphism" interface built for modern teams.
-- **📋 Action Menu & Toasts**: High-performance management with real-time feedback.
+- **🧠 Autonomous Intelligence**: One keyword is all you need. The system handles intent extraction, SERP analysis, and drafting.
+- **📊 Real-time SEO Scoring**: A dynamic 10-metric score that provides instant feedback on keyword density and NLP optimization.
+- **🏙️ GEO-Targeting (India Special)**: Localize content for Indian Tier-1 and Tier-2 cities with native landmark injection.
+- **🎙️ Brand Voice DNA**: Clone your unique founder voice by analyzing past newsletters and manifestos.
+- **🗺️ Topic Cluster Map**: Visualize your content authority to ensure 100% niche dominance.
+- **🌓 Obsidian Core Design**: A premium Glassmorphism-based UI/UX system optimized for high-performance dark mode.
+- **📋 Management Actions**: Integrated 3-dot menus for View, Copy, Publish, and Schedule with real-time Toasts.
+- **📑 Premium Marketing Hub**: A fully functional, SEO-optimized blog grid with AI-generated covers and deep-article detail views.
 
 ---
 
