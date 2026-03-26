@@ -6,15 +6,13 @@ import {
 } from 'lucide-react';
 import './Dashboard.css';
 import './BlogEditor.css';
+import { publishBlog } from './utils/publishBlog';
 import BlogEditor from './BlogEditor';
 const apiKeys = [
-  'AIzaSyAOCdbhW95ld9N2pKCwy_nXF8CVYt-1UOw',
-  'AIzaSyDzZo0hGbJ3T916Oy00wtwzJ6SpJjck_MA',
-  //env.key1
-  
-  
-  
-];
+  import.meta.env.VITE_API1,
+  import.meta.env.VITE_API2,
+  import.meta.env.VITE_API3,
+].filter(Boolean);
 let currentKeyIndex = 0;
 
 // Track when a key is allowed to be used again (Date.now() timestamp)
@@ -100,6 +98,79 @@ const MyBlogsSection = () => {
   const [search, setSearch] = useState('');
   const [filter, setFilter] = useState('all');
   const [modalBlog, setModalBlog] = useState(null);
+
+  const [publishModalBlog, setPublishModalBlog] = useState(null);
+  const [publishingPlatform, setPublishingPlatform] = useState('');
+  const [publishStatus, setPublishStatus] = useState('');
+  const [isScheduled, setIsScheduled] = useState(false);
+  const [scheduledAt, setScheduledAt] = useState('');
+
+  
+  const handlePublish = async () => {
+    if (!publishingPlatform) {
+      alert("Select a platform first");
+      return;
+    }
+    const credsStr = localStorage.getItem('bf_credentials');
+    if (!credsStr) {
+      setPublishStatus('Error: Credentials not found. Please setup in Auto-Publisher.');
+      return;
+    }
+    const creds = JSON.parse(credsStr)[publishingPlatform];
+    if (!creds || Object.keys(creds).length === 0 || !Object.values(creds).some(val => val.length > 0)) {
+      setPublishStatus('Error: Invalid API keys for ' + publishingPlatform + '. Please configure them in the Auto-Publisher settings.');
+      return;
+    }
+
+    if (isScheduled) {
+      if (!scheduledAt) {
+        setPublishStatus('Error: Please select a date and time.');
+        return;
+      }
+      setPublishStatus('Scheduling for ' + scheduledAt + '...');
+      
+      const blogs = JSON.parse(localStorage.getItem('bf_blogs') || '[]');
+      const bIdx = blogs.findIndex(b => b.id === publishModalBlog.id);
+      if (bIdx !== -1) {
+        blogs[bIdx].status = 'scheduled';
+        blogs[bIdx].scheduledAt = scheduledAt;
+        blogs[bIdx].platform = publishingPlatform;
+        localStorage.setItem('bf_blogs', JSON.stringify(blogs));
+        if (window.loadMyBlogs) window.loadMyBlogs();
+      }
+      
+      setPublishStatus('✓ Blog scheduled!');
+      setTimeout(() => setPublishModalBlog(null), 1500);
+      return;
+    }
+
+    setPublishStatus('Publishing...');
+    try {
+      await publishBlog(publishingPlatform, {
+        title: publishModalBlog.title,
+        content: publishModalBlog.body || publishModalBlog.content,
+        tags: [publishModalBlog.keyword].filter(Boolean),
+        credentials: creds
+      });
+      setPublishStatus('Published successfully!');
+      
+      // Update status to 'published'
+      const blogs = JSON.parse(localStorage.getItem('bf_blogs') || '[]');
+      const bIdx = blogs.findIndex(b => b.id === publishModalBlog.id);
+      if (bIdx !== -1) {
+        blogs[bIdx].status = 'published';
+        localStorage.setItem('bf_blogs', JSON.stringify(blogs));
+        if (window.loadMyBlogs) window.loadMyBlogs();
+        if (window.loadDashboardBlogs) window.loadDashboardBlogs();
+      }
+
+      setTimeout(() => setPublishModalBlog(null), 1500);
+    } catch(err) {
+      setPublishStatus('Error: ' + err.message);
+    }
+  };
+
+
 
   const loadMyBlogs = () => {
     const saved = JSON.parse(localStorage.getItem('bf_blogs') || '[]');
@@ -198,7 +269,8 @@ const MyBlogsSection = () => {
                     <td style={{padding: '14px 20px'}}>
                       <div style={{display: 'flex', gap: '8px'}}>
                         <button onClick={() => setModalBlog(blog)} style={{background: 'rgba(124,58,237,0.15)', border: 'none', color: '#A78BFA', borderRadius: '6px', padding: '5px 12px', fontSize: '12px', cursor: 'pointer'}}>View</button>
-                        <button onClick={() => deleteBlog(blog.id)} style={{background: 'rgba(239,68,68,0.1)', border: 'none', color: '#EF4444', borderRadius: '6px', padding: '5px 12px', fontSize: '12px', cursor: 'pointer'}}>Delete</button>
+   <button onClick={() => { setPublishModalBlog(blog); setPublishStatus(''); setPublishingPlatform('wordpress'); setIsScheduled(false); setScheduledAt(''); }} style={{background: 'rgba(16,185,129,0.15)', border: 'none', color: '#10B981', borderRadius: '6px', padding: '5px 12px', fontSize: '12px', cursor: 'pointer'}}>Publish</button>
+   <button onClick={() => deleteBlog(blog.id)} style={{background: 'rgba(239,68,68,0.1)', border: 'none', color: '#EF4444', borderRadius: '6px', padding: '5px 12px', fontSize: '12px', cursor: 'pointer'}}>Delete</button>
                       </div>
                     </td>
                   </tr>
@@ -208,6 +280,53 @@ const MyBlogsSection = () => {
           </tbody>
         </table>
       </div>
+
+      
+      {publishModalBlog && (
+        <div style={{position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+          <div style={{background: '#141B2D', border: '1px solid rgba(16,185,129,0.3)', borderRadius: '20px', padding: '32px', width: '400px', position: 'relative'}}>
+            <button onClick={() => setPublishModalBlog(null)} style={{position: 'absolute', top: '16px', right: '16px', background: 'transparent', border: 'none', color: 'white', cursor: 'pointer', fontSize: '16px'}}>✕</button>
+            <h2 style={{fontSize: '20px', fontWeight: 700, color: 'white', marginBottom: '8px'}}>Publish Blog</h2>
+            <p style={{fontSize: '13px', color: '#94A3B8', marginBottom: '20px'}}>{publishModalBlog.title}</p>
+            
+            <label style={{color: 'white', fontSize: '14px', marginBottom: '8px', display: 'block'}}>Select Platform</label>
+            <select value={publishingPlatform} onChange={(e) => setPublishingPlatform(e.target.value)} style={{width: '100%', background: '#0D1526', border: '1px solid rgba(255,255,255,0.1)', color: 'white', padding: '10px', borderRadius: '8px', marginBottom: '20px'}}>
+              <option value="wordpress">WordPress</option>
+              <option value="blogger">Blogger</option>
+              <option value="devto">Dev.to</option>
+              <option value="hashnode">Hashnode</option>
+              <option value="tumblr">Tumblr</option>
+            </select>
+
+            {/* Scheduling Options */}
+            <div style={{marginTop:'0px', padding:'16px', background:'rgba(255,255,255,0.03)', borderRadius:'12px', border:'1px solid rgba(255,255,255,0.05)', marginBottom: '20px'}}>
+                <label style={{display:'flex', alignItems:'center', gap:'10px', cursor:'pointer', marginBottom: isScheduled ? '12px' : '0'}}>
+                    <input type="checkbox" checked={isScheduled} onChange={e => setIsScheduled(e.target.checked)} style={{width:'18px', height:'18px', accentColor:'var(--color-primary-500)'}} />
+                    <span style={{fontSize:'14px', fontWeight:500, color:'white'}}>Schedule for later</span>
+                </label>
+                
+                {isScheduled && (
+                    <div style={{display:'flex', flexDirection:'column', gap:'8px'}}>
+                      <label style={{fontSize:'12px', color:'#64748B'}}>Select Date & Time</label>
+                      <input 
+                        type="datetime-local" 
+                        value={scheduledAt} 
+                        onChange={e => setScheduledAt(e.target.value)}
+                        style={{background:'#0D1526', border:'1px solid rgba(255,255,255,0.1)', color:'white', padding:'10px', borderRadius:'8px', outline:'none', width:'100%', boxSizing:'border-box'}}
+                      />
+                    </div>
+                )}
+            </div>
+
+            <button onClick={handlePublish} disabled={publishStatus === 'Publishing...' || publishStatus.includes('Scheduling')} style={{width: '100%', background: '#10B981', color: 'white', border: 'none', padding: '12px', borderRadius: '8px', cursor: 'pointer', fontWeight: 'bold'}}>
+              {publishStatus === 'Publishing...' || publishStatus.includes('Scheduling') ? (isScheduled ? 'Scheduling...' : 'Publishing...') : (isScheduled ? 'Schedule Blog' : 'Publish Now')}
+            </button>
+            {publishStatus && publishStatus !== 'Publishing...' && (
+              <p style={{marginTop: '16px', fontSize: '14px', color: publishStatus.startsWith('Error') ? '#EF4444' : '#10B981', textAlign: 'center'}}>{publishStatus}</p>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* Modal */}
       {modalBlog && (
@@ -583,14 +702,168 @@ Return ONLY a valid JSON object:
   );
 };
 
-const Dashboard = ({ onLogout }) => {
-const blogs = [
-    { title: "10 AI Tools Disrupting Martech in India", score: 94, status: "Published", date: "Oct 12, 2026", traffic: "1,240", statusColor: "green" },
-    { title: "How to Automate SEO with Generative AI", score: 88, status: "Published", date: "Oct 10, 2026", traffic: "890", statusColor: "green" },
-    { title: "Top 5 Tier-2 Cities for Tech Startups", score: 96, status: "Scheduled", date: "Oct 15, 2026", traffic: "—", statusColor: "amber" },
-    { title: "Understanding Google's Helpful Content Update", score: 91, status: "Scheduled", date: "Oct 18, 2026", traffic: "—", statusColor: "amber" },
-    { title: "Building an Autonomous Agent from Scratch", score: 72, status: "Draft", date: "Last edited 2h ago", traffic: "—", statusColor: "gray" },
+
+
+
+const AutoPublisherSection = () => {
+  const [credentials, setCredentials] = useState(() => {
+    return JSON.parse(localStorage.getItem('bf_credentials') || '{}');
+  });
+  const [activeTab, setActiveTab] = useState('wordpress');
+  const [saveStatus, setSaveStatus] = useState('');
+
+  const updateCred = (platform, field, value) => {
+    const updated = {
+      ...credentials,
+      [platform]: {
+        ...(credentials[platform] || {}),
+        [field]: value
+      }
+    };
+    setCredentials(updated);
+    localStorage.setItem('bf_credentials', JSON.stringify(updated));
+  };
+
+  const handleManualSave = (e) => {
+    e.preventDefault();
+    setSaveStatus('Connecting...');
+    setTimeout(() => {
+      setSaveStatus('Saved successfully!');
+      setTimeout(() => setSaveStatus(''), 2000);
+    }, 600);
+  };
+
+  const platforms = [
+    { id: 'wordpress', name: 'WordPress', icon: '📝' },
+    { id: 'blogger', name: 'Blogger', icon: '🅱️' },
+    { id: 'devto', name: 'Dev.to', icon: '👩‍💻' },
+    { id: 'hashnode', name: 'Hashnode', icon: '🔗' },
+    { id: 'tumblr', name: 'Tumblr', icon: '🆃' }
   ];
+
+  const inputStyle = {
+    display: 'block', width: '100%', marginBottom: '16px', padding: '14px 16px', 
+    background: '#0D1526', border: '1px solid rgba(255,255,255,0.1)', 
+    color: 'white', borderRadius: '10px', fontSize: '14px', outline: 'none',
+    transition: 'border-color 0.2s'
+  };
+
+  const labelStyle = {
+    display: 'block', color: '#94A3B8', fontSize: '13px', marginBottom: '8px', fontWeight: 600
+  };
+
+  return (
+    <div style={{background: '#141B2D', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '16px', padding: '32px', maxWidth: '800px'}}>
+      <h3 style={{color:'white', fontSize:'22px', marginBottom:'8px', fontWeight: 700}}>Platform Connections</h3>
+      <p style={{color:'#64748B', fontSize:'14px', marginBottom:'28px'}}>Configure your external blogging platforms to enable one-click publishing.</p>
+      
+      <div style={{display:'flex', gap:'12px', marginBottom:'32px', overflowX:'auto', paddingBottom:'8px'}}>
+        {platforms.map(p => (
+          <button 
+            key={p.id} 
+            onClick={(e) => { e.preventDefault(); setActiveTab(p.id); }} 
+            style={{
+              background: activeTab === p.id ? 'linear-gradient(135deg,#7C3AED,#5B21B6)' : '#0D1526', 
+              color: activeTab === p.id ? 'white' : '#94A3B8', 
+              border: '1px solid ' + (activeTab === p.id ? 'transparent' : 'rgba(255,255,255,0.1)'), 
+              padding:'12px 20px', borderRadius:'10px', cursor:'pointer', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '8px',
+              transition: 'all 0.2s', whiteSpace: 'nowrap'
+            }}
+          >
+            <span>{p.icon}</span> {p.name}
+          </button>
+        ))}
+      </div>
+      
+      <div style={{background: 'rgba(255,255,255,0.02)', padding: '28px', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.04)'}}>
+        <form onSubmit={handleManualSave}>
+          {activeTab === 'wordpress' && (
+            <div className="animation-fade-in">
+              <label style={labelStyle}>Site URL</label>
+              <input value={(credentials.wordpress?.url) || ''} onChange={e => updateCred('wordpress', 'url', e.target.value)} placeholder="https://mysite.com" style={inputStyle} required />
+              
+              <label style={labelStyle}>Username</label>
+              <input value={(credentials.wordpress?.username) || ''} onChange={e => updateCred('wordpress', 'username', e.target.value)} placeholder="admin" style={inputStyle} required />
+              
+              <label style={labelStyle}>Application Password</label>
+              <input value={(credentials.wordpress?.applicationPassword) || ''} onChange={e => updateCred('wordpress', 'applicationPassword', e.target.value)} type="password" placeholder="xxxx xxxx xxxx xxxx" style={inputStyle} required />
+            </div>
+          )}
+          {activeTab === 'blogger' && (
+            <div className="animation-fade-in">
+              <label style={labelStyle}>Blog ID</label>
+              <input value={(credentials.blogger?.blogId) || ''} onChange={e => updateCred('blogger', 'blogId', e.target.value)} placeholder="1234567890" style={inputStyle} required />
+              
+              <label style={labelStyle}>OAuth Access Token</label>
+              <input value={(credentials.blogger?.accessToken) || ''} onChange={e => updateCred('blogger', 'accessToken', e.target.value)} type="password" placeholder="ya29.a0A..." style={inputStyle} required />
+            </div>
+          )}
+          {activeTab === 'devto' && (
+            <div className="animation-fade-in">
+              <label style={labelStyle}>Dev.to API Key</label>
+              <input value={(credentials.devto?.apiKey) || ''} onChange={e => updateCred('devto', 'apiKey', e.target.value)} type="password" placeholder="Your extensions API key" style={inputStyle} required />
+            </div>
+          )}
+          {activeTab === 'hashnode' && (
+            <div className="animation-fade-in">
+              <label style={labelStyle}>Personal Access Token</label>
+              <input value={(credentials.hashnode?.personalAccessToken) || ''} onChange={e => updateCred('hashnode', 'personalAccessToken', e.target.value)} type="password" placeholder="Token from Hashnode Developer settings" style={inputStyle} required />
+              
+              <label style={labelStyle}>Publication ID</label>
+              <input value={(credentials.hashnode?.publicationId) || ''} onChange={e => updateCred('hashnode', 'publicationId', e.target.value)} placeholder="5fxx..." style={inputStyle} required />
+            </div>
+          )}
+          {activeTab === 'tumblr' && (
+            <div className="animation-fade-in">
+              <label style={labelStyle}>Blog Identifier</label>
+              <input value={(credentials.tumblr?.blogIdentifier) || ''} onChange={e => updateCred('tumblr', 'blogIdentifier', e.target.value)} placeholder="example.tumblr.com" style={inputStyle} required />
+              
+              <label style={labelStyle}>Consumer Key</label>
+              <input value={(credentials.tumblr?.consumerKey) || ''} onChange={e => updateCred('tumblr', 'consumerKey', e.target.value)} type="password" placeholder="from tumblr app" style={inputStyle} required />
+
+              <label style={labelStyle}>Consumer Secret</label>
+              <input value={(credentials.tumblr?.consumerSecret) || ''} onChange={e => updateCred('tumblr', 'consumerSecret', e.target.value)} type="password" placeholder="from tumblr app" style={inputStyle} required />
+
+              <label style={labelStyle}>OAuth Token</label>
+              <input value={(credentials.tumblr?.oauthToken) || ''} onChange={e => updateCred('tumblr', 'oauthToken', e.target.value)} type="password" placeholder="from console auth" style={inputStyle} required />
+
+              <label style={labelStyle}>OAuth Token Secret</label>
+              <input value={(credentials.tumblr?.oauthTokenSecret) || ''} onChange={e => updateCred('tumblr', 'oauthTokenSecret', e.target.value)} type="password" placeholder="from console" style={inputStyle} required />
+            </div>
+          )}
+
+          <div style={{display: 'flex', alignItems: 'center', gap: '16px', marginTop: '20px'}}>
+            <button type="submit" style={{background: 'linear-gradient(135deg,#10B981,#059669)', color: 'white', padding: '14px 28px', border: 'none', borderRadius: '10px', cursor: 'pointer', fontWeight: 600, fontSize: '15px', transition: 'all 0.2s', boxShadow: '0 4px 12px rgba(16,185,129,0.2)'}}>
+              {saveStatus ? saveStatus : 'Save & Connect'}
+            </button>
+            <span style={{color: '#94A3B8', fontSize: '13px'}}>Keys are stored securely in your browser\'s local cache.</span>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+};
+
+
+const Dashboard = ({ onLogout }) => {
+  const [blogs, setBlogs] = useState([]);
+  const [viewDate, setViewDate] = useState(new Date());
+
+  const loadDashboardBlogs = () => {
+    const saved = JSON.parse(localStorage.getItem('bf_blogs') || '[]');
+    setBlogs(saved);
+  };
+
+  const changeMonth = (offset) => {
+    const next = new Date(viewDate.getFullYear(), viewDate.getMonth() + offset, 1);
+    setViewDate(next);
+  };
+
+  useEffect(() => {
+    loadDashboardBlogs();
+    window.loadDashboardBlogs = loadDashboardBlogs;
+    return () => { delete window.loadDashboardBlogs; };
+  }, []);
 
   useEffect(() => {
     window.updateOverviewStats = function() {
@@ -846,26 +1119,40 @@ const blogs = [
               </div>
               <div className="mini-calendar">
                 <div className="cal-header">
-                  <span>October 2026</span>
+                  <span>{viewDate.toLocaleString('default', { month: 'long', year: 'numeric' })}</span>
                   <div className="cal-nav">
-                    <button>&lt;</button>
-                    <button>&gt;</button>
+                    <button onClick={() => changeMonth(-1)}>&lt;</button>
+                    <button onClick={() => changeMonth(1)}>&gt;</button>
                   </div>
                 </div>
                 <div className="cal-grid">
                   {['S','M','T','W','T','F','S'].map((d,i) => <div key={i} className="cal-day-name">{d}</div>)}
-                  {/* Dummy calendar dates */}
-                  {[...Array(31)].map((_, i) => {
-                    const day = i + 1;
-                    const hasBlue = day === 12 || day === 10;
-                    const hasAmber = day === 15 || day === 18 || day === 22;
-                    return (
-                      <div key={i} className={`cal-cell ${hasBlue ? 'active-blue' : ''} ${hasAmber ? 'active-amber' : ''}`}>
-                        {day}
-                        {(hasBlue || hasAmber) && <div className={`cal-dot ${hasAmber ? 'amber' : 'green'}`}></div>}
-                      </div>
-                    );
-                  })}
+                  {(() => {
+                    const year = viewDate.getFullYear();
+                    const month = viewDate.getMonth();
+                    const firstDay = new Date(year, month, 1).getDay();
+                    const daysInMonth = new Date(year, month + 1, 0).getDate();
+                    const cells = [];
+                    
+                    for (let i = 0; i < firstDay; i++) cells.push(<div key={`empty-${i}`} className="cal-cell empty"></div>);
+                    
+                    for (let d = 1; d <= daysInMonth; d++) {
+                      const dayBlogs = blogs.filter(b => {
+                        const date = new Date(b.status === 'scheduled' ? b.scheduledAt : b.createdAt);
+                        return date.getDate() === d && date.getMonth() === month && date.getFullYear() === year && (b.status === 'published' || b.status === 'scheduled');
+                      });
+                      const hasPublished = dayBlogs.some(b => b.status === 'published');
+                      const hasScheduled = dayBlogs.some(b => b.status === 'scheduled');
+                      
+                      cells.push(
+                        <div key={d} className={`cal-cell ${dayBlogs.length > 0 ? (hasPublished ? 'active-blue' : 'active-amber') : ''}`}>
+                          {d}
+                          {dayBlogs.length > 0 && <div className={`cal-dot ${hasPublished ? 'green' : 'amber'}`}></div>}
+                        </div>
+                      );
+                    }
+                    return cells;
+                  })()}
                 </div>
                 <div className="cal-legend">
                   <div className="legend-item"><span className="dot green"></span> Published</div>
@@ -886,32 +1173,51 @@ const blogs = [
           let content = null;
           
           if (sec.id === 'calendar') {
+            const year = viewDate.getFullYear();
+            const month = viewDate.getMonth();
+            const firstDay = new Date(year, month, 1).getDay();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+
             content = (
               <div style={{background: '#141B2D', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '16px', padding: '24px'}}>
                 <div style={{display: 'flex', justifyContent: 'space-between', marginBottom: '20px'}}>
-                  <h3 style={{margin:0, color:'white', fontSize:'16px'}}>October 2026</h3>
+                  <h3 style={{margin:0, color:'white', fontSize:'16px'}}>{viewDate.toLocaleString('default', { month: 'long', year: 'numeric' })}</h3>
                   <div style={{display:'flex', gap:'8px'}}>
-                    <button style={{background: '#0D1526', color: 'white', border: '1px solid rgba(255,255,255,0.1)', padding:'6px 12px', borderRadius:'6px'}}>Week</button>
-                    <button style={{background: '#7C3AED', color: 'white', border: 'none', padding:'6px 12px', borderRadius:'6px'}}>Month</button>
+                    <button onClick={() => changeMonth(-1)} style={{background: '#0D1526', color: 'white', border: '1px solid rgba(255,255,255,0.1)', padding:'6px 12px', borderRadius:'6px', cursor:'pointer'}}>&lt; Prev</button>
+                    <button onClick={() => changeMonth(1)} style={{background: '#0D1526', color: 'white', border: '1px solid rgba(255,255,255,0.1)', padding:'6px 12px', borderRadius:'6px', cursor:'pointer'}}>Next &gt;</button>
                   </div>
                 </div>
                 <div style={{display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '8px', textAlign: 'center', color: '#94A3B8', fontSize: '12px', marginBottom: '10px'}}>
                   {['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].map(d=><div key={d}>{d}</div>)}
                 </div>
                 <div style={{display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '8px'}}>
-                  {[...Array(35)].map((_,i) => {
-                    const d = i - 2;
-                    const isValid = d > 0 && d <= 31;
-                    const hasLive = d === 12;
-                    const hasDraft = d === 15 || d === 22;
-                    return (
-                      <div key={i} style={{background: isValid ? '#0D1526' : 'transparent', border: isValid ? '1px solid rgba(255,255,255,0.04)' : 'none', minHeight: '80px', borderRadius: '8px', padding: '8px', display: 'flex', flexDirection: 'column', gap: '4px'}}>
-                        <span style={{color: isValid ? 'white' : 'transparent', fontSize:'12px'}}>{d > 0 ? d : ''}</span>
-                        {hasLive && <div style={{background: 'rgba(16,185,129,0.1)', color: '#10B981', fontSize:'10px', padding:'2px 4px', borderRadius:'4px', whiteSpace:'nowrap', overflow:'hidden'}}>Live: Top 10 AI...</div>}
-                        {hasDraft && <div style={{background: 'rgba(245,158,11,0.1)', color: '#F59E0B', fontSize:'10px', padding:'2px 4px', borderRadius:'4px', whiteSpace:'nowrap', overflow:'hidden'}}>Draft: SEO Guides</div>}
-                      </div>
-                    )
-                  })}
+                  {(() => {
+                    const cells = [];
+                    for (let i = 0; i < firstDay; i++) {
+                      cells.push(<div key={`empty-${i}`} style={{minHeight: '80px'}}></div>);
+                    }
+                    for (let d = 1; d <= daysInMonth; d++) {
+                      const dayBlogs = blogs.filter(b => {
+                        const date = new Date(b.status === 'scheduled' ? b.scheduledAt : b.createdAt);
+                        return date.getDate() === d && date.getMonth() === month && date.getFullYear() === year && (b.status === 'published' || b.status === 'scheduled');
+                      });
+                      cells.push(
+                        <div key={d} style={{background: '#0D1526', border: '1px solid rgba(255,255,255,0.04)', minHeight: '80px', borderRadius: '8px', padding: '8px', display: 'flex', flexDirection: 'column', gap: '4px'}}>
+                          <span style={{color: 'white', fontSize:'12px'}}>{d}</span>
+                          {dayBlogs.map(b => (
+                              <div key={b.id} style={{
+                                 background: b.status === 'published' ? 'rgba(16,185,129,0.1)' : 'rgba(245,158,11,0.1)', 
+                                 color: b.status === 'published' ? '#10B981' : '#F59E0B', 
+                                 fontSize:'10px', padding:'2px 4px', borderRadius:'4px', whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis'
+                              }} title={b.title}>
+                                 {b.status === 'published' ? 'Live: ' : 'Sch: '}{b.title}
+                              </div>
+                           ))}
+                        </div>
+                      );
+                    }
+                    return cells;
+                  })()}
                 </div>
               </div>
             );
@@ -981,18 +1287,7 @@ const blogs = [
               </div>
             );
           } else if (sec.id === 'publisher') {
-            content = (
-              <div style={{display:'grid', gridTemplateColumns:'repeat(3, 1fr)', gap:'20px'}}>
-                {['WordPress', 'Webflow', 'Shopify', 'Ghost', 'Medium'].map(platform => (
-                  <div key={platform} style={{background: '#141B2D', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '16px', padding: '24px', textAlign:'center'}}>
-                    <div style={{width:'60px', height:'60px', background:'#0D1526', borderRadius:'12px', margin:'0 auto 16px', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'24px'}}>🔌</div>
-                    <h3 style={{color:'white', fontSize:'16px', margin:'0 0 8px'}}>{platform}</h3>
-                    <p style={{color:'#64748B', fontSize:'13px', margin:'0 0 20px'}}>Auto-publish directly to your {platform} site.</p>
-                    <button style={{background:'rgba(255,255,255,0.05)', color:'white', border:'1px solid rgba(255,255,255,0.1)', padding:'8px 20px', borderRadius:'8px', cursor:'pointer'}}>Connect</button>
-                  </div>
-                ))}
-              </div>
-            );
+            content = <AutoPublisherSection />;
           } else if (sec.id === 'integrations') {
             content = (
               <div style={{background: '#141B2D', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '16px', padding: '24px'}}>
@@ -1022,19 +1317,28 @@ const blogs = [
           } else if (sec.id === 'schedule') {
             content = (
               <div style={{background: '#141B2D', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '16px', padding: '24px'}}>
-                {[1,2,3].map(i => (
-                  <div key={i} style={{display:'flex', alignItems:'center', gap:'16px', padding:'16px', background:'#0D1526', borderRadius:'12px', marginBottom:'12px'}}>
-                    <div style={{background:'rgba(124,58,237,0.1)', color:'#A78BFA', padding:'10px', borderRadius:'8px', textAlign:'center', minWidth:'40px'}}>
-                       <div style={{fontSize:'11px', textTransform:'uppercase'}}>Oct</div>
-                       <div style={{fontSize:'20px', fontWeight:'bold'}}>{14 + i}</div>
-                    </div>
-                    <div style={{flex:1}}>
-                      <h4 style={{margin:'0 0 4px', color:'white', fontSize:'15px'}}>The Future of Autonomous Agents</h4>
-                      <p style={{margin:0, color:'#64748B', fontSize:'13px'}}>Scheduled for {14+i} Oct 2026, 09:00 AM</p>
-                    </div>
-                    <button style={{background:'transparent', color:'#94A3B8', border:'1px solid rgba(255,255,255,0.1)', padding:'6px 12px', borderRadius:'6px'}}>Edit Time</button>
-                  </div>
-                ))}
+                {(typeof blogs !== 'undefined' ? blogs : []).filter(b => b.status === 'scheduled').length === 0 ? (
+                    <div style={{textAlign:'center', padding:'40px', color:'#64748B'}}>No upcoming scheduled blogs.</div>
+                 ) : (
+                    blogs.filter(b => b.status === 'scheduled').map(blog => {
+                      const sDate = new Date(blog.scheduledAt);
+                      return (
+                        <div key={blog.id} style={{display:'flex', alignItems:'center', gap:'16px', padding:'16px', background:'#0D1526', borderRadius:'12px', marginBottom:'12px'}}>
+                          <div style={{background:'rgba(124,58,237,0.1)', color:'#A78BFA', padding:'10px', borderRadius:'8px', textAlign:'center', minWidth:'50px'}}>
+                             <div style={{fontSize:'11px', textTransform:'uppercase'}}>{sDate.toLocaleDateString('en-IN', {month:'short'})}</div>
+                             <div style={{fontSize:'20px', fontWeight:'bold'}}>{sDate.getDate()}</div>
+                          </div>
+                          <div style={{flex:1}}>
+                            <h4 style={{margin:'0 0 4px', color:'white', fontSize:'15px'}}>{blog.title}</h4>
+                            <p style={{margin:0, color:'#64748B', fontSize:'13px'}}>
+                               Scheduled for {sDate.toLocaleString('en-IN', { day:'numeric', month:'short', year:'numeric', hour:'numeric', minute:'numeric', hour12:true })}
+                            </p>
+                          </div>
+                          <div style={{fontSize:'12px', color:'#10B981', background:'rgba(16,185,129,0.1)', padding:'4px 10px', borderRadius:'99px', textTransform:'capitalize'}}>{blog.platform}</div>
+                        </div>
+                      );
+                    })
+                 )}
               </div>
             );
           } else if (sec.id === 'traffic' || sec.id === 'roi') {

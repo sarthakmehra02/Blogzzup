@@ -40,6 +40,7 @@ const Icons = {
   AlertCircle: () => <Icon d="M12 22c5.52 0 10-4.48 10-10S17.52 2 12 2 2 6.48 2 12s4.48 10 10 10zM12 8v4M12 16h.01"/>,
   Globe:     () => <Icon d="M12 2a10 10 0 100 20A10 10 0 0012 2zM2 12h20M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/>,
   Trash2:    () => <Icon d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/>,
+  Clock:     () => <Icon d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>,
 };
 
 // ─── Keyword example prompts ────────────────────────────────────────────────
@@ -162,6 +163,13 @@ const BlogEditor = ({ callGemini }) => {
   const [saveBanner, setSaveBanner]           = useState(null); // { message, type }
 
   // ── History state ──
+  const [isPreparingPub, setIsPreparingPub]   = useState(false);
+  const [preparedBlog, setPreparedBlog]       = useState(null);
+  const [showPubModal, setShowPubModal]       = useState(false);
+  const [pubPlatform, setPubPlatform]         = useState('');
+  const [pubStatus, setPubStatus]             = useState('');
+  const [isScheduled, setIsScheduled]         = useState(false);
+  const [scheduledAt, setScheduledAt]         = useState('');
   const [historyOpen, setHistoryOpen]   = useState(false);
   const [versions, setVersions]         = useState([]);
 
@@ -270,7 +278,10 @@ IMPORTANT: Return ONLY the JSON object. No preamble, no explanation, no markdown
       const id              = Date.now();
       const createdAt       = new Date().toISOString();
 
-      const full = { ...blogData, id, keyword, tone, geo, wordCountActual, readTime, createdAt };
+      const sanitizedKeyword = keyword.trim().replace(/\s+/g, '');
+      setKeyword(sanitizedKeyword);
+      
+      const full = { ...blogData, id, keyword: sanitizedKeyword, tone, geo, wordCountActual, readTime, createdAt };
 
       // Save version snapshot
       const versionEntry = { ...full, savedAt: createdAt };
@@ -319,9 +330,91 @@ IMPORTANT: Return ONLY the JSON object. No preamble, no explanation, no markdown
     });
   }, [output, editableTitle, editableMeta, editableBody]);
 
-  const handlePublish = useCallback(() => {
-    if (window.showDashboardSection) window.showDashboardSection('publisher');
-  }, []);
+  const handlePublish = async () => {
+    if (!output) return;
+    
+    // Preparation is now skipped for a faster experience per user request
+    setPreparedBlog({
+      title: editableTitle,
+      content: editableBody,
+      meta_description: editableMeta,
+      tags: [output.keyword].filter(Boolean)
+    });
+    setError(null);
+    setShowPubModal(true);
+  };
+
+  const executePublish = async () => {
+    if (!pubPlatform || !preparedBlog) return;
+    
+    const credsStr = localStorage.getItem('bf_credentials');
+    if (!credsStr) {
+      setPubStatus('Error: Credentials not found. Setup in Settings.');
+      return;
+    }
+    const creds = JSON.parse(credsStr)[pubPlatform];
+    if (!creds || Object.keys(creds).length === 0 || !Object.values(creds).some(val => val.length > 0)) {
+      setPubStatus('Error: Invalid API keys for ' + pubPlatform);
+      return;
+    }
+
+    if (isScheduled) {
+      if (!scheduledAt) {
+        setPubStatus('Error: Please select a date and time.');
+        return;
+      }
+      setPubStatus('Scheduling for ' + scheduledAt + '...');
+      
+      const blogs = JSON.parse(localStorage.getItem('bf_blogs') || '[]');
+      const bIdx = blogs.findIndex(b => b.id === output.id);
+      const entry = {
+        id: output.id, title: editableTitle, metaDescription: editableMeta,
+        body: editableBody, seoScore: output.seoScore, keyword: output.keyword,
+        status: 'scheduled', scheduledAt, createdAt: output.createdAt,
+        platform: pubPlatform
+      };
+
+      if (bIdx !== -1) blogs[bIdx] = entry; else blogs.unshift(entry);
+      localStorage.setItem('bf_blogs', JSON.stringify(blogs));
+      
+      setPubStatus('✓ Blog scheduled!');
+      if (window.loadMyBlogs) window.loadMyBlogs();
+      if (window.updateOverviewStats) window.updateOverviewStats();
+
+      setTimeout(() => {
+        setShowPubModal(false);
+        setPubStatus('');
+      }, 2000);
+      return;
+    }
+
+    setPubStatus('Publishing to ' + pubPlatform + '...');
+    try {
+      await publishBlog(pubPlatform, {
+        title: preparedBlog.title,
+        content: preparedBlog.content,
+        tags: preparedBlog.tags,
+        credentials: creds
+      });
+      setPubStatus('✓ Published successfully!');
+      
+      // Update status to published in localStorage
+      const blogs = JSON.parse(localStorage.getItem('bf_blogs') || '[]');
+      const bIdx = blogs.findIndex(b => b.id === output.id);
+      if (bIdx !== -1) {
+        blogs[bIdx].status = 'published';
+        localStorage.setItem('bf_blogs', JSON.stringify(blogs));
+        if (window.loadMyBlogs) window.loadMyBlogs();
+      }
+
+      setTimeout(() => {
+        setShowPubModal(false);
+        setPubStatus('');
+      }, 2000);
+    } catch (err) {
+      setPubStatus('Error: ' + err.message);
+    }
+  };
 
   const handleRestoreVersion = useCallback((v) => {
     setOutput(v);
@@ -357,6 +450,98 @@ IMPORTANT: Return ONLY the JSON object. No preamble, no explanation, no markdown
       {/* ── History Drawer ── */}
       {historyOpen && (
         <HistoryDrawer versions={versions} onRestore={handleRestoreVersion} onClose={() => setHistoryOpen(false)} />
+      )}
+
+      {/* ── Preparing for Publication Overlay ── */}
+      {isPreparingPub && (
+        <div className="be-history-overlay" style={{zIndex: 1000, display:'flex', alignItems:'center', justifyContent:'center'}}>
+           <div className="be-gen-card" style={{maxWidth:'400px', textAlign:'center', position:'relative'}}>
+              {/* Close button in case it hangs */}
+              <button 
+                className="be-icon-btn" 
+                style={{position:'absolute', top:'10px', right:'10px'}}
+                onClick={() => setIsPreparingPub(false)}
+              >
+                <Icons.X />
+              </button>
+
+              {!pubStatus.startsWith('Error') ? (
+                <>
+                  <div className="be-pulse" style={{width:'48px', height:'48px', margin:'0 auto 16px'}} />
+                  <h3>AI Assistant preparing your blog...</h3>
+                  <p style={{color:'var(--text-subtle)', fontSize:'13px', marginTop:'8px'}}>Optimizing tags, fixing grammar, and formatting for cross-platform safety.</p>
+                </>
+              ) : (
+                <>
+                  <Icons.AlertCircle size={48} style={{color:'var(--color-warning-400)', marginBottom:'16px'}} />
+                  <h3 style={{color:'var(--color-warning-400)'}}>Preparation Failed</h3>
+                  <p style={{color:'var(--text-subtle)', fontSize:'13px', marginTop:'8px'}}>{pubStatus}</p>
+                  <button className="btn btn-primary mt-4" onClick={() => { setIsPreparingPub(false); setPubStatus(''); }}>Back to Editor</button>
+                </>
+              )}
+           </div>
+        </div>
+      )}
+
+      {/* ── Platform Selection Modal ── */}
+      {showPubModal && (
+        <div className="be-history-overlay" onClick={() => !pubStatus.includes('...') && setShowPubModal(false)} style={{zIndex: 1001}}>
+          <div className="be-history-panel" onClick={e => e.stopPropagation()} style={{maxWidth:'500px', height:'auto', padding:'24px'}}>
+             <div className="be-history-header" style={{marginBottom:'20px'}}>
+                <span><Icons.Send /> Select Platform</span>
+                <button className="be-icon-btn" onClick={() => setShowPubModal(false)}><Icons.X /></button>
+             </div>
+             
+             <div className="be-tone-grid" style={{gridTemplateColumns:'repeat(auto-fit, minmax(140px, 1fr))', gap:'12px'}}>
+                {['wordpress', 'blogger', 'devto', 'hashnode', 'tumblr'].map(p => (
+                   <label key={p} className={`be-tone-card${pubPlatform === p ? ' selected' : ''}`} style={{padding:'16px', textAlign:'center'}}>
+                      <input type="radio" className="sr-only" name="pubPlatform" value={p} onChange={() => setPubPlatform(p)} />
+                      <div style={{fontSize:'24px', marginBottom:'8px'}}>
+                        {p === 'wordpress' && '📝'}
+                        {p === 'blogger' && '🍊'}
+                        {p === 'devto' && '📑'}
+                        {p === 'hashnode' && '⚡'}
+                        {p === 'tumblr' && '🔵'}
+                      </div>
+                      <span style={{textTransform:'capitalize', fontWeight:600}}>{p}</span>
+                   </label>
+                ))}
+             </div>
+
+             {/* Scheduling Options */}
+             <div style={{marginTop:'24px', padding:'16px', background:'rgba(255,255,255,0.03)', borderRadius:'12px', border:'1px solid rgba(255,255,255,0.05)'}}>
+                <label style={{display:'flex', alignItems:'center', gap:'10px', cursor:'pointer', marginBottom: isScheduled ? '12px' : '0'}}>
+                   <input type="checkbox" checked={isScheduled} onChange={e => setIsScheduled(e.target.checked)} style={{width:'18px', height:'18px', accentColor:'var(--color-primary-500)'}} />
+                   <span style={{fontSize:'14px', fontWeight:500, color:'white'}}>Schedule for later</span>
+                </label>
+                
+                {isScheduled && (
+                   <div style={{display:'flex', flexDirection:'column', gap:'8px'}}>
+                      <label style={{fontSize:'12px', color:'#64748B'}}>Select Date & Time</label>
+                      <input 
+                        type="datetime-local" 
+                        value={scheduledAt} 
+                        onChange={e => setScheduledAt(e.target.value)}
+                        style={{background:'#0D1526', border:'1px solid rgba(255,255,255,0.1)', color:'white', padding:'10px', borderRadius:'8px', outline:'none', width:'100%', boxSizing:'border-box'}}
+                      />
+                   </div>
+                )}
+             </div>
+
+             {pubStatus && (
+                <div style={{marginTop:'20px', padding:'12px', borderRadius:'8px', background:pubStatus.startsWith('Error') ? 'rgba(239,68,68,0.1)' : 'rgba(16,185,129,0.1)', color:pubStatus.startsWith('Error') ? 'var(--color-warning-400)' : 'var(--color-success-400)', fontSize:'13px', display:'flex', alignItems:'center', gap:'8px'}}>
+                   {pubStatus.includes('...') ? <span className="be-pulse" style={{width:'12px', height:'12px'}} /> : <Icons.Check />}
+                   {pubStatus}
+                </div>
+             )}
+
+             <div style={{marginTop:'24px', display:'flex', gap:'12px'}}>
+                <button className="btn btn-primary" style={{flex:1}} onClick={executePublish} disabled={!pubPlatform || pubStatus.includes('...')}>
+                   {isScheduled ? 'Schedule Blog' : 'Publish Now'}
+                </button>
+             </div>
+          </div>
+        </div>
       )}
 
       {/* ══ HEADER ══ */}

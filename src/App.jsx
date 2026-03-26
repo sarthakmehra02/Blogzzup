@@ -447,7 +447,7 @@ const FeaturesPage = () => {
                 <td><span className="comp-mark-no">✗</span></td>
               </tr>
               <tr>
-                <td>GEO Optimizer</td>
+                <td>SEO Optimization</td>
                 <td><span className="comp-mark-yes">✓</span></td>
                 <td><span className="comp-mark-no">✗</span></td>
                 <td><span className="comp-mark-no">✗</span></td>
@@ -1154,7 +1154,7 @@ function App() {
     { icon: <Search size={16} />, text: "SERP Gap Finder" },
     { icon: <UploadCloud size={16} />, text: "Auto Publisher" },
     { icon: <PenTool size={16} />, text: "Brand Voice AI" },
-    { icon: <Globe size={16} />, text: "GEO Optimizer" },
+    { icon: <Globe size={16} />, text: "Search-first" },
     { icon: <Network size={16} />, text: "Cluster Map" },
   ];
 
@@ -1352,8 +1352,8 @@ function App() {
                 <span className="fp-arrow">→</span>
               </div>
               <div className="fp-card glass-card" onClick={(e) => { e.preventDefault(); window.showPage('features'); }}>
-                <div className="fp-card-header"><span style={{fontSize: '20px'}}>🌍</span><span className="fp-title">GEO Optimizer</span></div>
-                <div className="fp-desc">Rank in every city automatically</div>
+                <div className="fp-card-header"><span style={{fontSize: '20px'}}>🌍</span><span className="fp-title">SEO optimization</span></div>
+                <div className="fp-desc">Search-first blog optimization for visibility</div>
                 <span className="fp-arrow">→</span>
               </div>
               <div className="fp-card glass-card" onClick={(e) => { e.preventDefault(); window.showPage('features'); }}>
