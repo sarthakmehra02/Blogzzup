@@ -23,5 +23,13 @@ dist-ssr
 *.sln
 *.sw?
 
-# Dev-only Python scripts
+# Dev-only scripts (Python and JS helpers used during development)
 *.py
+refactor*.js
+refactor.js
+
+# Debug / build output text files
+*.txt
+out.txt
+build_err*
+error.log
