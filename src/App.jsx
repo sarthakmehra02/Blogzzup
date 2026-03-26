@@ -1415,8 +1415,44 @@ function App() {
             <p className="hiw-subtitle">From keyword to ranked blog post in under 10 minutes</p>
           </div>
           
-          <div className="hiw-pipeline-wrapper" style={{margin: '3rem auto 5rem', maxWidth: '900px', width: '100%', padding: '0 20px', boxSizing: 'border-box', textAlign: 'center'}}>
-            <img src="/pipeline.png" alt="AI Pipeline Visual Flow" style={{width: '100%', height: 'auto', borderRadius: '24px', boxShadow: '0 20px 40px rgba(0,0,0,0.5)', border: '1px solid rgba(255,255,255,0.1)'}} />
+          <div style={{margin: '3rem auto 5rem', maxWidth: '1000px', width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', position: 'relative', padding: '0 20px', boxSizing: 'border-box'}}>
+             {/* Connector glow line */}
+             <div style={{position: 'absolute', top: '50%', left: '12%', right: '12%', height: '2px', background: 'linear-gradient(90deg, rgba(124,58,237,0) 0%, rgba(124,58,237,0.5) 50%, rgba(6,182,212,0) 100%)', zIndex: 0}}></div>
+             {/* Animated particles */}
+             <div style={{position: 'absolute', top: 'calc(50% - 4px)', left: '20%', width: '8px', height: '8px', background: '#A78BFA', borderRadius: '50%', boxShadow: '0 0 10px #A78BFA', animation: 'moveRightParticle 3s linear infinite', zIndex: 1}}></div>
+             <div style={{position: 'absolute', top: 'calc(50% - 4px)', left: '20%', width: '8px', height: '8px', background: '#06B6D4', borderRadius: '50%', boxShadow: '0 0 10px #06B6D4', animation: 'moveRightParticle 3s linear infinite 1.5s', zIndex: 1}}></div>
+             {/* Node 1 – Discovery */}
+             <div style={{background: '#0D1526', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '16px', padding: '24px', textAlign: 'center', width: '220px', flexShrink: 0, zIndex: 2, boxShadow: '0 10px 30px rgba(0,0,0,0.5)'}}>
+               <div style={{background: 'rgba(255,255,255,0.05)', width: '64px', height: '64px', borderRadius: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px', color: '#94A3B8'}}><Search size={32}/></div>
+               <h3 style={{color: 'white', fontSize: '18px', margin: '0 0 8px', fontWeight: 700}}>1. Discovery</h3>
+               <p style={{color: '#64748B', fontSize: '13px', margin: 0, lineHeight: 1.5}}>Keyword & SERP analysis automatically extracts missing competitor topics.</p>
+             </div>
+             {/* Node 2 – AI Engine (centre, glowing) */}
+             <div style={{background: 'linear-gradient(135deg, #1A1333, #0D1526)', border: '1px solid rgba(124,58,237,0.4)', borderRadius: '24px', padding: '32px', textAlign: 'center', width: '240px', flexShrink: 0, zIndex: 2, boxShadow: '0 0 40px rgba(124,58,237,0.25)', position: 'relative'}}>
+               <div style={{position: 'absolute', inset: 0, borderRadius: '24px', boxShadow: '0 0 0 0 rgba(124,58,237,0.4)', animation: 'pulseBorderGlow 2s infinite', pointerEvents: 'none'}}></div>
+               <div style={{background: 'linear-gradient(135deg, #7C3AED, #5B21B6)', width: '80px', height: '80px', borderRadius: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px', color: 'white', boxShadow: '0 10px 20px rgba(124,58,237,0.4)'}}><Brain size={40}/></div>
+               <h3 style={{color: 'white', fontSize: '22px', margin: '0 0 6px', fontWeight: 800}}>AI Engine</h3>
+               <p style={{color: '#A78BFA', fontSize: '13px', margin: 0}}>Generates, scores & optimises NLP content in real time.</p>
+             </div>
+             {/* Node 3 – Publishing */}
+             <div style={{background: '#0D1526', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '16px', padding: '24px', textAlign: 'center', width: '220px', flexShrink: 0, zIndex: 2, boxShadow: '0 10px 30px rgba(0,0,0,0.5)'}}>
+               <div style={{background: 'rgba(6,182,212,0.1)', width: '64px', height: '64px', borderRadius: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px', color: '#06B6D4'}}><Globe2 size={32}/></div>
+               <h3 style={{color: 'white', fontSize: '18px', margin: '0 0 8px', fontWeight: 700}}>3. Publishing</h3>
+               <p style={{color: '#64748B', fontSize: '13px', margin: 0, lineHeight: 1.5}}>Pushed live to WordPress, Webflow or Shopify instantly on schedule.</p>
+             </div>
+             <style dangerouslySetInnerHTML={{__html: `
+               @keyframes moveRightParticle {
+                 0%   { left: 20%; opacity: 0; transform: scale(0.5); }
+                 10%  { opacity: 1; transform: scale(1); }
+                 90%  { opacity: 1; transform: scale(1); }
+                 100% { left: 80%; opacity: 0; transform: scale(0.5); }
+               }
+               @keyframes pulseBorderGlow {
+                 0%   { box-shadow: 0 0 0 0 rgba(124,58,237,0.5); }
+                 70%  { box-shadow: 0 0 0 16px rgba(124,58,237,0); }
+                 100% { box-shadow: 0 0 0 0 rgba(124,58,237,0); }
+               }
+             `}} />
           </div>
           
         <section className="works-section fade-section" id="works">

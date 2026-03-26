@@ -8,7 +8,7 @@ import './Dashboard.css';
 async function callGemini(prompt, maxTokens = 4000) {
   const apiKey = 'AIzaSyAOCdbhW95ld9N2pKCwy_nXF8CVYt-1UOw';
   const response = await fetch(
-    'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-04-17:generateContent?key=' + apiKey,
+    'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=' + apiKey,
     {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -17,9 +17,6 @@ async function callGemini(prompt, maxTokens = 4000) {
         generationConfig: {
           maxOutputTokens: maxTokens,
           temperature: 1
-        },
-        thinkingConfig: {
-          thinkingBudget: 512
         }
       })
     }
