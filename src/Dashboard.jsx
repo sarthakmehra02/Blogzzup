@@ -100,76 +100,10 @@ const MyBlogsSection = () => {
   const [filter, setFilter] = useState('all');
   const [modalBlog, setModalBlog] = useState(null);
 
-  const [publishModalBlog, setPublishModalBlog] = useState(null);
-  const [publishingPlatform, setPublishingPlatform] = useState('');
-  const [publishStatus, setPublishStatus] = useState('');
-  const [isScheduled, setIsScheduled] = useState(false);
-  const [scheduledAt, setScheduledAt] = useState('');
+  
 
   
-  const handlePublish = async () => {
-    if (!publishingPlatform) {
-      alert("Select a platform first");
-      return;
-    }
-    const credsStr = localStorage.getItem('bf_credentials');
-    if (!credsStr) {
-      setPublishStatus('Error: Credentials not found. Please setup in Auto-Publisher.');
-      return;
-    }
-    const creds = JSON.parse(credsStr)[publishingPlatform];
-    if (!creds || Object.keys(creds).length === 0 || !Object.values(creds).some(val => val.length > 0)) {
-      setPublishStatus('Error: Invalid API keys for ' + publishingPlatform + '. Please configure them in the Auto-Publisher settings.');
-      return;
-    }
-
-    if (isScheduled) {
-      if (!scheduledAt) {
-        setPublishStatus('Error: Please select a date and time.');
-        return;
-      }
-      setPublishStatus('Scheduling for ' + scheduledAt + '...');
-      
-      const blogs = JSON.parse(localStorage.getItem('bf_blogs') || '[]');
-      const bIdx = blogs.findIndex(b => b.id === publishModalBlog.id);
-      if (bIdx !== -1) {
-        blogs[bIdx].status = 'scheduled';
-        blogs[bIdx].scheduledAt = scheduledAt;
-        blogs[bIdx].platform = publishingPlatform;
-        localStorage.setItem('bf_blogs', JSON.stringify(blogs));
-        if (window.loadMyBlogs) window.loadMyBlogs();
-      }
-      
-      setPublishStatus('✓ Blog scheduled!');
-      setTimeout(() => setPublishModalBlog(null), 1500);
-      return;
-    }
-
-    setPublishStatus('Publishing...');
-    try {
-      await publishBlog(publishingPlatform, {
-        title: publishModalBlog.title,
-        content: publishModalBlog.body || publishModalBlog.content,
-        tags: [publishModalBlog.keyword].filter(Boolean),
-        credentials: creds
-      });
-      setPublishStatus('Published successfully!');
-      
-      // Update status to 'published'
-      const blogs = JSON.parse(localStorage.getItem('bf_blogs') || '[]');
-      const bIdx = blogs.findIndex(b => b.id === publishModalBlog.id);
-      if (bIdx !== -1) {
-        blogs[bIdx].status = 'published';
-        localStorage.setItem('bf_blogs', JSON.stringify(blogs));
-        if (window.loadMyBlogs) window.loadMyBlogs();
-        if (window.loadDashboardBlogs) window.loadDashboardBlogs();
-      }
-
-      setTimeout(() => setPublishModalBlog(null), 1500);
-    } catch(err) {
-      setPublishStatus('Error: ' + err.message);
-    }
-  };
+  
 
 
 
@@ -268,24 +202,10 @@ const MyBlogsSection = () => {
                     <td style={{padding: '14px 20px'}}><span style={{...statusStyle, borderRadius: '999px', padding: '4px 12px', fontSize: '12px', fontWeight: 600}}>{String(blog.status).charAt(0).toUpperCase() + String(blog.status).slice(1)}</span></td>
                     <td style={{padding: '14px 20px', fontSize: '13px', color: '#64748B'}}>{date}</td>
                     <td style={{padding: '14px 20px'}}>
-<<<<<<< HEAD
                       <div style={{display: 'flex', gap: '8px'}}>
-                        <button onClick={() => setModalBlog(blog)} style={{background: 'rgba(124,58,237,0.15)', border: 'none', color: '#A78BFA', borderRadius: '6px', padding: '5px 12px', fontSize: '12px', cursor: 'pointer'}}>View</button>
-   <button onClick={() => { setPublishModalBlog(blog); setPublishStatus(''); setPublishingPlatform('wordpress'); setIsScheduled(false); setScheduledAt(''); }} style={{background: 'rgba(16,185,129,0.15)', border: 'none', color: '#10B981', borderRadius: '6px', padding: '5px 12px', fontSize: '12px', cursor: 'pointer'}}>Publish</button>
-   <button onClick={() => deleteBlog(blog.id)} style={{background: 'rgba(239,68,68,0.1)', border: 'none', color: '#EF4444', borderRadius: '6px', padding: '5px 12px', fontSize: '12px', cursor: 'pointer'}}>Delete</button>
-=======
-                      <div className="action-menu">
-                        <button className="action-btn" onClick={(e) => window.toggleActionMenu && window.toggleActionMenu(e)} style={{background: 'none', border: 'none', color: '#64748B', cursor: 'pointer', padding: '4px'}}>
-                          <MoreVertical size={16}/>
-                        </button>
-                        <div className="action-dropdown">
-                          <button onClick={() => setModalBlog(blog)}>👁 View Content</button>
-                          <button onClick={(e) => window.copyBlog && window.copyBlog(blog.id, e)}>📋 Copy Content</button>
-                          <button onClick={(e) => window.publishBlog && window.publishBlog(blog.id, e)}>🚀 Publish Now</button>
-                          <button onClick={(e) => window.scheduleBlog && window.scheduleBlog(blog.id, e)}>📅 Schedule</button>
-                          <button className="danger" onClick={(e) => window.confirmDeleteBlog && window.confirmDeleteBlog(blog.id, e)}>🗑 Delete</button>
-                        </div>
->>>>>>> 8ebd7f702f18cbab3140b3e3b24f860bb5f9fbac
+                        <button onClick={() => window.viewBlog && window.viewBlog(blog.id)} style={{background: 'rgba(124,58,237,0.15)', border: 'none', color: '#A78BFA', borderRadius: '6px', padding: '5px 12px', fontSize: '12px', cursor: 'pointer'}}>View</button>
+                        <button onClick={() => window.showPublishModal && window.showPublishModal(blog.id)} style={{background: 'rgba(16,185,129,0.15)', border: 'none', color: '#10B981', borderRadius: '6px', padding: '5px 12px', fontSize: '12px', cursor: 'pointer'}}>Publish</button>
+                        <button onClick={() => window.confirmDeleteBlog && window.confirmDeleteBlog(blog.id)} style={{background: 'rgba(239,68,68,0.1)', border: 'none', color: '#EF4444', borderRadius: '6px', padding: '5px 12px', fontSize: '12px', cursor: 'pointer'}}>Delete</button>
                       </div>
                     </td>
                   </tr>
@@ -297,51 +217,7 @@ const MyBlogsSection = () => {
       </div>
 
       
-      {publishModalBlog && (
-        <div style={{position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
-          <div style={{background: '#141B2D', border: '1px solid rgba(16,185,129,0.3)', borderRadius: '20px', padding: '32px', width: '400px', position: 'relative'}}>
-            <button onClick={() => setPublishModalBlog(null)} style={{position: 'absolute', top: '16px', right: '16px', background: 'transparent', border: 'none', color: 'white', cursor: 'pointer', fontSize: '16px'}}>✕</button>
-            <h2 style={{fontSize: '20px', fontWeight: 700, color: 'white', marginBottom: '8px'}}>Publish Blog</h2>
-            <p style={{fontSize: '13px', color: '#94A3B8', marginBottom: '20px'}}>{publishModalBlog.title}</p>
-            
-            <label style={{color: 'white', fontSize: '14px', marginBottom: '8px', display: 'block'}}>Select Platform</label>
-            <select value={publishingPlatform} onChange={(e) => setPublishingPlatform(e.target.value)} style={{width: '100%', background: '#0D1526', border: '1px solid rgba(255,255,255,0.1)', color: 'white', padding: '10px', borderRadius: '8px', marginBottom: '20px'}}>
-              <option value="wordpress">WordPress</option>
-              <option value="blogger">Blogger</option>
-              <option value="devto">Dev.to</option>
-              <option value="hashnode">Hashnode</option>
-              <option value="tumblr">Tumblr</option>
-            </select>
-
-            {/* Scheduling Options */}
-            <div style={{marginTop:'0px', padding:'16px', background:'rgba(255,255,255,0.03)', borderRadius:'12px', border:'1px solid rgba(255,255,255,0.05)', marginBottom: '20px'}}>
-                <label style={{display:'flex', alignItems:'center', gap:'10px', cursor:'pointer', marginBottom: isScheduled ? '12px' : '0'}}>
-                    <input type="checkbox" checked={isScheduled} onChange={e => setIsScheduled(e.target.checked)} style={{width:'18px', height:'18px', accentColor:'var(--color-primary-500)'}} />
-                    <span style={{fontSize:'14px', fontWeight:500, color:'white'}}>Schedule for later</span>
-                </label>
-                
-                {isScheduled && (
-                    <div style={{display:'flex', flexDirection:'column', gap:'8px'}}>
-                      <label style={{fontSize:'12px', color:'#64748B'}}>Select Date & Time</label>
-                      <input 
-                        type="datetime-local" 
-                        value={scheduledAt} 
-                        onChange={e => setScheduledAt(e.target.value)}
-                        style={{background:'#0D1526', border:'1px solid rgba(255,255,255,0.1)', color:'white', padding:'10px', borderRadius:'8px', outline:'none', width:'100%', boxSizing:'border-box'}}
-                      />
-                    </div>
-                )}
-            </div>
-
-            <button onClick={handlePublish} disabled={publishStatus === 'Publishing...' || publishStatus.includes('Scheduling')} style={{width: '100%', background: '#10B981', color: 'white', border: 'none', padding: '12px', borderRadius: '8px', cursor: 'pointer', fontWeight: 'bold'}}>
-              {publishStatus === 'Publishing...' || publishStatus.includes('Scheduling') ? (isScheduled ? 'Scheduling...' : 'Publishing...') : (isScheduled ? 'Schedule Blog' : 'Publish Now')}
-            </button>
-            {publishStatus && publishStatus !== 'Publishing...' && (
-              <p style={{marginTop: '16px', fontSize: '14px', color: publishStatus.startsWith('Error') ? '#EF4444' : '#10B981', textAlign: 'center'}}>{publishStatus}</p>
-            )}
-          </div>
-        </div>
-      )}
+  
 
       {/* Modal */}
       {modalBlog && (
@@ -938,6 +814,13 @@ const Dashboard = ({ onLogout }) => {
   const [blogs, setBlogs] = useState([]);
   const [viewDate, setViewDate] = useState(new Date());
 
+  // Global Publish Modal State
+  const [publishModalBlog, setPublishModalBlog] = useState(null);
+  const [publishingPlatform, setPublishingPlatform] = useState('wordpress');
+  const [publishStatus, setPublishStatus] = useState('');
+  const [isScheduled, setIsScheduled] = useState(false);
+  const [scheduledAt, setScheduledAt] = useState('');
+
   const loadDashboardBlogs = () => {
     const saved = JSON.parse(localStorage.getItem('bf_blogs') || '[]');
     setBlogs(saved);
@@ -948,10 +831,88 @@ const Dashboard = ({ onLogout }) => {
     setViewDate(next);
   };
 
+  const handleGlobalPublish = async () => {
+    if (!publishingPlatform) {
+      alert("Select a platform first");
+      return;
+    }
+    const credsStr = localStorage.getItem('bf_credentials');
+    if (!credsStr) {
+      setPublishStatus('Error: Credentials not found. Please setup in Auto-Publisher.');
+      return;
+    }
+    const creds = JSON.parse(credsStr)[publishingPlatform];
+    if (!creds || Object.keys(creds).length === 0 || !Object.values(creds).some(val => val.length > 0)) {
+      setPublishStatus('Error: Invalid API keys for ' + publishingPlatform + '. Please configure them in the Auto-Publisher settings.');
+      return;
+    }
+
+    if (isScheduled) {
+      if (!scheduledAt) {
+        setPublishStatus('Error: Please select a date and time.');
+        return;
+      }
+      setPublishStatus('Scheduling for ' + scheduledAt + '...');
+      
+      const blogs = JSON.parse(localStorage.getItem('bf_blogs') || '[]');
+      const bIdx = blogs.findIndex(b => b.id === publishModalBlog.id);
+      if (bIdx !== -1) {
+        blogs[bIdx].status = 'scheduled';
+        blogs[bIdx].scheduledAt = scheduledAt;
+        blogs[bIdx].platform = publishingPlatform;
+        localStorage.setItem('bf_blogs', JSON.stringify(blogs));
+        if (window.loadMyBlogs) window.loadMyBlogs();
+        if (window.loadDashboardBlogs) window.loadDashboardBlogs();
+      }
+      
+      setPublishStatus('✓ Blog scheduled!');
+      setTimeout(() => setPublishModalBlog(null), 1500);
+      return;
+    }
+
+    setPublishStatus('Publishing...');
+    try {
+      const response = await publishBlog(publishingPlatform, {
+        title: publishModalBlog.title,
+        content: publishModalBlog.body || publishModalBlog.content,
+        tags: [publishModalBlog.keyword].filter(Boolean),
+        credentials: creds
+      });
+      setPublishStatus('Published successfully!');
+      
+      const blogs = JSON.parse(localStorage.getItem('bf_blogs') || '[]');
+      const bIdx = blogs.findIndex(b => b.id === publishModalBlog.id);
+      if (bIdx !== -1) {
+        blogs[bIdx].status = 'published';
+        localStorage.setItem('bf_blogs', JSON.stringify(blogs));
+        if (window.loadMyBlogs) window.loadMyBlogs();
+        if (window.loadDashboardBlogs) window.loadDashboardBlogs();
+      }
+
+      setTimeout(() => setPublishModalBlog(null), 1500);
+    } catch(err) {
+      setPublishStatus('Error: ' + err.message);
+    }
+  };
+
   useEffect(() => {
     loadDashboardBlogs();
     window.loadDashboardBlogs = loadDashboardBlogs;
-    return () => { delete window.loadDashboardBlogs; };
+    window.showPublishModal = (id) => {
+        const blogs = JSON.parse(localStorage.getItem('bf_blogs') || '[]');
+        const blog = blogs.find(b => b.id === id);
+        if (blog) {
+            setPublishModalBlog(blog);
+            setPublishStatus('');
+            setPublishingPlatform('wordpress');
+            setIsScheduled(false);
+            setScheduledAt('');
+        }
+    };
+    return () => { 
+        delete window.loadDashboardBlogs; 
+        delete window.showPublishModal;
+    };
   }, []);
 
   useEffect(() => {
@@ -1186,19 +1147,14 @@ Use clear headings and keep it actionable. Write in a professional consulting to
       if (menu) menu.classList.remove('open');
     };
 
-    window.publishBlog = function(id, e) {
+    window.publishBlog = function(id) {
+      if (window.showPublishModal) window.showPublishModal(id);
+    };
+
+    window.viewBlog = function(id) {
       const blogs = JSON.parse(localStorage.getItem('bf_blogs') || '[]');
-      const idx = blogs.findIndex(b => b.id == id);
-      if (idx !== -1) {
-        blogs[idx].status = 'published';
-        localStorage.setItem('bf_blogs', JSON.stringify(blogs));
-        window.showToast('Blog published successfully!');
-        if (window.loadMyBlogs) window.loadMyBlogs();
-        if (window.updateOverviewStats) window.updateOverviewStats();
-        if (window.loadROIDashboard) window.loadROIDashboard();
-      }
-      const menu = e.target.closest('.action-dropdown');
-      if (menu) menu.classList.remove('open');
+      const blog = blogs.find(b => b.id == id);
+      if (blog) setModalBlog(blog);
     };
 
     window.scheduleBlog = function(id, e) {
@@ -1229,8 +1185,10 @@ Use clear headings and keep it actionable. Write in a professional consulting to
       if (window.updateOverviewStats) window.updateOverviewStats();
       if (window.loadROIDashboard) window.loadROIDashboard();
       
-      const menu = e.target.closest('.action-dropdown');
-      if (menu) menu.classList.remove('open');
+      if (e && e.target && e.target.closest) {
+        const menu = e.target.closest('.action-dropdown');
+        if (menu) menu.classList.remove('open');
+      }
     };
 
     window.showDashboardSection = function(section) {
@@ -1466,17 +1424,10 @@ Use clear headings and keep it actionable. Write in a professional consulting to
                         <td className="text-muted">{blog.date}</td>
                         <td>{blog.traffic}</td>
                         <td className="actions-cell">
-                          <div className="action-menu">
-                            <button className="action-btn" onClick={(e) => window.toggleActionMenu && window.toggleActionMenu(e)}>
-                              <MoreVertical size={16}/>
-                            </button>
-                            <div className="action-dropdown">
-                              <button onClick={() => window.viewBlog && window.viewBlog(idx)}>👁 View Blog</button>
-                              <button onClick={(e) => window.copyBlog && window.copyBlog(idx, e)}>📋 Copy Content</button>
-                              <button onClick={(e) => window.publishBlog && window.publishBlog(idx, e)}>🚀 Publish Now</button>
-                              <button onClick={(e) => window.scheduleBlog && window.scheduleBlog(idx, e)}>📅 Schedule</button>
-                              <button className="danger" onClick={(e) => window.confirmDeleteBlog && window.confirmDeleteBlog(idx, e)}>🗑 Delete</button>
-                            </div>
+                          <div style={{display: 'flex', gap: '8px'}}>
+                            <button onClick={() => window.viewBlog && window.viewBlog(blog.id)} style={{background: 'rgba(124,58,237,0.15)', border: 'none', color: '#A78BFA', borderRadius: '6px', padding: '4px 10px', fontSize: '11px', cursor: 'pointer'}}>View</button>
+                            <button onClick={() => window.showPublishModal && window.showPublishModal(blog.id)} style={{background: 'rgba(16,185,129,0.15)', border: 'none', color: '#10B981', borderRadius: '6px', padding: '4px 10px', fontSize: '11px', cursor: 'pointer'}}>Publish</button>
+                            <button onClick={() => window.confirmDeleteBlog && window.confirmDeleteBlog(blog.id, {target: {}})} style={{background: 'rgba(239,68,68,0.1)', border: 'none', color: '#EF4444', borderRadius: '6px', padding: '4px 10px', fontSize: '11px', cursor: 'pointer'}}>Delete</button>
                           </div>
                         </td>
                       </tr>
@@ -1839,6 +1790,52 @@ Use clear headings and keep it actionable. Write in a professional consulting to
           );
         })}
       </main>
+      {/* Global Publish Modal */}
+      {publishModalBlog && (
+        <div style={{position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+          <div style={{background: '#141B2D', border: '1px solid rgba(16,185,129,0.3)', borderRadius: '20px', padding: '32px', width: '400px', position: 'relative'}}>
+            <button onClick={() => setPublishModalBlog(null)} style={{position: 'absolute', top: '16px', right: '16px', background: 'transparent', border: 'none', color: 'white', cursor: 'pointer', fontSize: '16px'}}>✕</button>
+            <h2 style={{fontSize: '20px', fontWeight: 700, color: 'white', marginBottom: '8px'}}>Publish Blog</h2>
+            <p style={{fontSize: '13px', color: '#94A3B8', marginBottom: '20px'}}>{publishModalBlog.title}</p>
+            
+            <label style={{color: 'white', fontSize: '14px', marginBottom: '8px', display: 'block'}}>Select Platform</label>
+            <select value={publishingPlatform} onChange={(e) => setPublishingPlatform(e.target.value)} style={{width: '100%', background: '#0D1526', border: '1px solid rgba(255,255,255,0.1)', color: 'white', padding: '10px', borderRadius: '8px', marginBottom: '20px'}}>
+              <option value="wordpress">WordPress</option>
+              <option value="blogger">Blogger</option>
+              <option value="devto">Dev.to</option>
+              <option value="hashnode">Hashnode</option>
+              <option value="tumblr">Tumblr</option>
+            </select>
+
+            {/* Scheduling Options */}
+            <div style={{marginTop:'0px', padding:'16px', background:'rgba(255,255,255,0.03)', borderRadius:'12px', border:'1px solid rgba(255,255,255,0.05)', marginBottom: '20px'}}>
+                <label style={{display:'flex', alignItems:'center', gap:'10px', cursor:'pointer', marginBottom: isScheduled ? '12px' : '0'}}>
+                    <input type="checkbox" checked={isScheduled} onChange={e => setIsScheduled(e.target.checked)} style={{width:'18px', height:'18px', accentColor:'var(--color-primary-500)'}} />
+                    <span style={{fontSize:'14px', fontWeight:500, color:'white'}}>Schedule for later</span>
+                </label>
+                
+                {isScheduled && (
+                    <div style={{display:'flex', flexDirection:'column', gap:'8px'}}>
+                      <label style={{fontSize:'12px', color:'#64748B'}}>Select Date & Time</label>
+                      <input 
+                        type="datetime-local" 
+                        value={scheduledAt} 
+                        onChange={e => setScheduledAt(e.target.value)}
+                        style={{background:'#0D1526', border:'1px solid rgba(255,255,255,0.1)', color:'white', padding:'10px', borderRadius:'8px', outline:'none', width:'100%', boxSizing:'border-box'}}
+                      />
+                    </div>
+                )}
+            </div>
+
+            <button onClick={handleGlobalPublish} disabled={publishStatus === 'Publishing...' || publishStatus.includes('Scheduling')} style={{width: '100%', background: '#10B981', color: 'white', border: 'none', padding: '12px', borderRadius: '8px', cursor: 'pointer', fontWeight: 'bold'}}>
+              {publishStatus === 'Publishing...' || publishStatus.includes('Scheduling') ? (isScheduled ? 'Scheduling...' : 'Publishing...') : (isScheduled ? 'Schedule Blog' : 'Publish Now')}
+            </button>
+            {publishStatus && publishStatus !== 'Publishing...' && (
+              <p style={{marginTop: '16px', fontSize: '14px', color: publishStatus.startsWith('Error') ? '#EF4444' : '#10B981', textAlign: 'center'}}>{publishStatus}</p>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 };
