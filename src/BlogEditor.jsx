@@ -139,7 +139,7 @@ const SaveBanner = ({ message, type = 'success', onDismiss }) => (
 );
 
 // ─── Main Component ──────────────────────────────────────────────────────────
-const BlogEditor = ({ callGemini }) => {
+const BlogEditor = ({ callGemini, publishBlog }) => {
   // ── Form state ──
   const [keyword, setKeyword]         = useState('');
   const [tone, setTone]               = useState('professional');

@@ -40,6 +40,8 @@ import {
   ArrowLeft
 } from 'lucide-react';
 import './index.css';
+import './interactions.css';
+
 
 const AnimatedCounter = ({ endValue, suffix = "" }) => {
   const [count, setCount] = useState(0);

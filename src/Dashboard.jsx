@@ -1202,7 +1202,7 @@ Use clear headings and keep it actionable. Write in a professional consulting to
     window.viewBlog = function(id) {
       const blogs = JSON.parse(localStorage.getItem('bf_blogs') || '[]');
       const blog = blogs.find(b => b.id == id);
-      if (blog) setModalBlog(blog);
+      if (blog) setPublishModalBlog(blog);
     };
 
     window.scheduleBlog = function(id, e) {
@@ -1536,7 +1536,7 @@ Use clear headings and keep it actionable. Write in a professional consulting to
           </div>
         </div>
 
-        <BlogEditor callGemini={callGemini} />
+        <BlogEditor callGemini={callGemini} publishBlog={publishBlog} />
         <MyBlogsSection />
         <SerpGapSection />
         <SeoScoresSection />
