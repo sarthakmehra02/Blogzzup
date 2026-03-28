@@ -501,61 +501,199 @@ const FeaturesPage = () => {
 };
 
 
+const demoInitialMessages = [
+  { role: 'user', text: 'Write an SEO blog about AI tools for Indian startups' },
+  { role: 'ai', text: 'Analyzing SERP gap... Found 3 low-competition keywords ✓\nClustering topics... Done ✓\nDrafting blog with 94% SEO score... ✓\nGenerating featured snippet structure... ✓' },
+  { role: 'user', text: 'Optimize for GEO — target Delhi and Bangalore' },
+  { role: 'ai', text: 'Adding location-specific entities... ✓\nInjecting local search modifiers... ✓\nApplying regional schema markup... ✓\nYour blog is ready to publish!' }
+];
+
+window.renderDemoMessage = function(msg) {
+  const isUser = msg.role === 'user';
+  const div = document.createElement('div');
+  div.style.cssText = 'display:flex; ' + (isUser ? 'justify-content:flex-end' : 'justify-content:flex-start');
+  div.innerHTML = '<div style="' +
+    'max-width:82%; padding:11px 16px; font-size:13px; line-height:1.6; white-space:pre-wrap;' +
+    (isUser 
+      ? 'background:#7C3AED; color:white; border-radius:18px 18px 4px 18px;'
+      : 'background:#141B2D; color:#94A3B8; border-radius:18px 18px 18px 4px;') +
+    '">' + msg.text + '</div>';
+  return div;
+};
+
+window.initDemoChat = function() {
+  const container = document.getElementById('demo-chat-messages');
+  if (!container) return;
+  container.innerHTML = '';
+  demoInitialMessages.forEach(msg => container.appendChild(window.renderDemoMessage(msg)));
+  container.scrollTop = container.scrollHeight;
+};
+
+window.sendDemoMessage = async function() {
+  const input = document.getElementById('demo-chat-input');
+  
+  if (!input) {
+    console.error('demo-chat-input element not found in DOM');
+    return;
+  }
+  
+  const keyword = input.value.trim();
+  
+  if (!keyword) {
+    input.style.borderColor = '#EF4444';
+    setTimeout(() => { input.style.borderColor = 'rgba(255,255,255,0.08)'; }, 2000);
+    return;
+  }
+
+  const container = document.getElementById('demo-chat-messages');
+  const btn = document.getElementById('demo-send-btn');
+
+  container.appendChild(window.renderDemoMessage({ role: 'user', text: keyword }));
+  container.scrollTop = container.scrollHeight;
+  input.value = '';
+  if (btn) {
+    btn.disabled = true;
+    btn.style.opacity = '0.5';
+  }
+
+  const thinkingDiv = document.createElement('div');
+  thinkingDiv.style.cssText = 'display:flex; justify-content:flex-start;';
+  thinkingDiv.innerHTML = '<div style="background:#141B2D; color:#94A3B8; border-radius:18px 18px 18px 4px; padding:11px 16px; font-size:13px;">⏳ Analyzing keyword...</div>';
+  container.appendChild(thinkingDiv);
+  container.scrollTop = container.scrollHeight;
+
+  const prompt = `You are BlogForge AI, an expert SEO content engine assistant. \nThe user just typed: "${keyword}"\n\nRespond in 3-4 short lines as if you are an AI engine processing their request. \nShow a realistic step-by-step processing response like:\n- Analyzing SERP gap for "${keyword}"... Found X low-competition keywords ✓\n- Identifying content gaps vs top 10 competitors... ✓  \n- Drafting SEO blog outline with XX% optimization score... ✓\n- Structuring for featured snippet eligibility... ✓\n\nKeep it short, punchy, technical. Show specific numbers related to "${keyword}". \nDo NOT write a blog. Just show the processing steps.`;
+
+  try {
+    const raw = await window.callGemini(prompt, 300);
+    thinkingDiv.remove();
+    container.appendChild(window.renderDemoMessage({ role: 'ai', text: raw }));
+  } catch(err) {
+    thinkingDiv.remove();
+    container.appendChild(window.renderDemoMessage({ 
+      role: 'ai', 
+      text: 'Analyzing "' + keyword + '"...\\nFound SERP gaps ✓\\nBlog outline ready ✓\\nSEO score: 91/100 ✓\\nReady to generate full blog!' 
+    }));
+  }
+
+  container.scrollTop = container.scrollHeight;
+  if (btn) {
+    btn.disabled = false;
+    btn.style.opacity = '1';
+  }
+};
+
+window.addEventListener('load', () => {
+  window.initDemoChat();
+});
+
+window.generateSampleBlog = async function() {
+  const inputEl = document.getElementById('tiy-keyword-input');
+  const btn = document.getElementById('tiy-generate-btn');
+  const resultsEl = document.getElementById('tiy-results');
+  const titleEl = document.getElementById('tiy-title-output');
+  const metaEl = document.getElementById('tiy-meta-output');
+  const paraEl = document.getElementById('tiy-para-output');
+
+  if (!inputEl) { console.error('tiy-keyword-input not found'); return; }
+
+  const keyword = inputEl.value.trim();
+
+  if (!keyword) {
+    inputEl.style.borderColor = '#EF4444';
+    inputEl.placeholder = 'Please enter a keyword first!';
+    setTimeout(() => {
+      inputEl.style.borderColor = 'rgba(255,255,255,0.1)';
+      inputEl.placeholder = 'Enter any keyword, e.g. data science, SaaS tools...';
+    }, 2000);
+    return;
+  }
+
+  if (btn) {
+    btn.textContent = '⏳ Generating...';
+    btn.disabled = true;
+    btn.style.opacity = '0.7';
+  }
+
+  if (resultsEl) {
+    resultsEl.style.display = 'block';
+    if (titleEl) titleEl.textContent = '✍️ Writing title...';
+    if (metaEl) metaEl.textContent = '';
+    if (paraEl) paraEl.textContent = '';
+  }
+
+  const prompt = `You are an expert SEO content writer for Indian businesses.
+
+Generate a blog preview specifically for the keyword: "${keyword}"
+
+Return ONLY a valid JSON object — no markdown, no explanation, just raw JSON:
+{
+  "title": "An SEO blog title specifically about ${keyword}. Include the keyword, make it compelling, under 65 chars.",
+  "metaDescription": "Meta description under 155 chars specifically about ${keyword} with a subtle CTA.",
+  "firstParagraph": "A 3-4 sentence opening paragraph specifically about ${keyword}. Hook the reader. Include ${keyword} in the first sentence. Write for Indian audience."
+}`;
+
+  try {
+    const raw = await window.callGemini(prompt, 600);
+    const cleaned = raw.replace(/```json|```/g, '').trim();
+    const data = JSON.parse(cleaned);
+
+    if (titleEl) titleEl.textContent = '';
+    if (metaEl) metaEl.textContent = '';
+    if (paraEl) paraEl.textContent = '';
+
+    function typeIt(el, text, speed, onDone) {
+      if (!el) { if(onDone) onDone(); return; }
+      let i = 0;
+      function next() {
+        if (i < text.length) {
+          el.textContent += text.charAt(i++);
+          setTimeout(next, speed);
+        } else if (onDone) onDone();
+      }
+      next();
+    }
+
+    typeIt(titleEl, data.title || '', 30, () => {
+      setTimeout(() => {
+        typeIt(metaEl, data.metaDescription || '', 18, () => {
+          setTimeout(() => {
+            typeIt(paraEl, data.firstParagraph || '', 12, null);
+          }, 200);
+        });
+      }, 300);
+    });
+
+  } catch(err) {
+    const cap = keyword.charAt(0).toUpperCase() + keyword.slice(1);
+    if (titleEl) titleEl.textContent = 'Complete Guide to ' + cap + ' in 2026';
+    if (metaEl) metaEl.textContent = 'Everything you need to know about ' + keyword + '. Expert tips and actionable strategies to master ' + keyword + ' today.';
+    if (paraEl) paraEl.textContent = cap + ' is one of the most in-demand skills in 2026. Whether you are a beginner or looking to advance your expertise, this guide covers everything about ' + keyword + ' from fundamentals to advanced strategies.';
+    console.error('Gemini error:', err.message);
+  }
+
+  if (btn) {
+    btn.textContent = 'Generate →';
+    btn.disabled = false;
+    btn.style.opacity = '1';
+  }
+};
+
+window.typeWriterEffect = function(element, text, speed) {
+  element.textContent = '';
+  let i = 0;
+  function type() {
+    if (i < text.length) {
+      element.textContent += text.charAt(i);
+      i++;
+      setTimeout(type, speed);
+    }
+  }
+  type();
+};
+
 const DemoPage = () => {
-  const [isGenerating, setIsGenerating] = React.useState(false);
-  const [showResults, setShowResults] = React.useState(false);
-  const [typedTitle, setTypedTitle] = React.useState('');
-  const [typedMeta, setTypedMeta] = React.useState('');
-  const [typedPara, setTypedPara] = React.useState('');
 
-  const fullTitle = "Top 10 AI Tools for Indian Startups in 2026 — Ranked by ROI";
-  const fullMeta = "Discover the best AI tools Indian startups are using to cut costs, automate workflows, and grow 10x faster. Ranked by real ROI data from 500+ founders.";
-  const fullPara = "India's startup ecosystem is moving fast — and AI tools are the new competitive edge. From automating customer support to generating SEO content at scale, the right AI stack can save an early-stage startup lakhs of rupees every month. In this guide, we've ranked the top 10 AI tools actually being used by Indian founders in 2026, based on ROI data collected from over 500 startups.";
-
-  const handleGenerate = () => {
-    if (isGenerating) return;
-    setIsGenerating(true);
-    setShowResults(true);
-    setTypedTitle('');
-    setTypedMeta('');
-    setTypedPara('');
-
-    let titleIdx = 0;
-    let metaIdx = 0;
-    let paraIdx = 0;
-
-    const typePara = () => {
-      if (paraIdx < fullPara.length) {
-        setTypedPara(prev => fullPara.substring(0, paraIdx + 1));
-        paraIdx++;
-        setTimeout(typePara, 15);
-      } else {
-        setIsGenerating(false);
-      }
-    };
-
-    const typeMeta = () => {
-      if (metaIdx < fullMeta.length) {
-        setTypedMeta(prev => fullMeta.substring(0, metaIdx + 1));
-        metaIdx++;
-        setTimeout(typeMeta, 15);
-      } else {
-        setTimeout(typePara, 200);
-      }
-    };
-
-    const typeTitle = () => {
-      if (titleIdx < fullTitle.length) {
-        setTypedTitle(prev => fullTitle.substring(0, titleIdx + 1));
-        titleIdx++;
-        setTimeout(typeTitle, 15);
-      } else {
-        setTimeout(typeMeta, 200);
-      }
-    };
-
-    typeTitle();
-  };
 
   return (
     <div className="container" style={{paddingTop: '8rem', paddingBottom: '8rem'}}>
@@ -592,32 +730,31 @@ const DemoPage = () => {
                 </div>
               </div>
 
-              <div style={{flex: 1, padding: '20px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '12px', background: '#0D1526'}}>
-                <div style={{alignSelf: 'flex-end', background: '#7C3AED', color: '#fff', padding: '10px 16px', borderRadius: '18px 18px 4px 18px', maxWidth: '75%', fontSize: '13px', lineHeight: 1.5}}>
-                  Write an SEO blog about AI tools for Indian startups
-                </div>
-                <div style={{alignSelf: 'flex-start', background: '#141B2D', color: '#94A3B8', padding: '12px 16px', borderRadius: '18px 18px 18px 4px', maxWidth: '85%', fontSize: '13px', lineHeight: 1.5, whiteSpace: 'pre-line'}}>
-                  Analyzing SERP gap... Found 3 low-competition keywords ✓<br/>
-                  Clustering topics... Done ✓<br/>
-                  Drafting blog with 94% SEO score... ✓<br/>
-                  Generating featured snippet structure... ✓
-                </div>
-                <div style={{alignSelf: 'flex-end', background: '#7C3AED', color: '#fff', padding: '10px 16px', borderRadius: '18px 18px 4px 18px', maxWidth: '75%', fontSize: '13px', lineHeight: 1.5}}>
-                  Optimize for GEO — target Delhi and Bangalore
-                </div>
-                <div style={{alignSelf: 'flex-start', background: '#141B2D', color: '#94A3B8', padding: '12px 16px', borderRadius: '18px 18px 18px 4px', maxWidth: '85%', fontSize: '13px', lineHeight: 1.5, whiteSpace: 'pre-line'}}>
-                  Adding location-specific entities... ✓<br/>
-                  Injecting local search modifiers... ✓<br/>
-                  Applying regional schema markup... ✓<br/>
-                  Your blog is ready to publish!
+              <div style={{flex: 1, display: 'flex', flexDirection: 'column', background: '#0D1526'}}>
+                <div id="demo-chat-messages" style={{flex: 1, padding: '20px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '12px'}}>
+                  {/* messages will be injected here */}
                 </div>
                 
-                <div style={{marginTop: 'auto', paddingTop: '12px'}}>
-                  <div style={{padding: '12px 16px', background: '#080E1C', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '12px', display: 'flex', alignItems: 'center', gap: '12px'}}>
-                    <div style={{flex: 1, background: '#141B2D', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '10px', padding: '10px 14px', color: '#4B5563', fontSize: '13px'}}>
-                      Enter your keyword or topic...
-                    </div>
-                    <div style={{background: '#7C3AED', width: '36px', height: '36px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: '16px'}}>↑</div>
+                <div style={{marginTop: 'auto'}}>
+                  <div style={{padding: '12px 16px', background: '#080E1C', borderTop: '1px solid rgba(255,255,255,0.06)', display: 'flex', alignItems: 'center', gap: '12px'}}>
+                    <input 
+                      id="demo-chat-input"
+                      type="text" 
+                      placeholder="Enter your keyword or topic..."
+                      onKeyDown={(e) => { if(e.key === 'Enter') window.sendDemoMessage(); }}
+                      style={{flex: 1, background: '#141B2D', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '10px', padding: '10px 14px', color: 'white', fontSize: '13px', outline: 'none'}}
+                      onFocus={(e) => e.target.style.borderColor='#7C3AED'}
+                      onBlur={(e) => e.target.style.borderColor='rgba(255,255,255,0.08)'}
+                    />
+                    <button 
+                      onClick={() => window.sendDemoMessage()}
+                      id="demo-send-btn"
+                      style={{background: '#7C3AED', width: '38px', height: '38px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: 'white', fontSize: '16px', border: 'none', flexShrink: 0, transition: 'all 0.2s'}}
+                      onMouseEnter={(e) => e.target.style.background='#6D28D9'}
+                      onMouseLeave={(e) => e.target.style.background='#7C3AED'}
+                    >
+                      ↑
+                    </button>
                   </div>
                 </div>
               </div>
@@ -650,7 +787,12 @@ const DemoPage = () => {
               ))}
             </div>
 
-            <button onClick={() => window.showPage('auth')} style={{marginTop: 'auto', width: '100%', background: 'linear-gradient(135deg,#7C3AED,#6D28D9)', color: '#fff', borderRadius: '10px', padding: '13px', fontWeight: 600, fontSize: '14px', border: 'none', cursor: 'pointer', transition: 'all 0.2s', className: 'hover-brighten'}}>
+            <button 
+              onClick={() => { if(window.showDashboard) window.showDashboard(); }}
+              style={{marginTop: '24px', width: '100%', background: 'linear-gradient(135deg,#7C3AED,#6D28D9)', color: 'white', border: 'none', borderRadius: '10px', padding: '13px', fontWeight: 600, fontSize: '14px', cursor: 'pointer', transition: 'all 0.2s'}}
+              onMouseEnter={(e) => e.target.style.filter='brightness(1.1)'}
+              onMouseLeave={(e) => e.target.style.filter='brightness(1)'}
+            >
               Generate Full Blog →
             </button>
           </div>
@@ -662,24 +804,36 @@ const DemoPage = () => {
         <p style={{color: '#94A3B8', textAlign: 'center', marginBottom: '32px', marginTop: '12px'}}>Enter any keyword and watch the AI work</p>
         
         <div style={{maxWidth: '600px', margin: '0 auto', display: 'flex', gap: '12px'}}>
-          <input type="text" placeholder="Enter a keyword, e.g. AI tools for startups..." style={{flex: 1, background: '#141B2D', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px', padding: '14px 20px', color: '#fff', fontSize: '15px'}} />
-          <button onClick={handleGenerate} style={{background: 'linear-gradient(135deg,#7C3AED,#06B6D4)', color: '#fff', borderRadius: '12px', padding: '14px 24px', fontWeight: 600, border: 'none', cursor: 'pointer', whiteSpace: 'nowrap'}}>
+          <input 
+            id="tiy-keyword-input"
+            type="text" 
+            placeholder="Enter any keyword, e.g. data science, SaaS tools, fitness apps..."
+            onKeyDown={(e) => { if (e.key === 'Enter') window.generateSampleBlog(); }}
+            style={{flex: 1, background: '#141B2D', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px', padding: '14px 20px', color: 'white', fontSize: '15px', outline: 'none'}}
+            onFocus={(e) => e.target.style.borderColor='#7C3AED'}
+            onBlur={(e) => e.target.style.borderColor='rgba(255,255,255,0.1)'}
+          />
+          <button 
+            onClick={() => window.generateSampleBlog()}
+            id="tiy-generate-btn"
+            style={{background: 'linear-gradient(135deg,#7C3AED,#06B6D4)', color: 'white', border: 'none', borderRadius: '12px', padding: '14px 28px', fontSize: '15px', fontWeight: 600, cursor: 'pointer', whiteSpace: 'nowrap', transition: 'all 0.2s'}}
+            onMouseEnter={(e) => e.target.style.opacity='0.9'}
+            onMouseLeave={(e) => e.target.style.opacity='1'}
+          >
             Generate →
           </button>
         </div>
 
-        {showResults && (
-          <div style={{maxWidth: '600px', margin: '20px auto 0', background: '#141B2D', border: '1px solid rgba(124,58,237,0.3)', borderRadius: '16px', padding: '24px'}}>
-            <div style={{fontSize: '11px', color: '#7C3AED', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '8px'}}>📌 Blog Title</div>
-            <div style={{fontSize: '18px', color: '#fff', fontWeight: 600, marginBottom: '20px', minHeight: '27px'}}>{typedTitle}</div>
-            
-            <div style={{fontSize: '11px', color: '#7C3AED', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '8px'}}>📝 Meta Description</div>
-            <div style={{fontSize: '14px', color: '#94A3B8', marginBottom: '20px', minHeight: '42px'}}>{typedMeta}</div>
-            
-            <div style={{fontSize: '11px', color: '#7C3AED', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '8px'}}>✍️ First Paragraph</div>
-            <div style={{fontSize: '14px', color: '#94A3B8', lineHeight: 1.7, minHeight: '100px'}}>{typedPara}</div>
-          </div>
-        )}
+        <div id="tiy-results" style={{display: 'none', background: '#141B2D', border: '1px solid rgba(124,58,237,0.3)', borderRadius: '16px', padding: '28px', marginTop: '20px', maxWidth: '700px', marginLeft: 'auto', marginRight: 'auto'}}>
+          <div style={{fontSize: '11px', color: '#7C3AED', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '8px'}}>📌 Blog Title</div>
+          <div id="tiy-title-output" style={{fontSize: '18px', color: '#fff', fontWeight: 600, marginBottom: '20px', minHeight: '27px'}}></div>
+          
+          <div style={{fontSize: '11px', color: '#7C3AED', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '8px'}}>📝 Meta Description</div>
+          <div id="tiy-meta-output" style={{fontSize: '14px', color: '#94A3B8', marginBottom: '20px', minHeight: '42px'}}></div>
+          
+          <div style={{fontSize: '11px', color: '#7C3AED', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '8px'}}>✍️ First Paragraph</div>
+          <div id="tiy-para-output" style={{fontSize: '14px', color: '#94A3B8', lineHeight: 1.7, minHeight: '100px'}}></div>
+        </div>
       </div>
 
       <div style={{marginTop: '64px', textAlign: 'center'}}>
@@ -1321,6 +1475,9 @@ function App() {
       });
       window.location.hash = name;
       window.scrollTo(0, 0);
+      if (name === 'demo') {
+        setTimeout(window.initDemoChat, 100);
+      }
     };
 
     const hash = window.location.hash.replace('#', '') || 'home';
@@ -1363,7 +1520,30 @@ function App() {
             <li><a href="#blog" onClick={(e) => { e.preventDefault(); window.showPage('blog'); }} data-nav="blog" className="nav-link">Blog</a></li>
           </ul>
 
-          <div className="nav-actions" role="group" aria-label="Account actions">
+          <div className="nav-actions" role="group" aria-label="Account actions" style={{display: 'flex', alignItems: 'center', gap: '8px'}}>
+            <button 
+              id="theme-toggle" 
+              onClick={() => window.toggleTheme && window.toggleTheme()} 
+              title="Toggle light/dark mode"
+              style={{
+                background: 'rgba(255,255,255,0.06)',
+                border: '1px solid rgba(255,255,255,0.1)',
+                borderRadius: '999px',
+                width: '40px',
+                height: '40px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                cursor: 'pointer',
+                fontSize: '17px',
+                transition: 'background 0.2s, border-color 0.2s',
+                flexShrink: 0
+              }}
+              onMouseOver={(e) => { e.currentTarget.style.background='rgba(124,58,237,0.15)'; e.currentTarget.style.borderColor='rgba(124,58,237,0.4)'; }}
+              onMouseOut={(e) => { e.currentTarget.style.background='rgba(255,255,255,0.06)'; e.currentTarget.style.borderColor='rgba(255,255,255,0.1)'; }}
+            >
+              🌙
+            </button>
             <button className="btn btn-ghost" onClick={() => window.showPage('auth')}>Sign In</button>
             <button className="btn btn-primary" onClick={() => window.showPage('auth')} aria-label="Start free for 30 days">Start Free</button>
           </div>
@@ -1439,7 +1619,14 @@ function App() {
 
             <div className="hero-actions stagger-in-item">
               <button className="btn btn-primary btn-lg" onClick={() => window.showDashboard()}>Start Free Trial →</button>
-              <button className="btn btn-outline btn-lg" onClick={() => window.showPage('demo')}><Play size={18} style={{marginRight: '8px'}} /> Watch Demo</button>
+              <button 
+                onClick={() => window.showPage('demo')} 
+                style={{background:'transparent', border:'1px solid rgba(255,255,255,0.2)', color:'white', padding:'14px 28px', borderRadius:'999px', fontSize:'16px', fontWeight:500, cursor:'pointer', display:'flex', alignItems:'center', gap:'10px', transition:'all 0.2s'}}
+                onMouseEnter={(e) => { e.currentTarget.style.borderColor='#7C3AED'; e.currentTarget.style.color='#A78BFA'; }}
+                onMouseLeave={(e) => { e.currentTarget.style.borderColor='rgba(255,255,255,0.2)'; e.currentTarget.style.color='white'; }}
+              >
+                <span style={{fontSize:'18px'}}>▷</span> Watch Demo
+              </button>
             </div>
 
             <div className="feature-pill-grid stagger-in">
