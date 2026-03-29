@@ -1324,7 +1324,7 @@ const HomeFeaturesSection = () => {
 };
 
 function App() {
-  const { currentUser, signInWithGoogle, signIn, signUp, logOut, resendVerification } = useAuth();
+  const { currentUser, signInWithGoogle, signIn, signUp, logOut, resendVerification, resetPassword } = useAuth();
 
   // Redirect to dashboard automatically if already logged in
   useEffect(() => {
@@ -1381,7 +1381,7 @@ function App() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
-  const [isLogin, setIsLogin] = useState(true);
+  const [authMode, setAuthMode] = useState('login'); // 'login', 'signup', 'reset'
   const [authLoading, setAuthLoading] = useState(false);
   const [authMsg, setAuthMsg] = useState({ type: '', text: '' });
   const [showResend, setShowResend] = useState(false);
@@ -1899,8 +1899,12 @@ function App() {
           <div className="auth-form-container stagger-in">
             <div className="auth-form-card glass-card stagger-in-item">
               <div className="auth-header">
-                <h1 className="auth-title">{isLogin ? 'Welcome Back' : 'Create Account'}</h1>
-                <p className="auth-subtitle">{isLogin ? 'Sign in to your BlogzzUP Workspace' : 'Get started with BlogzzUP'}</p>
+                <h1 className="auth-title">
+                  {authMode === 'login' ? 'Welcome Back' : authMode === 'signup' ? 'Create Account' : 'Reset Password'}
+                </h1>
+                <p className="auth-subtitle">
+                  {authMode === 'login' ? 'Sign in to your BlogzzUP Workspace' : authMode === 'signup' ? 'Get started with BlogzzUP' : 'Enter your email to receive a reset link'}
+                </p>
               </div>
 
               {/* Error / Success Message */}
@@ -1951,7 +1955,7 @@ function App() {
               <div className="auth-divider"><span>or continue with email</span></div>
 
               <div className="auth-fields">
-                {!isLogin && (
+                {authMode === 'signup' && (
                   <div className="input-group">
                     <label>Full Name</label>
                     <input type="text" placeholder="John Doe" value={name} onChange={(e) => setName(e.target.value)} />
@@ -1961,10 +1965,23 @@ function App() {
                   <label>Email Address</label>
                   <input type="email" placeholder="name@company.com" value={email} onChange={(e) => setEmail(e.target.value)} />
                 </div>
-                <div className="input-group">
-                  <label>Password</label>
-                  <input type="password" placeholder="••••••••" value={password} onChange={(e) => setPassword(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter') document.getElementById('auth-submit-btn').click(); }} />
-                </div>
+                {authMode !== 'reset' && (
+                  <div className="input-group">
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                      <label style={{ margin: 0 }}>Password</label>
+                      {authMode === 'login' && (
+                        <span 
+                          className="auth-link" 
+                          style={{ fontSize: '12px', fontWeight: 500 }}
+                          onClick={() => { setAuthMode('reset'); setAuthMsg({ type: '', text: '' }); }}
+                        >
+                          Forgot Password?
+                        </span>
+                      )}
+                    </div>
+                    <input type="password" placeholder="••••••••" value={password} onChange={(e) => setPassword(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter') document.getElementById('auth-submit-btn').click(); }} />
+                  </div>
+                )}
               </div>
 
               <button
@@ -1974,19 +1991,23 @@ function App() {
                 onClick={async () => {
                   setAuthLoading(true); setAuthMsg({ type: '', text: '' }); setShowResend(false);
                   try {
-                    if (isLogin) {
+                    if (authMode === 'login') {
                       const user = await signIn(email, password);
                       window.updateUserInDashboard && window.updateUserInDashboard(user);
                       document.getElementById('marketing-site').style.display = 'none';
                       document.getElementById('dashboard-app').style.display = 'flex';
                       if (window.showDashboardSection) window.showDashboardSection('overview');
                       window.scrollTo(0, 0);
-                    } else {
+                    } else if (authMode === 'signup') {
                       if (!name.trim()) { setAuthMsg({ type: 'error', text: 'Please enter your full name.' }); setAuthLoading(false); return; }
                       if (password.length < 6) { setAuthMsg({ type: 'error', text: 'Password must be at least 6 characters.' }); setAuthLoading(false); return; }
                       await signUp(name.trim(), email, password);
                       setAuthMsg({ type: 'success', text: '✅ Account created! We sent a verification email to ' + email + '. Please verify your email then sign in.' });
-                      setIsLogin(true); setPassword('');
+                      setAuthMode('login'); setPassword('');
+                    } else if (authMode === 'reset') {
+                      if (!email.trim()) { setAuthMsg({ type: 'error', text: 'Please enter your email address.' }); setAuthLoading(false); return; }
+                      await resetPassword(email);
+                      setAuthMsg({ type: 'success', text: '✅ Reset link sent! Check your inbox for instructions.' });
                     }
                   } catch(e) {
                     const msg = e.message || '';
@@ -1998,14 +2019,16 @@ function App() {
                   } finally { setAuthLoading(false); }
                 }}
               >
-                {authLoading ? (isLogin ? 'Signing in…' : 'Creating account…') : (isLogin ? 'Sign In' : 'Sign Up')}
+                {authLoading ? (authMode === 'login' ? 'Signing in…' : authMode === 'signup' ? 'Creating account…' : 'Sending...') : (authMode === 'login' ? 'Sign In' : authMode === 'signup' ? 'Sign Up' : 'Send Reset Link')}
               </button>
 
               <div className="auth-footer">
-                {isLogin ? (
-                  <>Don't have an account? <span className="auth-link" onClick={() => { setIsLogin(false); setAuthMsg({ type: '', text: '' }); }}>Sign Up</span></>
+                {authMode === 'login' ? (
+                  <>Don't have an account? <span className="auth-link" onClick={() => { setAuthMode('signup'); setAuthMsg({ type: '', text: '' }); }}>Sign Up</span></>
+                ) : authMode === 'signup' ? (
+                  <>Already have an account? <span className="auth-link" onClick={() => { setAuthMode('login'); setAuthMsg({ type: '', text: '' }); }}>Sign In</span></>
                 ) : (
-                  <>Already have an account? <span className="auth-link" onClick={() => { setIsLogin(true); setAuthMsg({ type: '', text: '' }); }}>Sign In</span></>
+                  <span className="auth-link" onClick={() => { setAuthMode('login'); setAuthMsg({ type: '', text: '' }); }}>Back to Sign In</span>
                 )}
               </div>
             </div>

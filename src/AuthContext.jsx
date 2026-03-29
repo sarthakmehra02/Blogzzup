@@ -8,6 +8,7 @@ import {
   sendEmailVerification,
   updateProfile,
   fetchSignInMethodsForEmail,
+  sendPasswordResetEmail,
 } from 'firebase/auth';
 import { doc, setDoc, getDoc, serverTimestamp } from 'firebase/firestore';
 import { auth, db, googleProvider } from './firebase';
@@ -119,6 +120,12 @@ export function AuthProvider({ children }) {
     await signOut(auth);
   }
 
+  // ─── Reset Password ────────────────────────────────────────────────────────
+  async function resetPassword(email) {
+    setAuthError('');
+    await sendPasswordResetEmail(auth, email);
+  }
+
   // ─── Auth state listener ──────────────────────────────────────────────────
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
@@ -143,6 +150,7 @@ export function AuthProvider({ children }) {
     signInWithGoogle,
     logOut,
     resendVerification,
+    resetPassword,
   };
 
   return (
