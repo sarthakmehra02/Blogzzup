@@ -203,6 +203,9 @@ const MyBlogsSection = () => {
                   <tr key={blog.id} style={{ borderTop: '1px solid rgba(255,255,255,0.04)', transition: 'background 0.15s' }} onMouseOver={e => e.currentTarget.style.background = 'rgba(124,58,237,0.05)'} onMouseOut={e => e.currentTarget.style.background = 'transparent'}>
                     <td onClick={() => setModalBlog(blog)} style={{ padding: '14px 20px', fontSize: '14px', color: 'white', fontWeight: 500, maxWidth: '280px', cursor: 'pointer', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                       {blog.title}
+                      {blog.inputMode === "voice" && (
+                        <span style={{fontSize:"11px",padding:"2px 8px",borderRadius:"10px",background:"#3D2D6B",color:"#C4B5FD",marginLeft:"8px",fontWeight:500}}>🎙 Voice</span>
+                      )}
                     </td>
                     <td style={{ padding: '14px 20px' }}><span style={{ color: scoreColor, fontWeight: 700, fontSize: '14px' }}>● {blog.seoScore}/100</span></td>
                     <td style={{ padding: '14px 20px' }}><span style={{ ...statusStyle, borderRadius: '999px', padding: '4px 12px', fontSize: '12px', fontWeight: 600 }}>{String(blog.status).charAt(0).toUpperCase() + String(blog.status).slice(1)}</span></td>
@@ -1578,7 +1581,12 @@ Use clear headings and keep it actionable. Write in a professional consulting to
                   <tbody>
                     {blogs.map((blog, idx) => (
                       <tr key={blog.id} onMouseOver={(e) => e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.02)'} onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}>
-                        <td style={{ fontWeight: 600, color: 'white' }}>{blog.title}</td>
+                        <td style={{ fontWeight: 600, color: 'white' }}>
+                          {blog.title}
+                          {blog.inputMode === "voice" && (
+                            <span style={{fontSize:"11px",padding:"2px 8px",borderRadius:"10px",background:"#3D2D6B",color:"#C4B5FD",marginLeft:"8px",fontWeight:500}}>🎙 Voice</span>
+                          )}
+                        </td>
                         <td>
                           <div className="score-badge">
                             <span className={`dot ${(blog.seoScore || blog.score) >= 90 ? 'green' : 'amber'}`}></span>

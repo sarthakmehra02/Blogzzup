@@ -36,3 +36,7 @@ error.log
 
 .env
 .env.*
+
+# Agents and Codebase_Context
+agents/
+codebase_context.json

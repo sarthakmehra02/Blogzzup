@@ -46,8 +46,15 @@ export async function fetchUserBlogs(uid) {
 
 /** Create a new blog document */
 export async function createBlog(uid, blogData) {
+  const {
+    inputMode = "text",
+    voiceTranscript = "",
+    ...rest
+  } = blogData;
   const ref = await addDoc(blogsRef(uid), {
-    ...blogData,
+    ...rest,
+    inputMode,
+    voiceTranscript,
     createdAt: serverTimestamp(),
     updatedAt: serverTimestamp(),
     status: blogData.status || 'draft',
@@ -57,8 +64,13 @@ export async function createBlog(uid, blogData) {
 
 /** Update an existing blog document */
 export async function updateBlog(uid, blogId, updates) {
+  const {
+    inputMode = "text",
+    voiceTranscript = "",
+    ...rest
+  } = updates;
   const ref = doc(db, 'users', uid, 'blogs', blogId);
-  await updateDoc(ref, { ...updates, updatedAt: serverTimestamp() });
+  await updateDoc(ref, { ...rest, inputMode, voiceTranscript, updatedAt: serverTimestamp() });
 }
 
 /** Delete a blog document */

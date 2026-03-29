@@ -16,6 +16,8 @@
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { createBlog, updateBlog } from './utils/blogStorage';
+import VoiceRecorder from './VoiceRecorder';
+import { extractBlogContext } from "./utils/whisperTranscribe";
 
 // ─── Icons (inline SVG to avoid extra deps) ────────────────────────────────
 const Icon = ({ d, size = 16 }) => (
@@ -157,6 +159,8 @@ const BlogEditor = ({ callGemini, publishBlog, uid }) => {
   const [geo, setGeo]                 = useState('');
   const [instructions, setInstructions] = useState('');
   const [showExamples, setShowExamples] = useState(false);
+  const [inputMode, setInputMode]     = useState("write");
+  const [voiceTranscript, setVoiceTranscript] = useState("");
 
   // ── Generation state ──
   const [stage, setStage]             = useState('configure'); // configure | generating | review
@@ -349,7 +353,7 @@ STRICT RULES for the body field:
       const sanitizedKeyword = keyword.trim().replace(/\s+/g, '');
       setKeyword(sanitizedKeyword);
       
-      const full = { ...blogData, id, keyword: sanitizedKeyword, tone, geo, wordCountActual, readTime, createdAt };
+      const full = { ...blogData, id, keyword: sanitizedKeyword, tone, geo, wordCountActual, readTime, createdAt, voiceTranscript: voiceTranscript, inputMode: inputMode };
 
       // Save version snapshot
       const versionEntry = { ...full, savedAt: createdAt };
@@ -775,58 +779,125 @@ Return ONLY a valid JSON object:
             {/* Left: form */}
             <div className="be-form-panel">
 
-              {/* Keyword */}
-              <div className={`form-group${kwError ? ' has-error' : ''}`}>
-                <label className="form-label form-label-required" htmlFor="be-keyword">Target Keyword</label>
-                <div className="search-input-wrapper">
-                  <input
-                    ref={keywordRef}
-                    id="be-keyword"
-                    className={`form-input${kwError ? ' is-invalid' : ''}`}
-                    placeholder="e.g. AI tools for Indian startups"
-                    value={keyword}
-                    onChange={e => { setKeyword(e.target.value); if (kwError) setKwError(''); }}
-                    onKeyDown={e => e.key === 'Enter' && generateBlog()}
-                    maxLength={120}
-                    aria-describedby="be-kw-hint be-kw-error"
-                    autoFocus
-                  />
-                  <span className="be-charcount" style={{ position: 'absolute', right: '12px', fontSize: '11px', color: kwCharCount > 100 ? 'var(--color-warning-400)' : 'var(--text-subtle)', pointerEvents: 'none' }}>
-                    {kwCharCount}/120
-                  </span>
-                </div>
-                {kwError && (
-                  <div className="form-error" id="be-kw-error" role="alert">
-                    <Icons.AlertCircle /> {kwError}
-                  </div>
-                )}
-                <div className="form-hint" id="be-kw-hint">
-                  This becomes your primary SEO target — be as specific as possible.{' '}
+              {/* Keyword/Input Mode Toggle */}
+              <div className="form-group">
+                <div style={{ display: 'flex', gap: 8, marginBottom: 12 }}>
                   <button
                     type="button"
-                    className="be-examples-toggle"
-                    onClick={() => setShowExamples(v => !v)}
-                    aria-expanded={showExamples}
+                    className={`be-pill-btn${inputMode === 'write' ? ' active' : ''}`}
+                    onClick={() => setInputMode('write')}
+                    aria-pressed={inputMode === 'write'}
                   >
-                    {showExamples ? 'Hide' : 'See'} examples <Icons.ChevronDown />
+                    Write
+                  </button>
+                  <button
+                    type="button"
+                    className={`be-pill-btn${inputMode === 'voice' ? ' active' : ''}`}
+                    onClick={() => setInputMode('voice')}
+                    aria-pressed={inputMode === 'voice'}
+                  >
+                    Voice
                   </button>
                 </div>
-                {showExamples && (
-                  <div className="be-examples" role="listbox" aria-label="Keyword examples">
-                    {KEYWORD_EXAMPLES.map(ex => (
-                      <button
-                        key={ex}
-                        type="button"
-                        role="option"
-                        className="be-example-chip"
-                        onClick={() => { setKeyword(ex); setShowExamples(false); setKwError(''); keywordRef.current?.focus(); }}
-                      >
-                        {ex}
-                      </button>
-                    ))}
-                  </div>
-                )}
               </div>
+
+              {/* Keyword or Voice Input */}
+              {inputMode === 'write' ? (
+                <div className={`form-group${kwError ? ' has-error' : ''}`}> 
+                  <label className="form-label form-label-required" htmlFor="be-keyword">Target Keyword</label>
+                  <div className="search-input-wrapper">
+                    <input
+                      ref={keywordRef}
+                      id="be-keyword"
+                      className={`form-input${kwError ? ' is-invalid' : ''}`}
+                      placeholder="e.g. AI tools for Indian startups"
+                      value={keyword}
+                      onChange={e => { setKeyword(e.target.value); if (kwError) setKwError(''); }}
+                      onKeyDown={e => e.key === 'Enter' && generateBlog()}
+                      maxLength={120}
+                      aria-describedby="be-kw-hint be-kw-error"
+                      autoFocus
+                    />
+                    <span className="be-charcount" style={{ position: 'absolute', right: '12px', fontSize: '11px', color: kwCharCount > 100 ? 'var(--color-warning-400)' : 'var(--text-subtle)', pointerEvents: 'none' }}>
+                      {kwCharCount}/120
+                    </span>
+                  </div>
+                  {kwError && (
+                    <div className="form-error" id="be-kw-error" role="alert">
+                      <Icons.AlertCircle /> {kwError}
+                    </div>
+                  )}
+                  <div className="form-hint" id="be-kw-hint">
+                    This becomes your primary SEO target — be as specific as possible.{' '}
+                    <button
+                      type="button"
+                      className="be-examples-toggle"
+                      onClick={() => setShowExamples(v => !v)}
+                      aria-expanded={showExamples}
+                    >
+                      {showExamples ? 'Hide' : 'See'} examples <Icons.ChevronDown />
+                    </button>
+                  </div>
+                  {showExamples && (
+                    <div className="be-examples" role="listbox" aria-label="Keyword examples">
+                      {KEYWORD_EXAMPLES.map(ex => (
+                        <button
+                          key={ex}
+                          type="button"
+                          role="option"
+                          className="be-example-chip"
+                          onClick={() => { setKeyword(ex); setShowExamples(false); setKwError(''); keywordRef.current?.focus(); }}
+                        >
+                          {ex}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div className="form-group">
+                  <label className="form-label form-label-required">Voice Input</label>
+                  <VoiceRecorder
+                    onTranscriptReady={async text => {
+                      setVoiceTranscript(text);
+                      setKeyword(text); // Use transcript as keyword/context
+                      setIsExtractingContext(true);
+                      setAutoFillBadge(false);
+                      try {
+                        const context = await extractBlogContext(text);
+                        setIsExtractingContext(false);
+                        if (context && context.suggestedKeyword) {
+                          setKeyword(context.suggestedKeyword);
+                          // Tone matching (case-insensitive)
+                          const match = TONE_OPTIONS.find(t => t.label.toLowerCase() === (context.suggestedTone || '').toLowerCase());
+                          if (match) setTone(match.value);
+                          setAutoFillBadge(true);
+                          setTimeout(() => setAutoFillBadge(false), 4000);
+                        }
+                      } catch {
+                        setIsExtractingContext(false);
+                      }
+                    }}
+                  />
+                  {inputMode === "voice" && voiceTranscript === "" && (
+                    <p style={{color:"#EF4444",fontSize:"13px",marginTop:"8px"}}>
+                      Please record a voice note before generating.
+                    </p>
+                  )}
+                  <textarea
+                    className="form-textarea"
+                    rows={3}
+                    placeholder="Transcript will appear here..."
+                    value={voiceTranscript}
+                    onChange={e => {
+                      setVoiceTranscript(e.target.value);
+                      setKeyword(e.target.value);
+                    }}
+                    style={{ marginTop: 12, minHeight: 60 }}
+                  />
+                  <div className="form-hint">Edit the transcript if needed before generating your blog.</div>
+                </div>
+              )}
 
               {/* Tone */}
               <div className="form-group">
@@ -937,6 +1008,8 @@ Return ONLY a valid JSON object:
                   className="btn btn-primary btn-lg be-generate-btn"
                   onClick={generateBlog}
                   aria-label="Generate blog post"
+                  disabled={inputMode === "voice" && voiceTranscript === ""}
+                  style={{ opacity: inputMode === "voice" && voiceTranscript === "" ? 0.5 : 1, cursor: inputMode === "voice" && voiceTranscript === "" ? "not-allowed" : "pointer" }}
                 >
                   <Icons.Zap />
                   Generate Blog
