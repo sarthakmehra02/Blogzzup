@@ -758,39 +758,35 @@
   margin-top: var(--space-2);
 }
 
-.be-seo-ring {
+.be-seo-ring-container {
   position: relative;
-  width: 72px;
-  height: 72px;
+  width: 76px;
+  height: 76px;
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
 }
 
-.be-seo-ring::before {
-  content: '';
+.be-seo-ring-bar {
   position: absolute;
   inset: 0;
-  border-radius: var(--radius-full);
-  border: 6px solid var(--border-default);
+  border-radius: 50%;
+  /* background will be set via inline style */
 }
 
-.be-seo-ring::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: var(--radius-full);
-  border: 6px solid var(--color-success-500);
-  border-right-color: transparent;
-  border-bottom-color: transparent;
-  transform: rotate(-45deg);
-  animation: seo-ring-in var(--duration-slower) var(--ease-out) forwards;
+/* Use a mask on the bar only */
+.be-seo-ring-bar {
+  mask-image: radial-gradient(circle at center, transparent 30px, black 31px);
+  -webkit-mask-image: radial-gradient(circle at center, transparent 30px, black 31px);
 }
 
-@keyframes seo-ring-in {
-  from { transform: rotate(-45deg) scale(0.8); opacity: 0; }
-  to   { transform: rotate(-45deg) scale(1);   opacity: 1; }
+.be-seo-ring-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: 2;
 }
 
 .be-seo-val {

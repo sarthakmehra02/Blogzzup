@@ -538,7 +538,7 @@
 }
 .status-badge.gray {
   background: rgba(148, 163, 184, 0.1);
-  color: var(--text-muted);
+  color: #94A3B8;
   border-color: rgba(148, 163, 184, 0.2);
 }
 
@@ -645,6 +645,13 @@
   border: 1px solid rgba(251, 191, 36, 0.3);
 }
 
+.cal-cell.active-gray {
+  background: rgba(148, 163, 184, 0.08) !important;
+  color: #94A3B8;
+  font-weight: var(--font-medium);
+  border: 1px solid rgba(148, 163, 184, 0.2);
+}
+
 .cal-cell.today {
   background: rgba(124, 58, 237, 0.12);
   color: var(--color-primary-300);
@@ -658,6 +665,10 @@
   position: absolute;
   bottom: 3px;
 }
+
+.cal-dot.green { background: #10B981; }
+.cal-dot.amber { background: #F59E0B; }
+.cal-dot.gray { background: #94A3B8; }
 
 .cal-legend {
   display: flex;
@@ -838,3 +849,58 @@
   from { transform: translateX(0); opacity: 1; }
   to { transform: translateX(100%); opacity: 0; }
 }
+
+/* ═══════════════════════════════════════════════════════
+   [data-theme="light"] — Dashboard overrides
+   Tokens already flip via tokens.css; these override
+   hardcoded hex values used in inline styles & classes.
+   ═══════════════════════════════════════════════════════ */
+[data-theme="light"] .dashboard-layout { background: var(--bg-base); }
+[data-theme="light"] .sidebar          { background: #FFFFFF; border-right-color: rgba(0,0,0,0.08); }
+[data-theme="light"] .main-content     { background: var(--bg-base); }
+[data-theme="light"] .logo-text        { color: #0F172A; }
+[data-theme="light"] .nav-label        { color: #64748B; }
+[data-theme="light"] .nav-item         { color: #475569; }
+[data-theme="light"] .nav-item:hover   { background: rgba(0,0,0,0.04); color: #0F172A; }
+[data-theme="light"] .nav-item.active  { background: rgba(124,58,237,0.08); color: #6D28D9; }
+[data-theme="light"] .user-name        { color: #0F172A; }
+[data-theme="light"] .sidebar-footer   { border-top-color: rgba(0,0,0,0.08); }
+[data-theme="light"] .logout-btn       { color: #64748B; }
+[data-theme="light"] .logout-btn:hover { background: rgba(0,0,0,0.04); color: #0F172A; }
+
+/* Panel & card backgrounds */
+[data-theme="light"] .stat-dash-card          { background: #FFFFFF; border-color: rgba(0,0,0,0.06); }
+[data-theme="light"] .content-table-panel,
+[data-theme="light"] .calendar-panel          { background: #FFFFFF; border-color: rgba(0,0,0,0.06); }
+[data-theme="light"] .panel-header            { background: rgba(0,0,0,0.02); border-bottom-color: rgba(0,0,0,0.06); }
+
+/* Table */
+[data-theme="light"] .dash-table th           { border-bottom-color: rgba(0,0,0,0.06); color: #64748B; }
+[data-theme="light"] .dash-table td           { border-bottom-color: rgba(0,0,0,0.04); color: #1E293B; }
+[data-theme="light"] .dash-table tbody tr:hover { background: rgba(124,58,237,0.04); }
+
+/* Inline-style overrides (Dashboard JSX uses hardcoded colours) */
+[data-theme="light"] .dash-section            { color: #0F172A; }
+
+/* Action dropdown */
+[data-theme="light"] .action-dropdown {
+  background: #FFFFFF;
+  border-color: rgba(0,0,0,0.10);
+  box-shadow: 0 10px 15px -3px rgba(0,0,0,0.10);
+}
+[data-theme="light"] .action-dropdown button  { color: #1E293B; }
+[data-theme="light"] .action-dropdown button:hover { background: rgba(124,58,237,0.08); color: #6D28D9; }
+[data-theme="light"] .action-dropdown button.danger { color: #DC2626; }
+
+/* Toast */
+[data-theme="light"] .toast {
+  background: #FFFFFF;
+  color: #0F172A;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+}
+
+/* Dashboard greeting & headers */
+[data-theme="light"] .dashboard-greeting { color: #0F172A; }
+[data-theme="light"] .top-header h1      { color: #0F172A; -webkit-text-fill-color: #0F172A; background: none; }
+[data-theme="light"] .header-text h1     { color: #0F172A; -webkit-text-fill-color: #0F172A; background: none; }
+[data-theme="light"] .header-text p      { color: #475569; }

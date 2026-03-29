@@ -15,6 +15,7 @@
  */
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { createBlog, updateBlog } from './utils/blogStorage';
 
 // ─── Icons (inline SVG to avoid extra deps) ────────────────────────────────
 const Icon = ({ d, size = 16 }) => (
@@ -138,8 +139,17 @@ const SaveBanner = ({ message, type = 'success', onDismiss }) => (
   </div>
 );
 
+const API_KEYS = [
+  import.meta.env.VITE_API1, import.meta.env.VITE_API2, import.meta.env.VITE_API3,
+  import.meta.env.VITE_API4, import.meta.env.VITE_API5, import.meta.env.VITE_API6,
+  import.meta.env.VITE_API7, import.meta.env.VITE_API8, import.meta.env.VITE_API9,
+  import.meta.env.VITE_API10
+].filter(Boolean);
+
+const getScoreColor = (s) => s >= 90 ? '#10B981' : s >= 80 ? '#34D399' : s >= 70 ? '#FBBF24' : s >= 55 ? '#F59E0B' : '#EF4444';
+
 // ─── Main Component ──────────────────────────────────────────────────────────
-const BlogEditor = ({ callGemini, publishBlog }) => {
+const BlogEditor = ({ callGemini, publishBlog, uid }) => {
   // ── Form state ──
   const [keyword, setKeyword]         = useState('');
   const [tone, setTone]               = useState('professional');
@@ -172,6 +182,8 @@ const BlogEditor = ({ callGemini, publishBlog }) => {
   const [scheduledAt, setScheduledAt]         = useState('');
   const [historyOpen, setHistoryOpen]   = useState(false);
   const [versions, setVersions]         = useState([]);
+  const [detailedScores, setDetailedScores] = useState(null);
+  const [isAnalyzingSeo, setIsAnalyzingSeo] = useState(false);
 
   const keywordRef   = useRef(null);
   const bodyRef      = useRef(null);
@@ -187,13 +199,21 @@ const BlogEditor = ({ callGemini, publishBlog }) => {
   useEffect(() => {
     if (stage !== 'review' || !output) return;
     setAutoSaveStatus('saving');
-    const t = setTimeout(() => {
+    const t = setTimeout(async () => {
       // Persist edits to draft in localStorage
       const blogs = JSON.parse(localStorage.getItem('bf_blogs') || '[]');
       const idx = blogs.findIndex(b => b.id === output.id);
       if (idx !== -1) {
         blogs[idx] = { ...blogs[idx], title: editableTitle, body: editableBody, metaDescription: editableMeta };
         localStorage.setItem('bf_blogs', JSON.stringify(blogs));
+
+        // Also update Firestore if uid exists and blog has a Firestore ID
+        if (uid && output.firestoreId) {
+          try {
+            await updateBlog(uid, output.firestoreId, { title: editableTitle, body: editableBody, metaDescription: editableMeta });
+          } catch(e) { console.error('Auto-save to Firestore failed:', e); }
+        }
+
         setAutoSaveStatus('saved');
         setTimeout(() => setAutoSaveStatus(null), 2200);
       } else {
@@ -261,7 +281,7 @@ Format your response as valid JSON with exactly these fields:
 {
   "title": "SEO-optimized blog title with keyword, under 60 chars",
   "metaDescription": "Meta description under 155 chars with keyword and CTA",
-  "seoScore": 92,
+  "seoScore": <realistic_seo_score_0_to_100_based_on_content_quality>,
   "body": "Full blog content here"
 }
 
@@ -291,7 +311,8 @@ STRICT RULES for the body field:
         
         const titleMatch = cleaned.match(/"title"\s*:\s*"([^"]+)"/);
         const metaMatch = cleaned.match(/"metaDescription"\s*:\s*"([^"]+)"/);
-        const seoMatch = cleaned.match(/"seoScore"\s*:\s*(\d+)/);
+        const seoMatch = cleaned.match(/"seoScore":\s*(\d+)/);
+        const seoScoreValue = seoMatch ? parseInt(seoMatch[1]) : 85;
         
         // For body — extract everything between "body": " and the truncation point
         const bodyStart = cleaned.indexOf('"body"');
@@ -351,22 +372,48 @@ STRICT RULES for the body field:
   };
 
   // ── Actions ──────────────────────────────────────────────────────────────
-  const handleSaveDraft = useCallback(() => {
+  const handleSaveDraft = useCallback(async () => {
     if (!output) return;
-    const blogs  = JSON.parse(localStorage.getItem('bf_blogs') || '[]');
-    const exists = blogs.findIndex(b => b.id === output.id);
-    const entry  = {
+    const entry = {
       id: output.id, title: editableTitle, metaDescription: editableMeta,
       body: editableBody, seoScore: output.seoScore, keyword: output.keyword,
       status: 'draft', createdAt: output.createdAt,
     };
+
+    // Save to localStorage for real-time UI updates
+    const blogs = JSON.parse(localStorage.getItem('bf_blogs') || '[]');
+    const exists = blogs.findIndex(b => b.id === output.id);
     if (exists !== -1) blogs[exists] = entry; else blogs.unshift(entry);
     localStorage.setItem('bf_blogs', JSON.stringify(blogs));
+
+    // Save to Firestore if uid is available
+    if (uid) {
+      try {
+        if (output.firestoreId || typeof output.id === 'string') {
+          const fid = output.firestoreId || output.id;
+          await updateBlog(uid, fid, entry);
+        } else {
+          const fid = await createBlog(uid, entry);
+          // Standardize: use Firestore ID as the primary id
+          setOutput(prev => ({ ...prev, id: fid, firestoreId: fid }));
+          entry.id = fid;
+          // Update localStorage with the new ID
+          const latestBlogs = JSON.parse(localStorage.getItem('bf_blogs') || '[]');
+          const oldIdx = latestBlogs.findIndex(b => b.id === output.id);
+          if (oldIdx !== -1) {
+            latestBlogs[oldIdx] = entry;
+            localStorage.setItem('bf_blogs', JSON.stringify(latestBlogs));
+          }
+        }
+      } catch(e) { console.error('Firestore save failed:', e); }
+    }
+
+    if (window.loadDashboardBlogs) await window.loadDashboardBlogs();
     if (window.updateOverviewStats) window.updateOverviewStats();
     if (window.loadMyBlogs) window.loadMyBlogs();
     setSaveBanner({ message: 'Draft saved to My Blogs!', type: 'success' });
     setTimeout(() => setSaveBanner(null), 3500);
-  }, [output, editableTitle, editableMeta, editableBody]);
+  }, [output, editableTitle, editableMeta, editableBody, uid]);
 
   const handleCopy = useCallback(() => {
     if (!output) return;
@@ -380,7 +427,6 @@ STRICT RULES for the body field:
   const handlePublish = async () => {
     if (!output) return;
     
-    // Preparation is now skipped for a faster experience per user request
     setPreparedBlog({
       title: editableTitle,
       content: editableBody,
@@ -421,10 +467,26 @@ STRICT RULES for the body field:
         platform: pubPlatform
       };
 
+      if (uid) {
+        try {
+          let fid = output.firestoreId;
+          if (!fid) {
+            fid = await createBlog(uid, entry);
+            setOutput(prev => ({ ...prev, firestoreId: fid }));
+          } else {
+            await updateBlog(uid, fid, { ...entry, status: 'scheduled' });
+          }
+        } catch (err) {
+          setPubStatus('Error: Failed to save to database. ' + err.message);
+          return;
+        }
+      }
+
       if (bIdx !== -1) blogs[bIdx] = entry; else blogs.unshift(entry);
       localStorage.setItem('bf_blogs', JSON.stringify(blogs));
       
       setPubStatus('✓ Blog scheduled!');
+      if (window.loadDashboardBlogs) await window.loadDashboardBlogs();
       if (window.loadMyBlogs) window.loadMyBlogs();
       if (window.updateOverviewStats) window.updateOverviewStats();
 
@@ -445,14 +507,33 @@ STRICT RULES for the body field:
       });
       setPubStatus('✓ Published successfully!');
       
-      // Update status to published in localStorage
       const blogs = JSON.parse(localStorage.getItem('bf_blogs') || '[]');
       const bIdx = blogs.findIndex(b => b.id === output.id);
-      if (bIdx !== -1) {
-        blogs[bIdx].status = 'published';
-        localStorage.setItem('bf_blogs', JSON.stringify(blogs));
-        if (window.loadMyBlogs) window.loadMyBlogs();
+      const entry = {
+        id: output.id, title: editableTitle, metaDescription: editableMeta,
+        body: editableBody, seoScore: output.seoScore, keyword: output.keyword,
+        status: 'published', createdAt: output.createdAt,
+        platform: pubPlatform
+      };
+
+      if (uid) {
+        try {
+          let fid = output.firestoreId;
+          if (!fid) {
+            fid = await createBlog(uid, entry);
+            setOutput(prev => ({ ...prev, firestoreId: fid }));
+          } else {
+            await updateBlog(uid, fid, { ...entry, status: 'published' });
+          }
+        } catch (err) {
+          console.error("Failed to update status to published in Firestore:", err);
+        }
       }
+
+      if (bIdx !== -1) blogs[bIdx] = entry; else blogs.unshift(entry);
+      localStorage.setItem('bf_blogs', JSON.stringify(blogs));
+      if (window.loadDashboardBlogs) await window.loadDashboardBlogs();
+      if (window.loadMyBlogs) window.loadMyBlogs();
 
       setTimeout(() => {
         setShowPubModal(false);
@@ -468,11 +549,61 @@ STRICT RULES for the body field:
     setEditableTitle(v.title);
     setEditableBody(v.body);
     setEditableMeta(v.metaDescription);
+    setDetailedScores(null);
     setHistoryOpen(false);
     setStage('review');
     setSaveBanner({ message: 'Version restored — review your content below.', type: 'success' });
     setTimeout(() => setSaveBanner(null), 3500);
   }, []);
+
+  const runDetailedSeoScore = async () => {
+    if (!editableBody.trim()) return;
+    setIsAnalyzingSeo(true);
+    setDetailedScores(null);
+
+    const wordCount = editableBody.trim().split(/\s+/).filter(w => w).length;
+    const escapedKeyword = (output?.keyword || keyword).trim().toLowerCase().replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
+    const kwCount = (editableBody.toLowerCase().match(new RegExp(`\\b${escapedKeyword}\\b`, 'g')) || 
+                    editableBody.toLowerCase().match(new RegExp(escapedKeyword, 'g')) || []).length;
+    const kwDensity = wordCount > 0 ? ((kwCount / wordCount) * 100).toFixed(2) : 0;
+
+    const prompt = `You are an expert SEO auditor. Analyze this blog content for SEO quality.
+
+Target keyword: "${(output?.keyword || keyword).trim()}"
+Word count: ${wordCount}
+Keyword density: ${kwDensity}%
+Full Content (clipped if too long): ${editableBody.substring(0, 6000)}
+
+Return ONLY a valid JSON object:
+{
+  "overallScore": <integer 0-100>,
+  "titleOptimization": <integer 0-100>,
+  "metaDescription": <integer 0-100>,
+  "keywordDensityScore": <integer 0-100>,
+  "contentDepth": <integer 0-100>,
+  "readabilityScore": <integer 0-100>,
+  "internalLinks": <integer 0-100>,
+  "snippetEligibility": <integer 0-100>,
+  "aiDetectionRisk": <integer 0-100>,
+  "nlpEntities": <integer 0-100>,
+  "schemaMarkup": <integer 0-100>,
+  "fleschScore": <integer 0-100>,
+  "recommendations": ["specific actionable recommendation 1", "rec 2", "rec 3", "rec 4", "rec 5"]
+}`;
+
+    try {
+      const raw = await callGemini(prompt, 1500);
+      const res = JSON.parse(raw);
+      setDetailedScores({...res, kwDensity});
+      // Optionally update the main score
+      setOutput(prev => ({ ...prev, seoScore: res.overallScore }));
+    } catch (err) {
+      setSaveBanner({ message: 'SEO Analysis failed: ' + err.message, type: 'error' });
+      setTimeout(() => setSaveBanner(null), 3500);
+    } finally {
+      setIsAnalyzingSeo(false);
+    }
+  };
 
   const handleReset = () => {
     setStage('configure');
@@ -1011,15 +1142,50 @@ STRICT RULES for the body field:
 
                 {/* SEO score card */}
                 <div className="be-seo-card">
-                  <div className="be-seo-ring" style={{ '--seo-pct': `${(output.seoScore / 100) * 251}px` }}>
-                    <span className="be-seo-val">{output.seoScore}</span>
-                    <span className="be-seo-unit">/100</span>
+                  <div className="be-seo-ring-container">
+                    <div 
+                      className="be-seo-ring-bar" 
+                      style={{ 
+                        background: `conic-gradient(${getScoreColor(detailedScores?.overallScore || output.seoScore)} ${(detailedScores?.overallScore || output.seoScore)}%, var(--bg-overlay) 0%)` 
+                      }}
+                    />
+                    <div className="be-seo-ring-inner">
+                      <span className="be-seo-val">{detailedScores?.overallScore || output.seoScore}</span>
+                      <span className="be-seo-unit">/100</span>
+                    </div>
                   </div>
                   <div className="be-seo-label">SEO Score</div>
                   <div className="be-seo-desc">
-                    {output.seoScore >= 90 ? '🟢 Excellent' : output.seoScore >= 75 ? '🟡 Good' : '🔴 Needs work'}
+                    {(detailedScores?.overallScore || output.seoScore) >= 90 ? '🟢 Excellent' : (detailedScores?.overallScore || output.seoScore) >= 75 ? '🟡 Good' : '🔴 Needs work'}
                   </div>
+                  
+                  <button 
+                    className="btn btn-sm btn-ghost" 
+                    style={{ width: '100%', marginTop: 'var(--space-3)', fontSize: '11px', height: 'auto', padding: '6px' }}
+                    onClick={runDetailedSeoScore}
+                    disabled={isAnalyzingSeo}
+                  >
+                    {isAnalyzingSeo ? '⌛ Analyzing...' : '📊 Run Detailed Analysis'}
+                  </button>
                 </div>
+
+                {detailedScores && (
+                  <div className="be-seo-breakdown" style={{ marginTop: 'var(--space-4)', background: 'rgba(255,255,255,0.02)', borderRadius: '12px', padding: '12px', border: '1px solid rgba(255,255,255,0.04)' }}>
+                     <div style={{ fontSize: '11px', color: 'var(--text-subtle)', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Metrics</div>
+                     {[
+                       { label: 'Title', key: 'titleOptimization' },
+                       { label: 'Density', key: 'keywordDensityScore' },
+                       { label: 'Depth', key: 'contentDepth' },
+                       { label: 'Readability', key: 'readabilityScore' },
+                       { label: 'AI Safety', key: 'aiDetectionRisk' }
+                     ].map(m => (
+                       <div key={m.key} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px', fontSize: '12px' }}>
+                         <span style={{ color: 'var(--text-muted)' }}>{m.label}</span>
+                         <span style={{ color: detailedScores[m.key] >= 80 ? 'var(--color-success-400)' : detailedScores[m.key] >= 60 ? 'var(--color-warning-400)' : 'var(--color-danger-400)', fontWeight: 700 }}>{detailedScores[m.key]}</span>
+                       </div>
+                     ))}
+                  </div>
+                )}
 
                 <div className="be-action-section-title" style={{ marginTop: 'var(--space-4)' }}>Shortcuts</div>
                 <div className="be-shortcut-list">
