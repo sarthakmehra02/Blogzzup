@@ -1484,7 +1484,7 @@ Use clear headings and keep it actionable. Write in a professional consulting to
       {/* Main Content */}
       <main className="main-content" style={{ overflowY: 'auto' }}>
         {/* Overview Section */}
-        <div id="dash-overview" className="dash-section" style={{ display: 'block' }}>
+        <div id="dash-overview" className="dash-section" style={{ display: 'block', padding: '40px', color: '#fff' }}>
           <header className="top-header">
             <div className="header-text">
               <h1 className="dashboard-greeting">Good morning 👋</h1>

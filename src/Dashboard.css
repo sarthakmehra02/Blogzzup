@@ -12,6 +12,8 @@
   color: var(--text-primary);
   font-family: var(--font-sans);
   overflow: hidden;
+  gap: var(--space-4);
+  padding-right: var(--space-4); /* Add some space on the right edge too */
 }
 
 /* ─── Sidebar ─── */
@@ -272,9 +274,14 @@
   display: flex;
   flex-direction: column;
   overflow-y: auto;
-  background: var(--bg-base);
+  background: var(--bg-surface);
   scrollbar-width: thin;
   scrollbar-color: var(--border-default) transparent;
+  border-left: 1px solid var(--border-subtle);
+  border-radius: var(--radius-2xl) 0 0 var(--radius-2xl);
+  margin-top: var(--space-4);
+  margin-bottom: var(--space-4);
+  box-shadow: var(--shadow-card);
 }
 
 /* Grid background pattern */
