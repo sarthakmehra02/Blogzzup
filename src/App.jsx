@@ -1,14 +1,14 @@
 import React, { useEffect, useState, useRef } from 'react';
-import {
-  Sparkles,
-  ArrowRight,
-  Play,
-  Star,
-  LineChart,
-  Search,
-  UploadCloud,
-  PenTool,
-  Globe,
+import { 
+  Sparkles, 
+  ArrowRight, 
+  Play, 
+  Star, 
+  LineChart, 
+  Search, 
+  UploadCloud, 
+  PenTool, 
+  Globe, 
   Network,
   Clock,
   TrendingUp,
@@ -37,9 +37,7 @@ import {
   Menu,
   X,
   ArrowUp,
-  ArrowLeft,
-  Moon,
-  Sun
+  ArrowLeft
 } from 'lucide-react';
 import './index.css';
 import './interactions.css';
@@ -49,7 +47,7 @@ import { useAuth } from './AuthContext';
 const AnimatedCounter = ({ endValue, suffix = "" }) => {
   const [count, setCount] = useState(0);
   const ref = useRef(null);
-
+  
   useEffect(() => {
     const observer = new IntersectionObserver(([entry]) => {
       if (entry.isIntersecting) {
@@ -108,15 +106,15 @@ const HowItWorksAccordion = () => {
   ];
 
   return (
-    <div className="accordion-section" style={{ maxWidth: '800px', margin: '0 auto', paddingBottom: '8rem' }}>
+    <div className="accordion-section" style={{maxWidth: '800px', margin: '0 auto', paddingBottom: '8rem'}}>
       <h2 className="accordion-section-title">The 7-Stage Prompt Architecture</h2>
       <p className="accordion-subtitle">The exact prompt pipeline that turns a keyword into a ranking blog</p>
       {items.map((item, idx) => (
-        <AccordionItem
-          key={idx}
-          {...item}
-          isOpen={activeIdx === idx}
-          onClick={() => setActiveIdx(activeIdx === idx ? null : idx)}
+        <AccordionItem 
+          key={idx} 
+          {...item} 
+          isOpen={activeIdx === idx} 
+          onClick={() => setActiveIdx(activeIdx === idx ? null : idx)} 
         />
       ))}
       <div className="cta-bottom">
@@ -147,47 +145,47 @@ const FeatureCard = ({ icon, title, description, bullets, mockUI }) => (
 
 const TabContent = () => (
   <div className="tab-panel-container">
-    <FeatureCard
-      icon="🧠"
-      title="7-Stage Prompt Architecture"
-      description="Our multi-stage pipeline converts any keyword into a full ranking blog. Each stage has a specific role — from intent analysis to schema injection."
+    <FeatureCard 
+      icon="🧠" 
+      title="7-Stage Prompt Architecture" 
+      description="Our multi-stage pipeline converts any keyword into a full ranking blog. Each stage has a specific role — from intent analysis to schema injection." 
       bullets={["Keyword clustering + intent detection", "Role-based prompt templates", "Naturalness + humanization pass"]}
       mockUI={
         <div className="mock-ui-stages">
-          {['Intent Analysis', 'SERP Gap', 'Content Brief', 'Drafting', 'SEO Pass', 'Humanization', 'Schema'].map((s, i) => (
-            <div key={i} className="mock-stage"><span className="mock-stage-num">{i + 1}</span> {s}</div>
+          {[ 'Intent Analysis', 'SERP Gap', 'Content Brief', 'Drafting', 'SEO Pass', 'Humanization', 'Schema' ].map((s, i) => (
+            <div key={i} className="mock-stage"><span className="mock-stage-num">{i+1}</span> {s}</div>
           ))}
         </div>
       }
     />
-    <FeatureCard
-      icon="🎙️"
-      title="Speak It. We Write It."
-      description="Record a 60-second voice note about your topic. BlogzzUP transcribes it, structures it, and outputs a full SEO-optimized blog post."
+    <FeatureCard 
+      icon="🎙️" 
+      title="Speak It. We Write It." 
+      description="Record a 60-second voice note about your topic. BlogzzUP transcribes it, structures it, and outputs a full SEO-optimized blog post." 
       bullets={["Powered by OpenAI Whisper API", "Auto-structures your spoken ideas", "Full SEO pass on transcription"]}
       mockUI={
-        <div style={{ textAlign: 'center' }}>
+        <div style={{textAlign: 'center'}}>
           <div className="mock-waveform-container">
-            <div className="mock-wave-bar" style={{ animationDelay: '0.1s' }}></div>
-            <div className="mock-wave-bar" style={{ animationDelay: '0.3s' }}></div>
-            <div className="mock-wave-bar" style={{ animationDelay: '0.5s' }}></div>
-            <div className="mock-wave-bar" style={{ animationDelay: '0.2s' }}></div>
-            <div className="mock-wave-bar" style={{ animationDelay: '0.8s' }}></div>
-            <div className="mock-wave-bar" style={{ animationDelay: '0.4s' }}></div>
-            <div className="mock-wave-bar" style={{ animationDelay: '0.6s' }}></div>
-            <div className="mock-wave-bar" style={{ animationDelay: '0.1s' }}></div>
-            <div className="mock-wave-bar" style={{ animationDelay: '0.9s' }}></div>
-            <div className="mock-wave-bar" style={{ animationDelay: '0.3s' }}></div>
+            <div className="mock-wave-bar" style={{animationDelay: '0.1s'}}></div>
+            <div className="mock-wave-bar" style={{animationDelay: '0.3s'}}></div>
+            <div className="mock-wave-bar" style={{animationDelay: '0.5s'}}></div>
+            <div className="mock-wave-bar" style={{animationDelay: '0.2s'}}></div>
+            <div className="mock-wave-bar" style={{animationDelay: '0.8s'}}></div>
+            <div className="mock-wave-bar" style={{animationDelay: '0.4s'}}></div>
+            <div className="mock-wave-bar" style={{animationDelay: '0.6s'}}></div>
+            <div className="mock-wave-bar" style={{animationDelay: '0.1s'}}></div>
+            <div className="mock-wave-bar" style={{animationDelay: '0.9s'}}></div>
+            <div className="mock-wave-bar" style={{animationDelay: '0.3s'}}></div>
           </div>
-          <div style={{ color: '#EF4444', fontSize: '12px', fontWeight: 'bold', marginBottom: '16px' }}>● Recording... 0:23</div>
-          <button className="btn btn-primary" style={{ padding: '8px 16px', fontSize: '13px' }} onClick={() => window.showPage('auth')}>Generate Blog</button>
+          <div style={{color: '#EF4444', fontSize: '12px', fontWeight: 'bold', marginBottom: '16px'}}>● Recording... 0:23</div>
+          <button className="btn btn-primary" style={{padding: '8px 16px', fontSize: '13px'}} onClick={() => window.showPage('auth')}>Generate Blog</button>
         </div>
       }
     />
-    <FeatureCard
-      icon="🎯"
-      title="Your Voice. Every Post."
-      description="Paste 3 of your best blogs and BlogzzUP learns your writing style. Every generated post matches your tone, vocabulary, and structure."
+    <FeatureCard 
+      icon="🎯" 
+      title="Your Voice. Every Post." 
+      description="Paste 3 of your best blogs and BlogzzUP learns your writing style. Every generated post matches your tone, vocabulary, and structure." 
       bullets={["Trains on your existing content", "Tone consistency across all posts", "Customize formality level"]}
       mockUI={
         <div>
@@ -211,10 +209,10 @@ const TabContent = () => (
 
 const TabSeo = () => (
   <div className="tab-panel-container">
-    <FeatureCard
-      icon="🔍"
-      title="Find What Competitors Miss"
-      description="Analyzes the top 10 SERP results for your keyword and surfaces topics your competitors don't cover — your opportunity to rank."
+    <FeatureCard 
+      icon="🔍" 
+      title="Find What Competitors Miss" 
+      description="Analyzes the top 10 SERP results for your keyword and surfaces topics your competitors don't cover — your opportunity to rank." 
       bullets={["Live SERP data analysis", "Unanswered question detection", "Featured snippet flagging"]}
       mockUI={
         <table className="mock-table">
@@ -222,35 +220,35 @@ const TabSeo = () => (
             <tr><th>Topic Gap</th><th>Coverage</th><th>Score</th></tr>
           </thead>
           <tbody>
-            <tr><td>API Pricing</td><td>2/10 URLs</td><td><span style={{ color: '#10B981' }}>High</span></td></tr>
-            <tr><td>Webhook Setup</td><td>0/10 URLs</td><td><span style={{ color: '#10B981' }}>High</span></td></tr>
-            <tr><td>Auth Flow</td><td>8/10 URLs</td><td><span style={{ color: '#EF4444' }}>Low</span></td></tr>
+            <tr><td>API Pricing</td><td>2/10 URLs</td><td><span style={{color:'#10B981'}}>High</span></td></tr>
+            <tr><td>Webhook Setup</td><td>0/10 URLs</td><td><span style={{color:'#10B981'}}>High</span></td></tr>
+            <tr><td>Auth Flow</td><td>8/10 URLs</td><td><span style={{color:'#EF4444'}}>Low</span></td></tr>
           </tbody>
         </table>
       }
     />
-    <FeatureCard
-      icon="📊"
-      title="Score As You Write"
-      description="10-metric real-time scoring dashboard that updates with every word. Know your SEO score before you hit publish."
+    <FeatureCard 
+      icon="📊" 
+      title="Score As You Write" 
+      description="10-metric real-time scoring dashboard that updates with every word. Know your SEO score before you hit publish." 
       bullets={["Keyword density + readability", "AI detection percentage", "Snippet eligibility check"]}
       mockUI={
         <div>
           <div className="mock-ring">
             <div className="mock-ring-inner">94</div>
           </div>
-          <div style={{ fontSize: '11px', color: '#94A3B8', display: 'flex', flexDirection: 'column', gap: '6px', alignItems: 'center' }}>
-            <div><span style={{ color: '#10B981' }}>✓</span> Density 1.8%</div>
-            <div><span style={{ color: '#10B981' }}>✓</span> AI Detection 3%</div>
-            <div><span style={{ color: '#10B981' }}>✓</span> Snippet Ready</div>
+          <div style={{fontSize: '11px', color: '#94A3B8', display: 'flex', flexDirection: 'column', gap: '6px', alignItems: 'center'}}>
+            <div><span style={{color:'#10B981'}}>✓</span> Density 1.8%</div>
+            <div><span style={{color:'#10B981'}}>✓</span> AI Detection 3%</div>
+            <div><span style={{color:'#10B981'}}>✓</span> Snippet Ready</div>
           </div>
         </div>
       }
     />
-    <FeatureCard
-      icon="🌍"
-      title="Rank in Every Indian City"
-      description="Automatically injects city-level signals, regional entities, and local schema markup. Target Delhi, Mumbai, Bangalore — or all three."
+    <FeatureCard 
+      icon="🌍" 
+      title="Rank in Every Indian City" 
+      description="Automatically injects city-level signals, regional entities, and local schema markup. Target Delhi, Mumbai, Bangalore — or all three." 
       bullets={["City + region-level signals", "Local schema auto-injection", "Multi-location targeting"]}
       mockUI={
         <div className="mock-india-map">
@@ -265,10 +263,10 @@ const TabSeo = () => (
 
 const TabPublishing = () => (
   <div className="tab-panel-container">
-    <FeatureCard
-      icon="🚀"
-      title="Publish Everywhere Automatically"
-      description="Connect your CMS once and every blog auto-publishes on schedule. Supports WordPress, Webflow, Shopify, Ghost, Strapi, Sanity, and custom webhooks."
+    <FeatureCard 
+      icon="🚀" 
+      title="Publish Everywhere Automatically" 
+      description="Connect your CMS once and every blog auto-publishes on schedule. Supports WordPress, Webflow, Shopify, Ghost, Strapi, Sanity, and custom webhooks." 
       bullets={["6 native CMS integrations", "Custom webhook support", "Schedule queue with calendar view"]}
       mockUI={
         <div className="mock-cms-grid">
@@ -281,25 +279,25 @@ const TabPublishing = () => (
         </div>
       }
     />
-    <FeatureCard
-      icon="📅"
-      title="Your Entire Content Plan. Automated."
-      description="AI-generated publishing schedule based on your niche trends and SERP opportunities. See the next 30 days of content at a glance."
+    <FeatureCard 
+      icon="📅" 
+      title="Your Entire Content Plan. Automated." 
+      description="AI-generated publishing schedule based on your niche trends and SERP opportunities. See the next 30 days of content at a glance." 
       bullets={["AI-planned schedule", "Drag-and-drop rescheduling", "Topic preview per date"]}
       mockUI={
         <div className="mock-calendar">
-          {Array.from({ length: 20 }).map((_, i) => (
-            <div key={i} className="mock-cal-day">
-              {[2, 5, 8, 12, 18, 19].includes(i) && <div className="mock-cal-dot" style={{ background: i % 2 === 0 ? '#10B981' : '#7C3AED' }}></div>}
-            </div>
+          {Array.from({length: 20}).map((_, i) => (
+             <div key={i} className="mock-cal-day">
+               {[2, 5, 8, 12, 18, 19].includes(i) && <div className="mock-cal-dot" style={{background: i % 2 === 0 ? '#10B981' : '#7C3AED'}}></div>}
+             </div>
           ))}
         </div>
       }
     />
-    <FeatureCard
-      icon="🔁"
-      title="One Blog = 10 Content Pieces"
-      description="Every published blog automatically generates LinkedIn posts, Twitter/X threads, Instagram captions, and WhatsApp-ready summaries."
+    <FeatureCard 
+      icon="🔁" 
+      title="One Blog = 10 Content Pieces" 
+      description="Every published blog automatically generates LinkedIn posts, Twitter/X threads, Instagram captions, and WhatsApp-ready summaries." 
       bullets={["LinkedIn long-form post", "Twitter/X thread (10 tweets)", "Instagram caption + hashtags"]}
       mockUI={
         <div className="mock-social-split">
@@ -319,36 +317,36 @@ const TabPublishing = () => (
 
 const TabAnalytics = () => (
   <div className="tab-panel-container">
-    <FeatureCard
-      icon="📈"
-      title="See Exactly What's Working"
-      description="Track keyword rankings, organic traffic delta, and estimated revenue attribution per blog post. Know your ROI to the rupee."
+    <FeatureCard 
+      icon="📈" 
+      title="See Exactly What's Working" 
+      description="Track keyword rankings, organic traffic delta, and estimated revenue attribution per blog post. Know your ROI to the rupee." 
       bullets={["Per-post traffic attribution", "Keyword position tracking", "Revenue delta estimation"]}
       mockUI={
-        <div style={{ textAlign: 'center' }}>
+        <div style={{textAlign: 'center'}}>
           <div className="mock-bar-chart">
-            <div className="mock-bar" style={{ height: '30%' }}></div>
-            <div className="mock-bar" style={{ height: '50%' }}></div>
-            <div className="mock-bar" style={{ height: '40%' }}></div>
-            <div className="mock-bar" style={{ height: '70%' }}></div>
-            <div className="mock-bar" style={{ height: '90%' }}></div>
-            <div className="mock-bar" style={{ height: '100%', background: '#06B6D4', boxShadow: '0 0 10px #06B6D4' }}></div>
+            <div className="mock-bar" style={{height: '30%'}}></div>
+            <div className="mock-bar" style={{height: '50%'}}></div>
+            <div className="mock-bar" style={{height: '40%'}}></div>
+            <div className="mock-bar" style={{height: '70%'}}></div>
+            <div className="mock-bar" style={{height: '90%'}}></div>
+            <div className="mock-bar" style={{height: '100%', background: '#06B6D4', boxShadow: '0 0 10px #06B6D4'}}></div>
           </div>
-          <div style={{ color: '#10B981', fontSize: '11px', fontWeight: 'bold' }}>↑ 2,340 visits this month</div>
+          <div style={{color: '#10B981', fontSize: '11px', fontWeight: 'bold'}}>↑ 2,340 visits this month</div>
         </div>
       }
     />
-    <FeatureCard
-      icon="🗺️"
-      title="See Your Content Universe"
-      description="Visual network graph of your published and planned topics. See clusters, spot gaps, and generate new content with one click."
+    <FeatureCard 
+      icon="🗺️" 
+      title="See Your Content Universe" 
+      description="Visual network graph of your published and planned topics. See clusters, spot gaps, and generate new content with one click." 
       bullets={["Interactive topic network", "Coverage gap highlighting", "One-click blog from gap"]}
       mockUI={
         <div className="mock-cluster-network">
-          <div className="mock-cluster-line" style={{ transform: 'rotate(0deg)', width: '60px' }}></div>
-          <div className="mock-cluster-line" style={{ transform: 'rotate(90deg)', width: '60px' }}></div>
-          <div className="mock-cluster-line" style={{ transform: 'rotate(180deg)', width: '60px' }}></div>
-          <div className="mock-cluster-line" style={{ transform: 'rotate(270deg)', width: '60px' }}></div>
+          <div className="mock-cluster-line" style={{transform: 'rotate(0deg)', width: '60px'}}></div>
+          <div className="mock-cluster-line" style={{transform: 'rotate(90deg)', width: '60px'}}></div>
+          <div className="mock-cluster-line" style={{transform: 'rotate(180deg)', width: '60px'}}></div>
+          <div className="mock-cluster-line" style={{transform: 'rotate(270deg)', width: '60px'}}></div>
           <div className="mock-cluster-center">AI Tools</div>
           <div className="mock-cluster-node mcn-1"></div>
           <div className="mock-cluster-node mcn-2"></div>
@@ -357,26 +355,26 @@ const TabAnalytics = () => (
         </div>
       }
     />
-    <FeatureCard
-      icon="🏆"
-      title="Know What Your Rivals Publish"
-      description="Monitor competitor blogs in real time. Get notified when they publish, see their SEO scores, and auto-generate a better version."
+    <FeatureCard 
+      icon="🏆" 
+      title="Know What Your Rivals Publish" 
+      description="Monitor competitor blogs in real time. Get notified when they publish, see their SEO scores, and auto-generate a better version." 
       bullets={["Real-time competitor monitoring", "SEO score comparison", "Auto-generate competing post"]}
       mockUI={
-        <div style={{ width: '100%', display: 'flex', flexDirection: 'column' }}>
+        <div style={{width: '100%', display: 'flex', flexDirection: 'column'}}>
           <div className="mock-competitor-row">
-            <span style={{ fontWeight: 'bold' }}>seoblues.com</span>
-            <span style={{ color: '#94A3B8' }}>2d ago</span>
+            <span style={{fontWeight: 'bold'}}>seoblues.com</span>
+            <span style={{color: '#94A3B8'}}>2d ago</span>
             <button className="mock-comp-btn" onClick={() => window.showPage('auth')}>Beat This</button>
           </div>
           <div className="mock-competitor-row">
-            <span style={{ fontWeight: 'bold' }}>contentai.io</span>
-            <span style={{ color: '#94A3B8' }}>5d ago</span>
+            <span style={{fontWeight: 'bold'}}>contentai.io</span>
+            <span style={{color: '#94A3B8'}}>5d ago</span>
             <button className="mock-comp-btn" onClick={() => window.showPage('auth')}>Beat This</button>
           </div>
-          <div className="mock-competitor-row" style={{ border: 'none' }}>
-            <span style={{ fontWeight: 'bold' }}>rankmaker.in</span>
-            <span style={{ color: '#94A3B8' }}>1w ago</span>
+          <div className="mock-competitor-row" style={{border: 'none'}}>
+            <span style={{fontWeight: 'bold'}}>rankmaker.in</span>
+            <span style={{color: '#94A3B8'}}>1w ago</span>
             <button className="mock-comp-btn" onClick={() => window.showPage('auth')}>Beat This</button>
           </div>
         </div>
@@ -396,18 +394,18 @@ const FeaturesPage = () => {
   ];
 
   return (
-    <div className="container" style={{ paddingTop: '8rem', paddingBottom: '8rem' }}>
-      <div className="features-header" style={{ textAlign: 'center', marginBottom: '48px' }}>
-        <h1 style={{ fontSize: '48px', fontWeight: 800, color: '#fff', lineHeight: 1.1 }}>
+    <div className="container" style={{paddingTop: '8rem', paddingBottom: '8rem'}}>
+      <div className="features-header" style={{textAlign: 'center', marginBottom: '48px'}}>
+        <h1 style={{fontSize: '48px', fontWeight: 800, color: '#fff', lineHeight: 1.1}}>
           Every Tool You Need.<br />
-          <span style={{ background: 'linear-gradient(135deg, #7C3AED, #06B6D4)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Nothing You Don't.</span>
+          <span style={{background: 'linear-gradient(135deg, #7C3AED, #06B6D4)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent'}}>Nothing You Don't.</span>
         </h1>
-        <p style={{ color: '#94A3B8', marginTop: '12px', fontSize: '18px' }}>Nine specialized AI tools working together as one platform</p>
+        <p style={{color: '#94A3B8', marginTop: '12px', fontSize: '18px'}}>Nine specialized AI tools working together as one platform</p>
       </div>
 
-      <div className="feature-tabs" style={{ display: 'flex', gap: '8px', justifyContent: 'center', marginBottom: '48px' }}>
+      <div className="feature-tabs" style={{display: 'flex', gap: '8px', justifyContent: 'center', marginBottom: '48px'}}>
         {tabs.map(tab => (
-          <button
+          <button 
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
             className={`feature-tab-btn ${activeTab === tab.id ? 'active' : ''}`}
@@ -424,17 +422,17 @@ const FeaturesPage = () => {
         {activeTab === 'analytics' && <TabAnalytics />}
       </div>
 
-      <div className="comparison-table-section" style={{ marginTop: '80px' }}>
-        <h2 style={{ textAlign: 'center', fontSize: '28px', color: '#fff', marginBottom: '32px' }}>How We Stack Up</h2>
-        <div style={{ borderRadius: '16px', overflow: 'hidden', border: '1px solid rgba(255,255,255,0.06)' }}>
-          <table className="comp-table" style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '15px' }}>
+      <div className="comparison-table-section" style={{marginTop: '80px'}}>
+        <h2 style={{textAlign: 'center', fontSize: '28px', color: '#fff', marginBottom: '32px'}}>How We Stack Up</h2>
+        <div style={{borderRadius: '16px', overflow: 'hidden', border: '1px solid rgba(255,255,255,0.06)'}}>
+          <table className="comp-table" style={{width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '15px'}}>
             <thead>
-              <tr style={{ background: '#141B2D', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
-                <th style={{ padding: '16px 20px', color: '#fff' }}>Feature</th>
-                <th style={{ padding: '16px 20px', color: '#7C3AED', fontWeight: 700 }}>BlogzzUP</th>
-                <th style={{ padding: '16px 20px', color: '#fff' }}>Blogy</th>
-                <th style={{ padding: '16px 20px', color: '#fff' }}>Jasper</th>
-                <th style={{ padding: '16px 20px', color: '#fff' }}>Manual</th>
+              <tr style={{background: '#141B2D', borderBottom: '1px solid rgba(255,255,255,0.06)'}}>
+                <th style={{padding: '16px 20px', color: '#fff'}}>Feature</th>
+                <th style={{padding: '16px 20px', color: '#7C3AED', fontWeight: 700}}>BlogzzUP</th>
+                <th style={{padding: '16px 20px', color: '#fff'}}>Blogy</th>
+                <th style={{padding: '16px 20px', color: '#fff'}}>Jasper</th>
+                <th style={{padding: '16px 20px', color: '#fff'}}>Manual</th>
               </tr>
             </thead>
             <tbody>
@@ -503,141 +501,278 @@ const FeaturesPage = () => {
 };
 
 
+const demoInitialMessages = [
+  { role: 'user', text: 'Write an SEO blog about AI tools for Indian startups' },
+  { role: 'ai', text: 'Analyzing SERP gap... Found 3 low-competition keywords ✓\nClustering topics... Done ✓\nDrafting blog with 94% SEO score... ✓\nGenerating featured snippet structure... ✓' },
+  { role: 'user', text: 'Optimize for GEO — target Delhi and Bangalore' },
+  { role: 'ai', text: 'Adding location-specific entities... ✓\nInjecting local search modifiers... ✓\nApplying regional schema markup... ✓\nYour blog is ready to publish!' }
+];
+
+window.renderDemoMessage = function(msg) {
+  const isUser = msg.role === 'user';
+  const div = document.createElement('div');
+  div.style.cssText = 'display:flex; ' + (isUser ? 'justify-content:flex-end' : 'justify-content:flex-start');
+  div.innerHTML = '<div style="' +
+    'max-width:82%; padding:11px 16px; font-size:13px; line-height:1.6; white-space:pre-wrap;' +
+    (isUser 
+      ? 'background:#7C3AED; color:white; border-radius:18px 18px 4px 18px;'
+      : 'background:#141B2D; color:#94A3B8; border-radius:18px 18px 18px 4px;') +
+    '">' + msg.text + '</div>';
+  return div;
+};
+
+window.initDemoChat = function() {
+  const container = document.getElementById('demo-chat-messages');
+  if (!container) return;
+  container.innerHTML = '';
+  demoInitialMessages.forEach(msg => container.appendChild(window.renderDemoMessage(msg)));
+  container.scrollTop = container.scrollHeight;
+};
+
+window.sendDemoMessage = async function() {
+  const input = document.getElementById('demo-chat-input');
+  
+  if (!input) {
+    console.error('demo-chat-input element not found in DOM');
+    return;
+  }
+  
+  const keyword = input.value.trim();
+  
+  if (!keyword) {
+    input.style.borderColor = '#EF4444';
+    setTimeout(() => { input.style.borderColor = 'rgba(255,255,255,0.08)'; }, 2000);
+    return;
+  }
+
+  const container = document.getElementById('demo-chat-messages');
+  const btn = document.getElementById('demo-send-btn');
+
+  container.appendChild(window.renderDemoMessage({ role: 'user', text: keyword }));
+  container.scrollTop = container.scrollHeight;
+  input.value = '';
+  if (btn) {
+    btn.disabled = true;
+    btn.style.opacity = '0.5';
+  }
+
+  const thinkingDiv = document.createElement('div');
+  thinkingDiv.style.cssText = 'display:flex; justify-content:flex-start;';
+  thinkingDiv.innerHTML = '<div style="background:#141B2D; color:#94A3B8; border-radius:18px 18px 18px 4px; padding:11px 16px; font-size:13px;">⏳ Analyzing keyword...</div>';
+  container.appendChild(thinkingDiv);
+  container.scrollTop = container.scrollHeight;
+
+  const prompt = `You are BlogForge AI, an expert SEO content engine assistant. \nThe user just typed: "${keyword}"\n\nRespond in 3-4 short lines as if you are an AI engine processing their request. \nShow a realistic step-by-step processing response like:\n- Analyzing SERP gap for "${keyword}"... Found X low-competition keywords ✓\n- Identifying content gaps vs top 10 competitors... ✓  \n- Drafting SEO blog outline with XX% optimization score... ✓\n- Structuring for featured snippet eligibility... ✓\n\nKeep it short, punchy, technical. Show specific numbers related to "${keyword}". \nDo NOT write a blog. Just show the processing steps.`;
+
+  try {
+    const raw = await window.callGemini(prompt, 300);
+    thinkingDiv.remove();
+    container.appendChild(window.renderDemoMessage({ role: 'ai', text: raw }));
+  } catch(err) {
+    thinkingDiv.remove();
+    container.appendChild(window.renderDemoMessage({ 
+      role: 'ai', 
+      text: 'Analyzing "' + keyword + '"...\\nFound SERP gaps ✓\\nBlog outline ready ✓\\nSEO score: 91/100 ✓\\nReady to generate full blog!' 
+    }));
+  }
+
+  container.scrollTop = container.scrollHeight;
+  if (btn) {
+    btn.disabled = false;
+    btn.style.opacity = '1';
+  }
+};
+
+window.addEventListener('load', () => {
+  window.initDemoChat();
+});
+
+window.generateSampleBlog = async function() {
+  const inputEl = document.getElementById('tiy-keyword-input');
+  const btn = document.getElementById('tiy-generate-btn');
+  const resultsEl = document.getElementById('tiy-results');
+  const titleEl = document.getElementById('tiy-title-output');
+  const metaEl = document.getElementById('tiy-meta-output');
+  const paraEl = document.getElementById('tiy-para-output');
+
+  if (!inputEl) { console.error('tiy-keyword-input not found'); return; }
+
+  const keyword = inputEl.value.trim();
+
+  if (!keyword) {
+    inputEl.style.borderColor = '#EF4444';
+    inputEl.placeholder = 'Please enter a keyword first!';
+    setTimeout(() => {
+      inputEl.style.borderColor = 'rgba(255,255,255,0.1)';
+      inputEl.placeholder = 'Enter any keyword, e.g. data science, SaaS tools...';
+    }, 2000);
+    return;
+  }
+
+  if (btn) {
+    btn.textContent = '⏳ Generating...';
+    btn.disabled = true;
+    btn.style.opacity = '0.7';
+  }
+
+  if (resultsEl) {
+    resultsEl.style.display = 'block';
+    if (titleEl) titleEl.textContent = '✍️ Writing title...';
+    if (metaEl) metaEl.textContent = '';
+    if (paraEl) paraEl.textContent = '';
+  }
+
+  const prompt = `You are an expert SEO content writer for Indian businesses.
+
+Generate a blog preview specifically for the keyword: "${keyword}"
+
+Return ONLY a valid JSON object — no markdown, no explanation, just raw JSON:
+{
+  "title": "An SEO blog title specifically about ${keyword}. Include the keyword, make it compelling, under 65 chars.",
+  "metaDescription": "Meta description under 155 chars specifically about ${keyword} with a subtle CTA.",
+  "firstParagraph": "A 3-4 sentence opening paragraph specifically about ${keyword}. Hook the reader. Include ${keyword} in the first sentence. Write for Indian audience."
+}`;
+
+  try {
+    const raw = await window.callGemini(prompt, 600);
+    const cleaned = raw.replace(/```json|```/g, '').trim();
+    const data = JSON.parse(cleaned);
+
+    if (titleEl) titleEl.textContent = '';
+    if (metaEl) metaEl.textContent = '';
+    if (paraEl) paraEl.textContent = '';
+
+    function typeIt(el, text, speed, onDone) {
+      if (!el) { if(onDone) onDone(); return; }
+      let i = 0;
+      function next() {
+        if (i < text.length) {
+          el.textContent += text.charAt(i++);
+          setTimeout(next, speed);
+        } else if (onDone) onDone();
+      }
+      next();
+    }
+
+    typeIt(titleEl, data.title || '', 30, () => {
+      setTimeout(() => {
+        typeIt(metaEl, data.metaDescription || '', 18, () => {
+          setTimeout(() => {
+            typeIt(paraEl, data.firstParagraph || '', 12, null);
+          }, 200);
+        });
+      }, 300);
+    });
+
+  } catch(err) {
+    const cap = keyword.charAt(0).toUpperCase() + keyword.slice(1);
+    if (titleEl) titleEl.textContent = 'Complete Guide to ' + cap + ' in 2026';
+    if (metaEl) metaEl.textContent = 'Everything you need to know about ' + keyword + '. Expert tips and actionable strategies to master ' + keyword + ' today.';
+    if (paraEl) paraEl.textContent = cap + ' is one of the most in-demand skills in 2026. Whether you are a beginner or looking to advance your expertise, this guide covers everything about ' + keyword + ' from fundamentals to advanced strategies.';
+    console.error('Gemini error:', err.message);
+  }
+
+  if (btn) {
+    btn.textContent = 'Generate →';
+    btn.disabled = false;
+    btn.style.opacity = '1';
+  }
+};
+
+window.typeWriterEffect = function(element, text, speed) {
+  element.textContent = '';
+  let i = 0;
+  function type() {
+    if (i < text.length) {
+      element.textContent += text.charAt(i);
+      i++;
+      setTimeout(type, speed);
+    }
+  }
+  type();
+};
+
 const DemoPage = () => {
-  const [isGenerating, setIsGenerating] = React.useState(false);
-  const [showResults, setShowResults] = React.useState(false);
-  const [typedTitle, setTypedTitle] = React.useState('');
-  const [typedMeta, setTypedMeta] = React.useState('');
-  const [typedPara, setTypedPara] = React.useState('');
 
-  const fullTitle = "Top 10 AI Tools for Indian Startups in 2026 — Ranked by ROI";
-  const fullMeta = "Discover the best AI tools Indian startups are using to cut costs, automate workflows, and grow 10x faster. Ranked by real ROI data from 500+ founders.";
-  const fullPara = "India's startup ecosystem is moving fast — and AI tools are the new competitive edge. From automating customer support to generating SEO content at scale, the right AI stack can save an early-stage startup lakhs of rupees every month. In this guide, we've ranked the top 10 AI tools actually being used by Indian founders in 2026, based on ROI data collected from over 500 startups.";
-
-  const handleGenerate = () => {
-    if (isGenerating) return;
-    setIsGenerating(true);
-    setShowResults(true);
-    setTypedTitle('');
-    setTypedMeta('');
-    setTypedPara('');
-
-    let titleIdx = 0;
-    let metaIdx = 0;
-    let paraIdx = 0;
-
-    const typePara = () => {
-      if (paraIdx < fullPara.length) {
-        setTypedPara(prev => fullPara.substring(0, paraIdx + 1));
-        paraIdx++;
-        setTimeout(typePara, 15);
-      } else {
-        setIsGenerating(false);
-      }
-    };
-
-    const typeMeta = () => {
-      if (metaIdx < fullMeta.length) {
-        setTypedMeta(prev => fullMeta.substring(0, metaIdx + 1));
-        metaIdx++;
-        setTimeout(typeMeta, 15);
-      } else {
-        setTimeout(typePara, 200);
-      }
-    };
-
-    const typeTitle = () => {
-      if (titleIdx < fullTitle.length) {
-        setTypedTitle(prev => fullTitle.substring(0, titleIdx + 1));
-        titleIdx++;
-        setTimeout(typeTitle, 15);
-      } else {
-        setTimeout(typeMeta, 200);
-      }
-    };
-
-    typeTitle();
-  };
 
   return (
-    <div className="container" style={{ paddingTop: '8rem', paddingBottom: '8rem' }}>
-      <div style={{ textAlign: 'center', marginBottom: '48px' }}>
-        <h1 style={{ fontSize: '48px', fontWeight: 800, color: '#fff', margin: 0 }}>Try BlogzzUP Live</h1>
-        <p style={{ color: '#94A3B8', marginTop: '12px', fontSize: '18px' }}>No signup required. See the engine work in real time.</p>
+    <div className="container" style={{paddingTop: '8rem', paddingBottom: '8rem'}}>
+      <div style={{textAlign: 'center', marginBottom: '48px'}}>
+        <h1 style={{fontSize: '48px', fontWeight: 800, color: '#fff', margin: 0}}>Try BlogzzUP Live</h1>
+        <p style={{color: '#94A3B8', marginTop: '12px', fontSize: '18px'}}>No signup required. See the engine work in real time.</p>
       </div>
 
-      <div style={{ maxWidth: '900px', margin: '0 auto', background: '#0D1526', border: '1px solid rgba(124,58,237,0.3)', borderRadius: '20px', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
-        <div style={{ width: '100%', display: 'flex', flexWrap: 'wrap' }}>
-          <div style={{ flex: '1 1 60%', display: 'flex', flexDirection: 'column', minWidth: '300px' }}>
-            <div style={{ padding: '14px 20px', background: '#080E1C', borderBottom: '1px solid rgba(255,255,255,0.06)', display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <div style={{ display: 'flex', gap: '6px' }}>
-                <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#EF4444' }}></div>
-                <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#F59E0B' }}></div>
-                <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#10B981' }}></div>
+      <div style={{maxWidth: '900px', margin: '0 auto', background: '#0D1526', border: '1px solid rgba(124,58,237,0.3)', borderRadius: '20px', overflow: 'hidden', display: 'flex', flexDirection: 'column'}}>
+        <div style={{width: '100%', display: 'flex', flexWrap: 'wrap'}}>
+          <div style={{flex: '1 1 60%', display: 'flex', flexDirection: 'column', minWidth: '300px'}}>
+            <div style={{padding: '14px 20px', background: '#080E1C', borderBottom: '1px solid rgba(255,255,255,0.06)', display: 'flex', alignItems: 'center', gap: '8px'}}>
+              <div style={{display: 'flex', gap: '6px'}}>
+                <div style={{width: '12px', height: '12px', borderRadius: '50%', background: '#EF4444'}}></div>
+                <div style={{width: '12px', height: '12px', borderRadius: '50%', background: '#F59E0B'}}></div>
+                <div style={{width: '12px', height: '12px', borderRadius: '50%', background: '#10B981'}}></div>
               </div>
-              <div style={{ fontSize: '12px', color: '#64748B', marginLeft: '8px' }}>BlogzzUP — Content Engine</div>
+              <div style={{fontSize: '12px', color: '#64748B', marginLeft: '8px'}}>BlogzzUP — Content Engine</div>
             </div>
-
-            <div style={{ display: 'flex', height: '480px' }}>
-              <div style={{ width: '160px', background: '#080E1C', borderRight: '1px solid rgba(255,255,255,0.06)', padding: '16px', flexShrink: 0, display: 'flex', flexDirection: 'column' }}>
-                <div style={{ fontSize: '13px', color: '#fff', fontWeight: 600, marginBottom: '20px' }}>⚡ BlogzzUP</div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                  <div style={{ padding: '8px 12px', borderRadius: '6px', fontSize: '12px', color: '#64748B', cursor: 'pointer' }}>+ New Project</div>
-                  <div style={{ padding: '8px 12px', borderRadius: '6px', fontSize: '12px', color: '#64748B', cursor: 'pointer' }}>📄 My Documents</div>
-                  <div style={{ padding: '8px 12px', borderRadius: '6px', fontSize: '12px', color: '#64748B', cursor: 'pointer' }}>🗺️ Cluster Map</div>
-                  <div style={{ padding: '8px 12px', borderRadius: '6px', fontSize: '12px', color: '#64748B', cursor: 'pointer' }}>📅 Content Calendar</div>
-                  <div style={{ padding: '8px 12px', borderRadius: '6px', fontSize: '12px', color: '#64748B', cursor: 'pointer' }}>⚙️ Settings</div>
+            
+            <div style={{display: 'flex', height: '480px'}}>
+              <div style={{width: '160px', background: '#080E1C', borderRight: '1px solid rgba(255,255,255,0.06)', padding: '16px', flexShrink: 0, display: 'flex', flexDirection: 'column'}}>
+                <div style={{fontSize: '13px', color: '#fff', fontWeight: 600, marginBottom: '20px'}}>⚡ BlogzzUP</div>
+                <div style={{display: 'flex', flexDirection: 'column', gap: '4px'}}>
+                  <div style={{padding: '8px 12px', borderRadius: '6px', fontSize: '12px', color: '#64748B', cursor: 'pointer'}}>+ New Project</div>
+                  <div style={{padding: '8px 12px', borderRadius: '6px', fontSize: '12px', color: '#64748B', cursor: 'pointer'}}>📄 My Documents</div>
+                  <div style={{padding: '8px 12px', borderRadius: '6px', fontSize: '12px', color: '#64748B', cursor: 'pointer'}}>🗺️ Cluster Map</div>
+                  <div style={{padding: '8px 12px', borderRadius: '6px', fontSize: '12px', color: '#64748B', cursor: 'pointer'}}>📅 Content Calendar</div>
+                  <div style={{padding: '8px 12px', borderRadius: '6px', fontSize: '12px', color: '#64748B', cursor: 'pointer'}}>⚙️ Settings</div>
                 </div>
-                <div style={{ marginTop: 'auto' }}>
-                  <span style={{ background: 'rgba(16,185,129,0.1)', color: '#10B981', borderRadius: '999px', padding: '4px 10px', fontSize: '11px', marginBottom: '6px', display: 'block' }}>● SEO Optimizer</span>
-                  <span style={{ background: 'rgba(16,185,129,0.1)', color: '#10B981', borderRadius: '999px', padding: '4px 10px', fontSize: '11px', display: 'block' }}>● Auto Publisher</span>
+                <div style={{marginTop: 'auto'}}>
+                  <span style={{background: 'rgba(16,185,129,0.1)', color: '#10B981', borderRadius: '999px', padding: '4px 10px', fontSize: '11px', marginBottom: '6px', display: 'block'}}>● SEO Optimizer</span>
+                  <span style={{background: 'rgba(16,185,129,0.1)', color: '#10B981', borderRadius: '999px', padding: '4px 10px', fontSize: '11px', display: 'block'}}>● Auto Publisher</span>
                 </div>
               </div>
 
-              <div style={{ flex: 1, padding: '20px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '12px', background: '#0D1526' }}>
-                <div style={{ alignSelf: 'flex-end', background: '#7C3AED', color: '#fff', padding: '10px 16px', borderRadius: '18px 18px 4px 18px', maxWidth: '75%', fontSize: '13px', lineHeight: 1.5 }}>
-                  Write an SEO blog about AI tools for Indian startups
+              <div style={{flex: 1, display: 'flex', flexDirection: 'column', background: '#0D1526'}}>
+                <div id="demo-chat-messages" style={{flex: 1, padding: '20px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '12px'}}>
+                  {/* messages will be injected here */}
                 </div>
-                <div style={{ alignSelf: 'flex-start', background: '#141B2D', color: '#94A3B8', padding: '12px 16px', borderRadius: '18px 18px 18px 4px', maxWidth: '85%', fontSize: '13px', lineHeight: 1.5, whiteSpace: 'pre-line' }}>
-                  Analyzing SERP gap... Found 3 low-competition keywords ✓<br />
-                  Clustering topics... Done ✓<br />
-                  Drafting blog with 94% SEO score... ✓<br />
-                  Generating featured snippet structure... ✓
-                </div>
-                <div style={{ alignSelf: 'flex-end', background: '#7C3AED', color: '#fff', padding: '10px 16px', borderRadius: '18px 18px 4px 18px', maxWidth: '75%', fontSize: '13px', lineHeight: 1.5 }}>
-                  Optimize for GEO — target Delhi and Bangalore
-                </div>
-                <div style={{ alignSelf: 'flex-start', background: '#141B2D', color: '#94A3B8', padding: '12px 16px', borderRadius: '18px 18px 18px 4px', maxWidth: '85%', fontSize: '13px', lineHeight: 1.5, whiteSpace: 'pre-line' }}>
-                  Adding location-specific entities... ✓<br />
-                  Injecting local search modifiers... ✓<br />
-                  Applying regional schema markup... ✓<br />
-                  Your blog is ready to publish!
-                </div>
-
-                <div style={{ marginTop: 'auto', paddingTop: '12px' }}>
-                  <div style={{ padding: '12px 16px', background: '#080E1C', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '12px', display: 'flex', alignItems: 'center', gap: '12px' }}>
-                    <div style={{ flex: 1, background: '#141B2D', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '10px', padding: '10px 14px', color: '#4B5563', fontSize: '13px' }}>
-                      Enter your keyword or topic...
-                    </div>
-                    <div style={{ background: '#7C3AED', width: '36px', height: '36px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: '16px' }}>↑</div>
+                
+                <div style={{marginTop: 'auto'}}>
+                  <div style={{padding: '12px 16px', background: '#080E1C', borderTop: '1px solid rgba(255,255,255,0.06)', display: 'flex', alignItems: 'center', gap: '12px'}}>
+                    <input 
+                      id="demo-chat-input"
+                      type="text" 
+                      placeholder="Enter your keyword or topic..."
+                      onKeyDown={(e) => { if(e.key === 'Enter') window.sendDemoMessage(); }}
+                      style={{flex: 1, background: '#141B2D', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '10px', padding: '10px 14px', color: 'white', fontSize: '13px', outline: 'none'}}
+                      onFocus={(e) => e.target.style.borderColor='#7C3AED'}
+                      onBlur={(e) => e.target.style.borderColor='rgba(255,255,255,0.08)'}
+                    />
+                    <button 
+                      onClick={() => window.sendDemoMessage()}
+                      id="demo-send-btn"
+                      style={{background: '#7C3AED', width: '38px', height: '38px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: 'white', fontSize: '16px', border: 'none', flexShrink: 0, transition: 'all 0.2s'}}
+                      onMouseEnter={(e) => e.target.style.background='#6D28D9'}
+                      onMouseLeave={(e) => e.target.style.background='#7C3AED'}
+                    >
+                      ↑
+                    </button>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-
-          <div style={{ flex: '1 1 40%', background: '#080E1C', borderLeft: '1px solid rgba(124,58,237,0.15)', padding: '28px', display: 'flex', flexDirection: 'column', minWidth: '250px' }}>
-            <div style={{ fontSize: '14px', fontWeight: 600, color: '#fff', marginBottom: '20px' }}>Live SEO Score</div>
-
-            <div style={{ margin: '0 auto 24px', width: '100px', height: '100px', position: 'relative', borderRadius: '50%', background: 'conic-gradient(#7C3AED 0% 94%, #1E293B 94% 100%)' }}>
-              <div style={{ position: 'absolute', top: '8px', left: '8px', width: '84px', height: '84px', background: '#080E1C', borderRadius: '50%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-                <div style={{ fontSize: '28px', fontWeight: 700, color: '#fff', lineHeight: 1 }}>94</div>
-                <div style={{ fontSize: '12px', color: '#64748B' }}>/100</div>
+          
+          <div style={{flex: '1 1 40%', background: '#080E1C', borderLeft: '1px solid rgba(124,58,237,0.15)', padding: '28px', display: 'flex', flexDirection: 'column', minWidth: '250px'}}>
+            <div style={{fontSize: '14px', fontWeight: 600, color: '#fff', marginBottom: '20px'}}>Live SEO Score</div>
+            
+            <div style={{margin: '0 auto 24px', width: '100px', height: '100px', position: 'relative', borderRadius: '50%', background: 'conic-gradient(#7C3AED 0% 94%, #1E293B 94% 100%)'}}>
+              <div style={{position: 'absolute', top: '8px', left: '8px', width: '84px', height: '84px', background: '#080E1C', borderRadius: '50%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center'}}>
+                <div style={{fontSize: '28px', fontWeight: 700, color: '#fff', lineHeight: 1}}>94</div>
+                <div style={{fontSize: '12px', color: '#64748B'}}>/100</div>
               </div>
             </div>
-            <div style={{ fontSize: '12px', color: '#10B981', textAlign: 'center', marginTop: '-16px', marginBottom: '24px' }}>Excellent</div>
+            <div style={{fontSize: '12px', color: '#10B981', textAlign: 'center', marginTop: '-16px', marginBottom: '24px'}}>Excellent</div>
 
-            <div style={{ display: 'flex', flexDirection: 'column' }}>
+            <div style={{display: 'flex', flexDirection: 'column'}}>
               {[
                 ["Keyword Density", "1.8% ✓"],
                 ["Readability", "78/100 ✓"],
@@ -645,48 +780,65 @@ const DemoPage = () => {
                 ["Snippet Ready", "Yes ✓"],
                 ["Featured Snippet", "Eligible ✓"]
               ].map((metric, i) => (
-                <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 0', borderBottom: '1px solid rgba(255,255,255,0.05)', fontSize: '13px' }}>
-                  <span style={{ color: '#94A3B8' }}>{metric[0]}</span>
-                  <span style={{ color: '#10B981', fontWeight: 500 }}>{metric[1]}</span>
+                <div key={i} style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 0', borderBottom: '1px solid rgba(255,255,255,0.05)', fontSize: '13px'}}>
+                  <span style={{color: '#94A3B8'}}>{metric[0]}</span>
+                  <span style={{color: '#10B981', fontWeight: 500}}>{metric[1]}</span>
                 </div>
               ))}
             </div>
 
-            <button onClick={() => window.showPage('auth')} style={{ marginTop: 'auto', width: '100%', background: 'linear-gradient(135deg,#7C3AED,#6D28D9)', color: '#fff', borderRadius: '10px', padding: '13px', fontWeight: 600, fontSize: '14px', border: 'none', cursor: 'pointer', transition: 'all 0.2s', className: 'hover-brighten' }}>
+            <button 
+              onClick={() => { if(window.showDashboard) window.showDashboard(); }}
+              style={{marginTop: '24px', width: '100%', background: 'linear-gradient(135deg,#7C3AED,#6D28D9)', color: 'white', border: 'none', borderRadius: '10px', padding: '13px', fontWeight: 600, fontSize: '14px', cursor: 'pointer', transition: 'all 0.2s'}}
+              onMouseEnter={(e) => e.target.style.filter='brightness(1.1)'}
+              onMouseLeave={(e) => e.target.style.filter='brightness(1)'}
+            >
               Generate Full Blog →
             </button>
           </div>
         </div>
       </div>
 
-      <div style={{ marginTop: '64px' }}>
-        <h2 style={{ fontSize: '32px', color: '#fff', textAlign: 'center', margin: 0, fontWeight: 700 }}>Try It Yourself</h2>
-        <p style={{ color: '#94A3B8', textAlign: 'center', marginBottom: '32px', marginTop: '12px' }}>Enter any keyword and watch the AI work</p>
-
-        <div style={{ maxWidth: '600px', margin: '0 auto', display: 'flex', gap: '12px' }}>
-          <input type="text" placeholder="Enter a keyword, e.g. AI tools for startups..." style={{ flex: 1, background: '#141B2D', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px', padding: '14px 20px', color: '#fff', fontSize: '15px' }} />
-          <button onClick={handleGenerate} style={{ background: 'linear-gradient(135deg,#7C3AED,#06B6D4)', color: '#fff', borderRadius: '12px', padding: '14px 24px', fontWeight: 600, border: 'none', cursor: 'pointer', whiteSpace: 'nowrap' }}>
+      <div style={{marginTop: '64px'}}>
+        <h2 style={{fontSize: '32px', color: '#fff', textAlign: 'center', margin: 0, fontWeight: 700}}>Try It Yourself</h2>
+        <p style={{color: '#94A3B8', textAlign: 'center', marginBottom: '32px', marginTop: '12px'}}>Enter any keyword and watch the AI work</p>
+        
+        <div style={{maxWidth: '600px', margin: '0 auto', display: 'flex', gap: '12px'}}>
+          <input 
+            id="tiy-keyword-input"
+            type="text" 
+            placeholder="Enter any keyword, e.g. data science, SaaS tools, fitness apps..."
+            onKeyDown={(e) => { if (e.key === 'Enter') window.generateSampleBlog(); }}
+            style={{flex: 1, background: '#141B2D', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px', padding: '14px 20px', color: 'white', fontSize: '15px', outline: 'none'}}
+            onFocus={(e) => e.target.style.borderColor='#7C3AED'}
+            onBlur={(e) => e.target.style.borderColor='rgba(255,255,255,0.1)'}
+          />
+          <button 
+            onClick={() => window.generateSampleBlog()}
+            id="tiy-generate-btn"
+            style={{background: 'linear-gradient(135deg,#7C3AED,#06B6D4)', color: 'white', border: 'none', borderRadius: '12px', padding: '14px 28px', fontSize: '15px', fontWeight: 600, cursor: 'pointer', whiteSpace: 'nowrap', transition: 'all 0.2s'}}
+            onMouseEnter={(e) => e.target.style.opacity='0.9'}
+            onMouseLeave={(e) => e.target.style.opacity='1'}
+          >
             Generate →
           </button>
         </div>
 
-        {showResults && (
-          <div style={{ maxWidth: '600px', margin: '20px auto 0', background: '#141B2D', border: '1px solid rgba(124,58,237,0.3)', borderRadius: '16px', padding: '24px' }}>
-            <div style={{ fontSize: '11px', color: '#7C3AED', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '8px' }}>📌 Blog Title</div>
-            <div style={{ fontSize: '18px', color: '#fff', fontWeight: 600, marginBottom: '20px', minHeight: '27px' }}>{typedTitle}</div>
-
-            <div style={{ fontSize: '11px', color: '#7C3AED', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '8px' }}>📝 Meta Description</div>
-            <div style={{ fontSize: '14px', color: '#94A3B8', marginBottom: '20px', minHeight: '42px' }}>{typedMeta}</div>
-
-            <div style={{ fontSize: '11px', color: '#7C3AED', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '8px' }}>✍️ First Paragraph</div>
-            <div style={{ fontSize: '14px', color: '#94A3B8', lineHeight: 1.7, minHeight: '100px' }}>{typedPara}</div>
-          </div>
-        )}
+        <div id="tiy-results" style={{display: 'none', background: '#141B2D', border: '1px solid rgba(124,58,237,0.3)', borderRadius: '16px', padding: '28px', marginTop: '20px', maxWidth: '700px', marginLeft: 'auto', marginRight: 'auto'}}>
+          <div style={{fontSize: '11px', color: '#7C3AED', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '8px'}}>📌 Blog Title</div>
+          <div id="tiy-title-output" style={{fontSize: '18px', color: '#fff', fontWeight: 600, marginBottom: '20px', minHeight: '27px'}}></div>
+          
+          <div style={{fontSize: '11px', color: '#7C3AED', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '8px'}}>📝 Meta Description</div>
+          <div id="tiy-meta-output" style={{fontSize: '14px', color: '#94A3B8', marginBottom: '20px', minHeight: '42px'}}></div>
+          
+          <div style={{fontSize: '11px', color: '#7C3AED', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '8px'}}>✍️ First Paragraph</div>
+          <div id="tiy-para-output" style={{fontSize: '14px', color: '#94A3B8', lineHeight: 1.7, minHeight: '100px'}}></div>
+        </div>
       </div>
 
-      <div style={{ marginTop: '64px', textAlign: 'center' }}>
-        <p style={{ fontSize: '18px', color: '#94A3B8' }}>Ready for the real thing?</p>
-        <button onClick={() => window.showPage('auth')} style={{ background: 'linear-gradient(135deg,#7C3AED,#9333EA)', color: '#fff', borderRadius: '999px', padding: '14px 32px', fontSize: '16px', fontWeight: '600', border: 'none', cursor: 'pointer', marginTop: '16px' }}>
+      <div style={{marginTop: '64px', textAlign: 'center'}}>
+        <p style={{fontSize: '18px', color: '#94A3B8'}}>Ready for the real thing?</p>
+        <button onClick={() => window.showPage('auth')} style={{background: 'linear-gradient(135deg,#7C3AED,#9333EA)', color: '#fff', borderRadius: '999px', padding: '14px 32px', fontSize: '16px', fontWeight: '600', border: 'none', cursor: 'pointer', marginTop: '16px'}}>
           Start Free — First Month on Us →
         </button>
       </div>
@@ -713,21 +865,21 @@ const PricingPage = () => {
   ];
 
   return (
-    <div className="container" style={{ paddingTop: '8rem', paddingBottom: '8rem' }}>
-      <div style={{ textAlign: 'center', marginBottom: '48px' }}>
-        <h1 style={{ fontSize: '48px', fontWeight: 800, color: '#fff', margin: 0 }}>
-          Simple Pricing. <span style={{ background: 'linear-gradient(135deg,#7C3AED,#06B6D4)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Serious Results.</span>
+    <div className="container" style={{paddingTop: '8rem', paddingBottom: '8rem'}}>
+      <div style={{textAlign: 'center', marginBottom: '48px'}}>
+        <h1 style={{fontSize: '48px', fontWeight: 800, color: '#fff', margin: 0}}>
+          Simple Pricing. <span style={{background: 'linear-gradient(135deg,#7C3AED,#06B6D4)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent'}}>Serious Results.</span>
         </h1>
-        <p style={{ color: '#94A3B8', marginTop: '12px', fontSize: '18px' }}>Start free. Upgrade when you're ready. Cancel anytime.</p>
+        <p style={{color: '#94A3B8', marginTop: '12px', fontSize: '18px'}}>Start free. Upgrade when you're ready. Cancel anytime.</p>
       </div>
 
       <div className="pricing-toggle">
         <div className="pt-container">
-          <button
+          <button 
             onClick={() => setAnnualBilling(false)}
             className={`pt-btn ${!annualBilling ? 'active' : 'inactive'}`}
           >Monthly</button>
-          <button
+          <button 
             onClick={() => setAnnualBilling(true)}
             className={`pt-btn ${annualBilling ? 'active' : 'inactive'}`}
           >Yearly (Save 30%)</button>
@@ -742,7 +894,7 @@ const PricingPage = () => {
             <span className="pc-price">{annualBilling ? '₹16,790' : '₹1,999'}</span>
             <span className="pc-per">{annualBilling ? '/year' : '/month'}</span>
           </div>
-          <div style={{ fontSize: '12px', color: '#10B981', marginTop: '4px' }}>(First month free)</div>
+          <div style={{fontSize: '12px', color: '#10B981', marginTop: '4px'}}>(First month free)</div>
           <p className="pc-desc">For early-stage startups building organic presence</p>
           <div className="pc-divider"></div>
           <ul className="pc-feat-list">
@@ -764,10 +916,10 @@ const PricingPage = () => {
             <span className="pc-price">{annualBilling ? '₹41,990' : '₹4,999'}</span>
             <span className="pc-per">{annualBilling ? '/year' : '/month'}</span>
           </div>
-          <p className="pc-desc" style={{ margin: '32px 0 24px' }}>For startups replacing their marketing team</p>
+          <p className="pc-desc" style={{margin: '32px 0 24px'}}>For startups replacing their marketing team</p>
           <div className="pc-divider"></div>
           <ul className="pc-feat-list">
-            <div style={{ fontSize: '14px', color: '#fff', fontWeight: 600, padding: '6px 0' }}>✓ Everything in Starter</div>
+            <div style={{fontSize: '14px', color: '#fff', fontWeight: 600, padding: '6px 0'}}>✓ Everything in Starter</div>
             <li className="pc-feat"><span className="pc-feat-check">✓</span> 50 SEO blogs / month</li>
             <li className="pc-feat"><span className="pc-feat-check">✓</span> GEO Optimization Engine</li>
             <li className="pc-feat"><span className="pc-feat-check">✓</span> Content Cluster Map (unlimited)</li>
@@ -785,42 +937,42 @@ const PricingPage = () => {
           <div className="pc-price-wrap">
             <span className="pc-price">Custom</span>
           </div>
-          <p className="pc-desc" style={{ margin: '48px 0 24px' }}>For agencies and high-growth teams</p>
+          <p className="pc-desc" style={{margin: '48px 0 24px'}}>For agencies and high-growth teams</p>
           <div className="pc-divider"></div>
           <ul className="pc-feat-list">
-            <li className="pc-feat"><span className="pc-feat-check">✓</span> Unlimited blogs</li>
-            <li className="pc-feat"><span className="pc-feat-check">✓</span> Multi-website support</li>
-            <li className="pc-feat"><span className="pc-feat-check">✓</span> Custom brand voice training</li>
-            <li className="pc-feat"><span className="pc-feat-check">✓</span> Full API access</li>
-            <li className="pc-feat"><span className="pc-feat-check">✓</span> White-label option</li>
-            <li className="pc-feat"><span className="pc-feat-check">✓</span> Dedicated onboarding</li>
-            <li className="pc-feat"><span className="pc-feat-check">✓</span> SLA + Priority support</li>
-            <li className="pc-feat"><span className="pc-feat-check">✓</span> Advanced analytics</li>
+             <li className="pc-feat"><span className="pc-feat-check">✓</span> Unlimited blogs</li>
+             <li className="pc-feat"><span className="pc-feat-check">✓</span> Multi-website support</li>
+             <li className="pc-feat"><span className="pc-feat-check">✓</span> Custom brand voice training</li>
+             <li className="pc-feat"><span className="pc-feat-check">✓</span> Full API access</li>
+             <li className="pc-feat"><span className="pc-feat-check">✓</span> White-label option</li>
+             <li className="pc-feat"><span className="pc-feat-check">✓</span> Dedicated onboarding</li>
+             <li className="pc-feat"><span className="pc-feat-check">✓</span> SLA + Priority support</li>
+             <li className="pc-feat"><span className="pc-feat-check">✓</span> Advanced analytics</li>
           </ul>
           <button className="pc-btn-outline-cyan" onClick={() => window.showPage('auth')}>Contact Sales →</button>
         </div>
       </div>
 
-      <div style={{ marginTop: '32px', textAlign: 'center', fontSize: '13px', color: '#64748B' }}>
+      <div style={{marginTop: '32px', textAlign: 'center', fontSize: '13px', color: '#64748B'}}>
         🔒 No credit card required · Cancel anytime · SOC2 Compliant · Used by 500+ Indian startups
       </div>
 
-      <div className="faq-accordion" style={{ marginTop: '80px', maxWidth: '800px', margin: '80px auto 0' }}>
-        <h2 style={{ fontSize: '32px', color: '#fff', textAlign: 'center', marginBottom: '32px', fontWeight: 700 }}>Frequently Asked Questions</h2>
+      <div className="faq-accordion" style={{marginTop: '80px', maxWidth: '800px', margin: '80px auto 0'}}>
+        <h2 style={{fontSize: '32px', color: '#fff', textAlign: 'center', marginBottom: '32px', fontWeight: 700}}>Frequently Asked Questions</h2>
         {faqs.map((faq, i) => (
-          <div
-            key={i}
-            onClick={() => setActiveFaq(activeFaq === i ? null : i)}
-            className={`accordion-container ${activeFaq === i ? 'open' : ''}`}
-          >
-            <div className="accordion-header">
-              <span className="accordion-title">{faq.q}</span>
-              <span className="accordion-icon">▼</span>
-            </div>
-            <div className="accordion-body">
-              <div className="accordion-answer">{faq.a}</div>
-            </div>
-          </div>
+           <div 
+             key={i} 
+             onClick={() => setActiveFaq(activeFaq === i ? null : i)}
+             className={`accordion-container ${activeFaq === i ? 'open' : ''}`}
+           >
+             <div className="accordion-header">
+               <span className="accordion-title">{faq.q}</span>
+               <span className="accordion-icon">▼</span>
+             </div>
+             <div className="accordion-body">
+               <div className="accordion-answer">{faq.a}</div>
+             </div>
+           </div>
         ))}
       </div>
     </div>
@@ -833,18 +985,18 @@ const BlogDetailView = ({ post, onBack }) => {
       <button className="blog-back-btn" onClick={onBack}>
         <ArrowLeft size={18} /> Back to Blog
       </button>
-
+      
       <img src={post.image} alt={post.title} className="blog-hero-img" />
-
+      
       <article className="blog-article">
         <span className="blog-tag">{post.tag}</span>
         <h1>{post.title}</h1>
-        <div className="blog-meta" style={{ marginBottom: '3rem' }}>
+        <div className="blog-meta" style={{marginBottom: '3rem'}}>
           <span>📅 Mar 2026</span>
           <span>⏱ {post.readTime}</span>
           <span>👤 By BlogzzUP</span>
         </div>
-
+        
         <div className="blog-content">
           {post.content.map((p, i) => (
             <div key={i}>
@@ -861,11 +1013,11 @@ const BlogPage = () => {
   const [selectedPost, setSelectedPost] = useState(null);
 
   const posts = [
-    {
+    { 
       id: 1,
-      title: "The 2026 SEO Blueprint: Why Cluster Mapping is the New Backlinking",
-      tag: "AI & SEO Strategy",
-      emoji: "🗺️",
+      title: "The 2026 SEO Blueprint: Why Cluster Mapping is the New Backlinking", 
+      tag: "AI & SEO Strategy", 
+      emoji: "🗺️", 
       image: "/assets/blog/seo_blueprint.png",
       readTime: "8 min read",
       grad: "linear-gradient(135deg,#1E0B4B,#2D1B69)",
@@ -879,11 +1031,11 @@ const BlogPage = () => {
         { type: 'p', text: "Our engine looks at the top 100 ranking pages, extracts their entity relationships, and identifies topics that aren't being fully addressed. This allows you to build a content moat that competitors find nearly impossible to breach without significant manual effort." }
       ]
     },
-    {
+    { 
       id: 2,
-      title: "From 8 Hours to 8 Minutes: How AI is Rescuing the Modern Content Marketer",
-      tag: "Productivity",
-      emoji: "⚡",
+      title: "From 8 Hours to 8 Minutes: How AI is Rescuing the Modern Content Marketer", 
+      tag: "Productivity", 
+      emoji: "⚡", 
       image: "/assets/blog/ai_productivity.png",
       readTime: "6 min read",
       grad: "linear-gradient(135deg,#0C2340,#1E3A5F)",
@@ -896,11 +1048,11 @@ const BlogPage = () => {
         { type: 'p', text: "In a world where speed is a competitive advantage, the ability to iterate on content strategies in real-time is invaluable. Instead of waiting a month for a content agency to deliver four posts, you can now produce an entire content series in a single afternoon, responding to market trends while they are still relevant." }
       ]
     },
-    {
+    { 
       id: 3,
-      title: "Hyper-Local Dominance: Leveraging GEO Optimization for Indian Tier-1 Markets",
-      tag: "GEO Special",
-      emoji: "🏙️",
+      title: "Hyper-Local Dominance: Leveraging GEO Optimization for Indian Tier-1 Markets", 
+      tag: "GEO Special", 
+      emoji: "🏙️", 
       image: "/assets/blog/geo_opt.png",
       readTime: "10 min read",
       grad: "linear-gradient(135deg,#0B3D2E,#1A5940)",
@@ -913,11 +1065,11 @@ const BlogPage = () => {
         { type: 'p', text: "This strategy allows you to capture long-tail traffic that is often high-intent. A user searching for 'marketing agency in Indiranagar' is much closer to a conversion than someone searching for 'global marketing agencies'. We give you the tools to win those local battles at scale." }
       ]
     },
-    {
+    { 
       id: 4,
-      title: "The Soul of the Machine: How to Train AI to Mimic Your Unique Founder Voice",
-      tag: "Brand Voice",
-      emoji: "🎙️",
+      title: "The Soul of the Machine: How to Train AI to Mimic Your Unique Founder Voice", 
+      tag: "Brand Voice", 
+      emoji: "🎙️", 
       image: "/assets/blog/brand_voice.png",
       readTime: "7 min read",
       grad: "linear-gradient(135deg,#3D1A0B,#5C2810)",
@@ -930,11 +1082,11 @@ const BlogPage = () => {
         { type: 'p', text: "By automating the drafting process while maintaining your voice, you can spend more time on strategic thinking and high-level editing, ensuring that every piece of content that leaves your dashboard is a true representation of your brand's philosophy." }
       ]
     },
-    {
+    { 
       id: 5,
-      title: "Beyond Generative AI: The Rise of Autonomous Content Agents in Digital Marketing",
-      tag: "Tech Trends",
-      emoji: "🤖",
+      title: "Beyond Generative AI: The Rise of Autonomous Content Agents in Digital Marketing", 
+      tag: "Tech Trends", 
+      emoji: "🤖", 
       image: "/assets/blog/autonomous_agents.png",
       readTime: "9 min read",
       grad: "linear-gradient(135deg,#1A0B3D,#2D1A5C)",
@@ -946,11 +1098,11 @@ const BlogPage = () => {
         { type: 'p', text: "At BlogzzUP, we're building the infrastructure for this autonomous future. By connecting your Google Search Console and CMS, our agents can operate as a self-healing content ecosystem that compounds in value while you sleep. The goal isn't just to produce more content, but to produce the *right* content at the exact moment it's needed by the market." }
       ]
     },
-    {
+    { 
       id: 6,
-      title: "Case Study: How 'BuildFast Delhi' Scaled from 0 to 100k Monthly Visits in 90 Days",
-      tag: "Success Story",
-      emoji: "🚀",
+      title: "Case Study: How 'BuildFast Delhi' Scaled from 0 to 100k Monthly Visits in 90 Days", 
+      tag: "Success Story", 
+      emoji: "🚀", 
       image: "/assets/blog/success_story.png",
       readTime: "12 min read",
       grad: "linear-gradient(135deg,#0B1A3D,#1A2D5C)",
@@ -969,17 +1121,17 @@ const BlogPage = () => {
   }
 
   return (
-    <div className="container" style={{ paddingTop: '8rem', paddingBottom: '8rem' }}>
-      <div style={{ textAlign: 'center', marginBottom: '48px' }}>
-        <h1 style={{ fontSize: '48px', color: '#fff', margin: 0, fontWeight: 800 }}>Latest from BlogzzUP</h1>
-        <p style={{ color: '#94A3B8', marginTop: '12px', fontSize: '18px' }}>Insights, strategies, and playbooks on AI content and SEO</p>
+    <div className="container" style={{paddingTop: '8rem', paddingBottom: '8rem'}}>
+      <div style={{textAlign: 'center', marginBottom: '48px'}}>
+        <h1 style={{fontSize: '48px', color: '#fff', margin: 0, fontWeight: 800}}>Latest from BlogzzUP</h1>
+        <p style={{color: '#94A3B8', marginTop: '12px', fontSize: '18px'}}>Insights, strategies, and playbooks on AI content and SEO</p>
       </div>
 
       <div className="blog-grid">
         {posts.map((post, i) => (
           <div key={i} className="blog-card">
-            <div className="blog-thumb" style={{ background: post.grad }}>
-              <img src={post.image} alt={post.title} style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.8 }} />
+            <div className="blog-thumb" style={{background: post.grad}}>
+               <img src={post.image} alt={post.title} style={{width:'100%', height:'100%', objectFit:'cover', opacity: 0.8}} />
             </div>
             <div className="blog-body">
               <div>
@@ -1001,120 +1153,120 @@ const BlogPage = () => {
 
 const HomeFeaturesSection = () => {
   const [active, setActive] = React.useState('generator');
-
+  
   const features = [
-    { id: 'generator', icon: <PenTool size={20} />, title: 'AI Blog Generator', desc: 'Generate 2,500+ word SEO-optimized articles in one click with real-time NLP suggestions.' },
-    { id: 'cluster', icon: <Network size={20} />, title: 'Cluster Map Planner', desc: 'Visually map out your pillar pages and topic clusters to build topical authority.' },
-    { id: 'serp', icon: <Search size={20} />, title: 'SERP Gap Scanner', desc: 'Analyze the top 10 search results to instantly find missing topics and keyword gaps.' },
-    { id: 'seo', icon: <LineChart size={20} />, title: 'Live SEO Scorer', desc: 'Get a real-time out-of-100 score on readability, keyword density, and snippet targeting.' },
-    { id: 'publish', icon: <UploadCloud size={20} />, title: 'Auto-Publisher', desc: 'Connect directly to WordPress, Webflow, or Shopify to automate your entire pipeline.' },
-    { id: 'voice', icon: <Mic size={20} />, title: 'Brand Voice Control', desc: 'Train the AI on your exact tone of voice, target audience, and negative keywords.' }
+    { id: 'generator', icon: <PenTool size={20}/>, title: 'AI Blog Generator', desc: 'Generate 2,500+ word SEO-optimized articles in one click with real-time NLP suggestions.' },
+    { id: 'cluster', icon: <Network size={20}/>, title: 'Cluster Map Planner', desc: 'Visually map out your pillar pages and topic clusters to build topical authority.' },
+    { id: 'serp', icon: <Search size={20}/>, title: 'SERP Gap Scanner', desc: 'Analyze the top 10 search results to instantly find missing topics and keyword gaps.' },
+    { id: 'seo', icon: <LineChart size={20}/>, title: 'Live SEO Scorer', desc: 'Get a real-time out-of-100 score on readability, keyword density, and snippet targeting.' },
+    { id: 'publish', icon: <UploadCloud size={20}/>, title: 'Auto-Publisher', desc: 'Connect directly to WordPress, Webflow, or Shopify to automate your entire pipeline.' },
+    { id: 'voice', icon: <Mic size={20}/>, title: 'Brand Voice Control', desc: 'Train the AI on your exact tone of voice, target audience, and negative keywords.' }
   ];
 
   const renderMockup = (id) => {
-    switch (id) {
+    switch(id) {
       case 'generator':
         return (
-          <div style={{ display: 'flex', gap: '12px', width: '100%', height: '100%', padding: '16px', boxSizing: 'border-box', background: '#111827', borderRadius: '0 0 16px 16px' }}>
-            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '12px' }}>
-              <div>
-                <div style={{ fontSize: '11px', color: '#94A3B8', marginBottom: '4px' }}>Target Keyword</div>
-                <div style={{ background: '#1E293B', padding: '8px 12px', borderRadius: '6px', color: 'white', fontSize: '12px', border: '1px solid rgba(255,255,255,0.05)' }}>SaaS Marketing Strategies</div>
-              </div>
-              <div>
-                <div style={{ fontSize: '11px', color: '#94A3B8', marginBottom: '4px' }}>Tone of Voice</div>
-                <div style={{ background: '#1E293B', padding: '8px 12px', borderRadius: '6px', color: 'white', fontSize: '12px', border: '1px solid rgba(255,255,255,0.05)' }}>Authoritative & Actionable</div>
-              </div>
-              <button onClick={() => window.showDashboard && window.showDashboard()} style={{ marginTop: 'auto', background: 'linear-gradient(135deg, #7C3AED, #5B21B6)', color: 'white', border: 'none', padding: '10px', borderRadius: '6px', fontSize: '12px', cursor: 'pointer', fontWeight: 'bold' }}>Generate Blog →</button>
-            </div>
-            <div style={{ flex: 1.5, background: '#0F172A', border: '1px solid rgba(255,255,255,0.05)', borderRadius: '8px', padding: '12px', position: 'relative', overflow: 'hidden' }}>
-              <div style={{ width: '70%', height: '14px', background: '#334155', borderRadius: '4px', marginBottom: '12px' }}></div>
-              <div style={{ width: '100%', height: '8px', background: '#1E293B', borderRadius: '4px', marginBottom: '8px' }}></div>
-              <div style={{ width: '90%', height: '8px', background: '#1E293B', borderRadius: '4px', marginBottom: '8px' }}></div>
-              <div style={{ width: '95%', height: '8px', background: '#1E293B', borderRadius: '4px', marginBottom: '16px' }}></div>
-              <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '40px', background: 'linear-gradient(to top, #0F172A, transparent)' }}></div>
-              <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', background: 'rgba(16,185,129,0.2)', color: '#10B981', padding: '4px 12px', borderRadius: '12px', fontSize: '10px', fontWeight: 'bold', border: '1px solid rgba(16,185,129,0.3)' }}>Processing AI Generation...</div>
-            </div>
+          <div style={{display:'flex', gap:'12px', width:'100%', height:'100%', padding:'16px', boxSizing:'border-box', background:'#111827', borderRadius:'0 0 16px 16px'}}>
+             <div style={{flex: 1, display:'flex', flexDirection:'column', gap:'12px'}}>
+               <div>
+                 <div style={{fontSize:'11px', color:'#94A3B8', marginBottom:'4px'}}>Target Keyword</div>
+                 <div style={{background:'#1E293B', padding:'8px 12px', borderRadius:'6px', color:'white', fontSize:'12px', border:'1px solid rgba(255,255,255,0.05)'}}>SaaS Marketing Strategies</div>
+               </div>
+               <div>
+                 <div style={{fontSize:'11px', color:'#94A3B8', marginBottom:'4px'}}>Tone of Voice</div>
+                 <div style={{background:'#1E293B', padding:'8px 12px', borderRadius:'6px', color:'white', fontSize:'12px', border:'1px solid rgba(255,255,255,0.05)'}}>Authoritative & Actionable</div>
+               </div>
+               <button onClick={() => window.showDashboard && window.showDashboard()} style={{marginTop:'auto', background:'linear-gradient(135deg, #7C3AED, #5B21B6)', color:'white', border:'none', padding:'10px', borderRadius:'6px', fontSize:'12px', cursor:'pointer', fontWeight:'bold'}}>Generate Blog →</button>
+             </div>
+             <div style={{flex: 1.5, background:'#0F172A', border:'1px solid rgba(255,255,255,0.05)', borderRadius:'8px', padding:'12px', position:'relative', overflow:'hidden'}}>
+               <div style={{width:'70%', height:'14px', background:'#334155', borderRadius:'4px', marginBottom:'12px'}}></div>
+               <div style={{width:'100%', height:'8px', background:'#1E293B', borderRadius:'4px', marginBottom:'8px'}}></div>
+               <div style={{width:'90%', height:'8px', background:'#1E293B', borderRadius:'4px', marginBottom:'8px'}}></div>
+               <div style={{width:'95%', height:'8px', background:'#1E293B', borderRadius:'4px', marginBottom:'16px'}}></div>
+               <div style={{position:'absolute', bottom:0, left:0, right:0, height:'40px', background:'linear-gradient(to top, #0F172A, transparent)'}}></div>
+               <div style={{position:'absolute', top:'50%', left:'50%', transform:'translate(-50%, -50%)', background:'rgba(16,185,129,0.2)', color:'#10B981', padding:'4px 12px', borderRadius:'12px', fontSize:'10px', fontWeight:'bold', border:'1px solid rgba(16,185,129,0.3)'}}>Processing AI Generation...</div>
+             </div>
           </div>
         );
       case 'cluster':
         return (
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%', background: '#111827', position: 'relative', borderRadius: '0 0 16px 16px', flex: 1 }}>
-            <div style={{ position: 'absolute', width: '100px', height: '2px', background: '#334155', zIndex: 1 }}></div>
-            <div style={{ position: 'absolute', width: '2px', height: '80px', background: '#334155', zIndex: 1, left: '65%' }}></div>
-            <div style={{ zIndex: 2, background: '#5B21B6', padding: '10px 16px', borderRadius: '8px', color: 'white', fontSize: '12px', fontWeight: 'bold', marginRight: '120px', boxShadow: '0 0 15px rgba(124,58,237,0.4)' }}>Pillar: SEO Strategy</div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', zIndex: 2 }}>
-              <div style={{ background: '#1E293B', border: '1px solid #334155', padding: '8px 12px', borderRadius: '6px', color: '#E2E8F0', fontSize: '11px' }}>Technical SEO Tips</div>
-              <div style={{ background: '#1E293B', border: '1px solid #334155', padding: '8px 12px', borderRadius: '6px', color: '#E2E8F0', fontSize: '11px' }}>Backlink Outreach</div>
-            </div>
+          <div style={{display:'flex', alignItems:'center', justifyContent:'center', width:'100%', height:'100%', background:'#111827', position:'relative', borderRadius:'0 0 16px 16px', flex:1}}>
+             <div style={{position:'absolute', width:'100px', height:'2px', background:'#334155', zIndex:1}}></div>
+             <div style={{position:'absolute', width:'2px', height:'80px', background:'#334155', zIndex:1, left:'65%'}}></div>
+             <div style={{zIndex:2, background:'#5B21B6', padding:'10px 16px', borderRadius:'8px', color:'white', fontSize:'12px', fontWeight:'bold', marginRight:'120px', boxShadow:'0 0 15px rgba(124,58,237,0.4)'}}>Pillar: SEO Strategy</div>
+             <div style={{display:'flex', flexDirection:'column', gap:'16px', zIndex:2}}>
+                <div style={{background:'#1E293B', border:'1px solid #334155', padding:'8px 12px', borderRadius:'6px', color:'#E2E8F0', fontSize:'11px'}}>Technical SEO Tips</div>
+                <div style={{background:'#1E293B', border:'1px solid #334155', padding:'8px 12px', borderRadius:'6px', color:'#E2E8F0', fontSize:'11px'}}>Backlink Outreach</div>
+             </div>
           </div>
         );
       case 'serp':
         return (
-          <div style={{ width: '100%', height: '100%', background: '#111827', padding: '16px', boxSizing: 'border-box', borderRadius: '0 0 16px 16px', flex: 1 }}>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr 1fr', gap: '8px', color: '#94A3B8', fontSize: '10px', borderBottom: '1px solid #334155', paddingBottom: '8px', marginBottom: '8px' }}>
-              <div>COMPETITOR</div><div>IDENTIFIED GAP</div><div>OPPORTUNITY</div>
+          <div style={{width:'100%', height:'100%', background:'#111827', padding:'16px', boxSizing:'border-box', borderRadius:'0 0 16px 16px', flex:1}}>
+            <div style={{display:'grid', gridTemplateColumns:'1fr 2fr 1fr', gap:'8px', color:'#94A3B8', fontSize:'10px', borderBottom:'1px solid #334155', paddingBottom:'8px', marginBottom:'8px'}}>
+               <div>COMPETITOR</div><div>IDENTIFIED GAP</div><div>OPPORTUNITY</div>
             </div>
             {[
-              { domain: 'hubspot.com', gap: 'Programmatic SEO execution', opp: 'High' },
-              { domain: 'ahrefs.com', gap: 'AI content safeguards', opp: 'Medium' },
+              {domain:'hubspot.com', gap:'Programmatic SEO execution', opp:'High'},
+              {domain:'ahrefs.com', gap:'AI content safeguards', opp:'Medium'},
             ].map(row => (
-              <div key={row.domain} style={{ display: 'grid', gridTemplateColumns: '1fr 2fr 1fr', gap: '8px', color: 'white', fontSize: '11px', padding: '8px 0', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-                <div style={{ color: '#A78BFA' }}>{row.domain}</div>
-                <div>{row.gap}</div>
-                <div><span style={{ background: 'rgba(16,185,129,0.1)', color: '#10B981', padding: '2px 6px', borderRadius: '4px' }}>{row.opp}</span></div>
+              <div key={row.domain} style={{display:'grid', gridTemplateColumns:'1fr 2fr 1fr', gap:'8px', color:'white', fontSize:'11px', padding:'8px 0', borderBottom:'1px solid rgba(255,255,255,0.05)'}}>
+                 <div style={{color:'#A78BFA'}}>{row.domain}</div>
+                 <div>{row.gap}</div>
+                 <div><span style={{background:'rgba(16,185,129,0.1)', color:'#10B981', padding:'2px 6px', borderRadius:'4px'}}>{row.opp}</span></div>
               </div>
             ))}
-            <button onClick={() => window.showDashboard && window.showDashboard()} style={{ width: '100%', marginTop: '12px', background: '#1E293B', border: '1px dashed #334155', padding: '8px', color: '#A78BFA', fontSize: '11px', borderRadius: '6px', cursor: 'pointer' }}>Scan New Seed Keyword</button>
+            <button onClick={() => window.showDashboard && window.showDashboard()} style={{width:'100%', marginTop:'12px', background:'#1E293B', border:'1px dashed #334155', padding:'8px', color:'#A78BFA', fontSize:'11px', borderRadius:'6px', cursor:'pointer'}}>Scan New Seed Keyword</button>
           </div>
         );
       case 'seo':
         return (
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '32px', width: '100%', height: '100%', background: '#111827', padding: '20px', boxSizing: 'border-box', borderRadius: '0 0 16px 16px', flex: 1 }}>
-            <div style={{ position: 'relative', width: '100px', height: '100px', borderRadius: '50%', background: 'conic-gradient(#10B981 92%, #1E293B 0)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <div style={{ position: 'absolute', inset: '8px', background: '#111827', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column' }}>
-                <span style={{ fontSize: '24px', fontWeight: 'bold', color: 'white' }}>92</span>
-                <span style={{ fontSize: '9px', color: '#94A3B8' }}>SCORE</span>
-              </div>
-            </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', flex: 1 }}>
-              <div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '10px', color: '#94A3B8', marginBottom: '4px' }}><span>Readability</span><span>Great</span></div>
-                <div style={{ height: '6px', background: '#1E293B', borderRadius: '3px' }}><div style={{ width: '85%', height: '100%', background: '#10B981', borderRadius: '3px' }}></div></div>
-              </div>
-              <div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '10px', color: '#94A3B8', marginBottom: '4px' }}><span>Keyword Density</span><span>1.2%</span></div>
-                <div style={{ height: '6px', background: '#1E293B', borderRadius: '3px' }}><div style={{ width: '100%', height: '100%', background: '#10B981', borderRadius: '3px' }}></div></div>
-              </div>
-              <div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '10px', color: '#94A3B8', marginBottom: '4px' }}><span>Target Snippets</span><span>Missing</span></div>
-                <div style={{ height: '6px', background: '#1E293B', borderRadius: '3px' }}><div style={{ width: '40%', height: '100%', background: '#F59E0B', borderRadius: '3px' }}></div></div>
-              </div>
-            </div>
+          <div style={{display:'flex', alignItems:'center', justifyContent:'center', gap:'32px', width:'100%', height:'100%', background:'#111827', padding:'20px', boxSizing:'border-box', borderRadius:'0 0 16px 16px', flex:1}}>
+             <div style={{position:'relative', width:'100px', height:'100px', borderRadius:'50%', background:'conic-gradient(#10B981 92%, #1E293B 0)', display:'flex', alignItems:'center', justifyContent:'center'}}>
+               <div style={{position:'absolute', inset:'8px', background:'#111827', borderRadius:'50%', display:'flex', alignItems:'center', justifyContent:'center', flexDirection:'column'}}>
+                 <span style={{fontSize:'24px', fontWeight:'bold', color:'white'}}>92</span>
+                 <span style={{fontSize:'9px', color:'#94A3B8'}}>SCORE</span>
+               </div>
+             </div>
+             <div style={{display:'flex', flexDirection:'column', gap:'12px', flex:1}}>
+               <div>
+                 <div style={{display:'flex', justifyContent:'space-between', fontSize:'10px', color:'#94A3B8', marginBottom:'4px'}}><span>Readability</span><span>Great</span></div>
+                 <div style={{height:'6px', background:'#1E293B', borderRadius:'3px'}}><div style={{width:'85%', height:'100%', background:'#10B981', borderRadius:'3px'}}></div></div>
+               </div>
+               <div>
+                 <div style={{display:'flex', justifyContent:'space-between', fontSize:'10px', color:'#94A3B8', marginBottom:'4px'}}><span>Keyword Density</span><span>1.2%</span></div>
+                 <div style={{height:'6px', background:'#1E293B', borderRadius:'3px'}}><div style={{width:'100%', height:'100%', background:'#10B981', borderRadius:'3px'}}></div></div>
+               </div>
+               <div>
+                 <div style={{display:'flex', justifyContent:'space-between', fontSize:'10px', color:'#94A3B8', marginBottom:'4px'}}><span>Target Snippets</span><span>Missing</span></div>
+                 <div style={{height:'6px', background:'#1E293B', borderRadius:'3px'}}><div style={{width:'40%', height:'100%', background:'#F59E0B', borderRadius:'3px'}}></div></div>
+               </div>
+             </div>
           </div>
         );
       case 'publish':
         return (
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '16px', width: '100%', height: '100%', background: '#111827', borderRadius: '0 0 16px 16px', flex: 1 }}>
-            <div style={{ width: '50px', height: '50px', background: '#5B21B6', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white' }}><Sparkles size={24} /></div>
-            <div style={{ display: 'flex', gap: '4px' }}>
-              <div style={{ width: '6px', height: '6px', background: '#334155', borderRadius: '50%' }}></div>
-              <div style={{ width: '6px', height: '6px', background: '#334155', borderRadius: '50%' }}></div>
-              <div style={{ width: '6px', height: '6px', background: '#334155', borderRadius: '50%' }}></div>
-            </div>
-            <div style={{ background: '#1E293B', border: '1px solid rgba(16,185,129,0.3)', width: '60px', height: '60px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '30px', position: 'relative' }}>
-              <img src="https://cdn.simpleicons.org/wordpress/white" width="30" />
-              <div style={{ position: 'absolute', top: '-6px', right: '-6px', background: '#10B981', color: 'white', fontSize: '8px', padding: '2px 4px', borderRadius: '4px', fontWeight: 'bold' }}>Synced</div>
-            </div>
+          <div style={{display:'flex', alignItems:'center', justifyContent:'center', gap:'16px', width:'100%', height:'100%', background:'#111827', borderRadius:'0 0 16px 16px', flex:1}}>
+             <div style={{width:'50px', height:'50px', background:'#5B21B6', borderRadius:'12px', display:'flex', alignItems:'center', justifyContent:'center', color:'white'}}><Sparkles size={24}/></div>
+             <div style={{display:'flex', gap:'4px'}}>
+               <div style={{width:'6px', height:'6px', background:'#334155', borderRadius:'50%'}}></div>
+               <div style={{width:'6px', height:'6px', background:'#334155', borderRadius:'50%'}}></div>
+               <div style={{width:'6px', height:'6px', background:'#334155', borderRadius:'50%'}}></div>
+             </div>
+             <div style={{background:'#1E293B', border:'1px solid rgba(16,185,129,0.3)', width:'60px', height:'60px', borderRadius:'12px', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'30px', position:'relative'}}>
+                <img src="https://cdn.simpleicons.org/wordpress/white" width="30" />
+                <div style={{position:'absolute', top:'-6px', right:'-6px', background:'#10B981', color:'white', fontSize:'8px', padding:'2px 4px', borderRadius:'4px', fontWeight:'bold'}}>Synced</div>
+             </div>
           </div>
         );
       case 'voice':
         return (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', width: '100%', height: '100%', background: '#111827', padding: '20px', boxSizing: 'border-box', borderRadius: '0 0 16px 16px', flex: 1 }}>
-            <textarea readOnly style={{ width: '100%', flex: 1, background: '#0F172A', border: '1px solid #334155', borderRadius: '8px', color: '#A78BFA', padding: '12px', fontSize: '11px', resize: 'none', outline: 'none', fontFamily: 'monospace' }} value="CORE_DIRECTIVE: Always maintain a professional yet engaging tone. Avoid jargon where possible. Refer to the reader as 'you'." />
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <div style={{ fontSize: '11px', color: '#94A3B8' }}>Creativity Temperature: <span style={{ color: 'white' }}>1.0</span></div>
-              <div style={{ background: 'rgba(124,58,237,0.1)', color: '#A78BFA', padding: '4px 8px', borderRadius: '4px', fontSize: '10px', border: '1px solid rgba(124,58,237,0.3)' }}>Active Profile</div>
+          <div style={{display:'flex', flexDirection:'column', gap:'12px', width:'100%', height:'100%', background:'#111827', padding:'20px', boxSizing:'border-box', borderRadius:'0 0 16px 16px', flex:1}}>
+            <textarea readOnly style={{width:'100%', flex:1, background:'#0F172A', border:'1px solid #334155', borderRadius:'8px', color:'#A78BFA', padding:'12px', fontSize:'11px', resize:'none', outline:'none', fontFamily:'monospace'}} value="CORE_DIRECTIVE: Always maintain a professional yet engaging tone. Avoid jargon where possible. Refer to the reader as 'you'." />
+            <div style={{display:'flex', justifyContent:'space-between', alignItems:'center'}}>
+              <div style={{fontSize:'11px', color:'#94A3B8'}}>Creativity Temperature: <span style={{color:'white'}}>1.0</span></div>
+              <div style={{background:'rgba(124,58,237,0.1)', color:'#A78BFA', padding:'4px 8px', borderRadius:'4px', fontSize:'10px', border:'1px solid rgba(124,58,237,0.3)'}}>Active Profile</div>
             </div>
           </div>
         );
@@ -1124,15 +1276,15 @@ const HomeFeaturesSection = () => {
   };
 
   return (
-    <div className="container" style={{ padding: '8rem 0' }}>
-      <div style={{ textAlign: 'center', marginBottom: '4rem' }}>
-        <h2 style={{ fontSize: '2.5rem', fontWeight: 800, color: 'white', marginBottom: '1rem' }}>Everything you need to <span className="title-accent-violet">dominate search.</span></h2>
-        <p style={{ color: '#94A3B8', fontSize: '1.2rem', maxWidth: '600px', margin: '0 auto' }}>Navigate through all our core modules natively right here.</p>
+    <div className="container" style={{padding: '8rem 0'}}>
+      <div style={{textAlign: 'center', marginBottom: '4rem'}}>
+        <h2 style={{fontSize: '2.5rem', fontWeight: 800, color: 'white', marginBottom: '1rem'}}>Everything you need to <span className="title-accent-violet">dominate search.</span></h2>
+        <p style={{color: '#94A3B8', fontSize: '1.2rem', maxWidth: '600px', margin: '0 auto'}}>Navigate through all our core modules natively right here.</p>
       </div>
-
-      <div style={{ display: 'flex', flexDirection: window.innerWidth <= 768 ? 'column' : 'row', gap: '2rem', background: '#0D1526', border: '1px solid rgba(255,255,255,0.05)', borderRadius: '24px', padding: '2rem' }}>
+      
+      <div style={{display: 'flex', flexDirection: window.innerWidth <= 768 ? 'column' : 'row', gap: '2rem', background: '#0D1526', border: '1px solid rgba(255,255,255,0.05)', borderRadius: '24px', padding: '2rem'}}>
         {/* Sidebar Toolbar */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', borderRight: window.innerWidth <= 768 ? 'none' : '1px solid rgba(255,255,255,0.05)', borderBottom: window.innerWidth <= 768 ? '1px solid rgba(255,255,255,0.05)' : 'none', paddingRight: window.innerWidth <= 768 ? '0' : '2rem', paddingBottom: window.innerWidth <= 768 ? '2rem' : '0', minWidth: '280px' }}>
+        <div style={{display: 'flex', flexDirection: 'column', gap: '8px', borderRight: window.innerWidth <= 768 ? 'none' : '1px solid rgba(255,255,255,0.05)', borderBottom: window.innerWidth <= 768 ? '1px solid rgba(255,255,255,0.05)' : 'none', paddingRight: window.innerWidth <= 768 ? '0' : '2rem', paddingBottom: window.innerWidth <= 768 ? '2rem' : '0', minWidth: '280px'}}>
           {features.map(f => (
             <button key={f.id} onClick={() => setActive(f.id)} style={{
               display: 'flex', alignItems: 'center', gap: '12px', padding: '16px', borderRadius: '12px',
@@ -1141,30 +1293,30 @@ const HomeFeaturesSection = () => {
               color: active === f.id ? 'white' : '#94A3B8',
               cursor: 'pointer', textAlign: 'left', transition: 'all 0.2s', width: '100%'
             }}>
-              <div style={{ color: active === f.id ? '#A78BFA' : '#64748B', display: 'flex' }}>{f.icon}</div>
-              <span style={{ fontWeight: 600, fontSize: '15px' }}>{f.title}</span>
+              <div style={{color: active === f.id ? '#A78BFA' : '#64748B', display: 'flex'}}>{f.icon}</div>
+              <span style={{fontWeight: 600, fontSize: '15px'}}>{f.title}</span>   
             </button>
           ))}
         </div>
-
+        
         {/* Right Panel Display */}
-        <div style={{ flex: 1, padding: window.innerWidth <= 768 ? '0' : '1rem 2rem', display: 'flex', flexDirection: 'column', justifyContent: 'center', minHeight: '350px' }}>
-          {features.map(f => (
-            <div key={f.id} style={{ display: active === f.id ? 'flex' : 'none', animation: 'fadeIn 0.4s ease forwards', height: '100%', flexDirection: 'column' }}>
-              <h3 style={{ fontSize: '2rem', color: 'white', marginBottom: '1rem' }}>{f.title}</h3>
-              <p style={{ color: '#94A3B8', fontSize: '1.1rem', lineHeight: 1.6, marginBottom: '2rem' }}>{f.desc}</p>
-
-              <div style={{ background: '#141B2D', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '16px', flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden', position: 'relative', minHeight: '260px' }}>
-                <div style={{ height: '40px', background: 'rgba(255,255,255,0.02)', borderBottom: '1px solid rgba(255,255,255,0.05)', display: 'flex', alignItems: 'center', padding: '0 16px', gap: '6px', width: '100%', boxSizing: 'border-box' }}>
-                  <div style={{ width: 10, height: 10, borderRadius: '50%', background: '#EF4444' }}></div>
-                  <div style={{ width: 10, height: 10, borderRadius: '50%', background: '#F59E0B' }}></div>
-                  <div style={{ width: 10, height: 10, borderRadius: '50%', background: '#10B981' }}></div>
-                  <div style={{ marginLeft: 'auto', fontSize: '10px', color: '#64748B', fontFamily: 'monospace' }}>BlogzzUP.ai/dash/{f.id}</div>
-                </div>
-                {renderMockup(f.id)}
-              </div>
-            </div>
-          ))}
+        <div style={{flex: 1, padding: window.innerWidth <= 768 ? '0' : '1rem 2rem', display: 'flex', flexDirection: 'column', justifyContent: 'center', minHeight: '350px'}}>
+           {features.map(f => (
+             <div key={f.id} style={{display: active === f.id ? 'flex' : 'none', animation: 'fadeIn 0.4s ease forwards', height: '100%', flexDirection: 'column'}}>
+               <h3 style={{fontSize: '2rem', color: 'white', marginBottom: '1rem'}}>{f.title}</h3>
+               <p style={{color: '#94A3B8', fontSize: '1.1rem', lineHeight: 1.6, marginBottom: '2rem'}}>{f.desc}</p>
+               
+               <div style={{background: '#141B2D', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '16px', flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden', position: 'relative', minHeight: '260px'}}>
+                  <div style={{height: '40px', background: 'rgba(255,255,255,0.02)', borderBottom: '1px solid rgba(255,255,255,0.05)', display: 'flex', alignItems: 'center', padding: '0 16px', gap: '6px', width: '100%', boxSizing: 'border-box'}}>
+                    <div style={{width: 10, height: 10, borderRadius: '50%', background: '#EF4444'}}></div>
+                    <div style={{width: 10, height: 10, borderRadius: '50%', background: '#F59E0B'}}></div>
+                    <div style={{width: 10, height: 10, borderRadius: '50%', background: '#10B981'}}></div>
+                    <div style={{marginLeft: 'auto', fontSize: '10px', color: '#64748B', fontFamily: 'monospace'}}>BlogzzUP.ai/dash/{f.id}</div>
+                  </div>
+                  {renderMockup(f.id)}
+               </div>
+             </div>
+           ))}
         </div>
       </div>
     </div>
@@ -1188,7 +1340,7 @@ function App() {
 
   // Navigation Utilities
   useEffect(() => {
-    window.updateUserInDashboard = function (user) {
+    window.updateUserInDashboard = function(user) {
       if (!user) return;
       const firstName = (user.displayName || 'User').split(' ')[0];
       const hour = new Date().getHours();
@@ -1207,11 +1359,11 @@ function App() {
     };
 
     // Redirect to auth page — real login happens in the auth form
-    window.showDashboard = function () {
+    window.showDashboard = function() {
       if (window.showPage) window.showPage('auth');
     };
 
-    window.showMarketingSite = function () {
+    window.showMarketingSite = function() {
       const da = document.getElementById('dashboard-app');
       if (da) da.style.display = 'none';
       const ms = document.getElementById('marketing-site');
@@ -1254,7 +1406,7 @@ function App() {
         }
       });
     }, { threshold: 0.1 });
-
+    
     items.forEach(item => observer.observe(item));
     return () => observer.disconnect();
   }, [view]);
@@ -1306,43 +1458,7 @@ function App() {
   ];
 
   useEffect(() => {
-    // ─── Theme init (persists across sessions) ───
-    const savedTheme = localStorage.getItem('bf_theme') || 'dark';
-    document.documentElement.setAttribute('data-theme', savedTheme);
-
-    window.toggleTheme = function () {
-      const current = document.documentElement.getAttribute('data-theme') || 'dark';
-      const next = current === 'dark' ? 'light' : 'dark';
-      document.documentElement.setAttribute('data-theme', next);
-      localStorage.setItem('bf_theme', next);
-
-      // Update all toggle buttons (sidebar + navbar)
-      document.querySelectorAll('.theme-toggle-icon').forEach(icon => {
-        icon.textContent = next === 'dark' ? '\uD83C\uDF19' : '\u2600\uFE0F';
-      });
-      document.querySelectorAll('.theme-toggle-label').forEach(label => {
-        label.textContent = next === 'dark' ? 'Dark Mode' : 'Light Mode';
-      });
-      const thumbs = document.querySelectorAll('.toggle-thumb');
-      const tracks = document.querySelectorAll('.toggle-track');
-      thumbs.forEach(thumb => {
-        thumb.style.transform = next === 'dark' ? '' : 'translateX(-17px)';
-      });
-      tracks.forEach(track => {
-        track.style.background = next === 'dark' ? '#7C3AED' : '#D1D5DB';
-      });
-    };
-
-    // Apply initial icon state
-    const theme = localStorage.getItem('bf_theme') || 'dark';
-    document.querySelectorAll('.theme-toggle-icon').forEach(icon => {
-      icon.textContent = theme === 'dark' ? '\uD83C\uDF19' : '\u2600\uFE0F';
-    });
-    document.querySelectorAll('.theme-toggle-label').forEach(label => {
-      label.textContent = theme === 'dark' ? 'Dark Mode' : 'Light Mode';
-    });
-
-    window.showPage = function (name) {
+    window.showPage = function(name) {
       document.querySelectorAll('.page-section').forEach(s => {
         s.style.display = 'none';
         s.style.opacity = '0';
@@ -1359,6 +1475,9 @@ function App() {
       });
       window.location.hash = name;
       window.scrollTo(0, 0);
+      if (name === 'demo') {
+        setTimeout(window.initDemoChat, 100);
+      }
     };
 
     const hash = window.location.hash.replace('#', '') || 'home';
@@ -1369,7 +1488,7 @@ function App() {
     }
   }, []);
 
-
+  
 
   if (view === 'architecture') {
     return <PromptArchitecture onBack={() => { setView('landing'); window.scrollTo(0, 0); }} />;
@@ -1382,241 +1501,260 @@ function App() {
       {/* Hidden live region for screen-reader announcements */}
       <div id="sr-live-region" aria-live="polite" aria-atomic="true" />
       <div id="marketing-site" style={{ display: 'block' }}>
-        <div className="bg-grid" role="presentation" aria-hidden="true"></div>
-        <div className="bg-glow" role="presentation" aria-hidden="true"></div>
+      <div className="bg-grid" role="presentation" aria-hidden="true"></div>
+      <div className="bg-glow" role="presentation" aria-hidden="true"></div>
 
-        <nav className={`navbar ${scrolled ? 'scrolled' : ''}`} role="navigation" aria-label="Main navigation">
-          <div className="container">
-            <a href="#" className="logo" aria-label="BlogzzUP — home">
-              <Sparkles className="logo-icon" size={24} aria-hidden="true" />
-              BlogzzUP
-            </a>
-
-            <ul className="nav-links" role="list" aria-label="Site pages">
-              <li><a href="#home" onClick={(e) => { e.preventDefault(); window.showPage('home'); }} data-nav="home" className="nav-link active" aria-current="page">Home</a></li>
-              <li><a href="#howitworks" onClick={(e) => { e.preventDefault(); window.showPage('howitworks'); }} data-nav="howitworks" className="nav-link">How it Works</a></li>
-              <li><a href="#features" onClick={(e) => { e.preventDefault(); window.showPage('features'); }} data-nav="features" className="nav-link">Features</a></li>
-              <li><a href="#demo" onClick={(e) => { e.preventDefault(); window.showPage('demo'); }} data-nav="demo" className="nav-link">Demo</a></li>
-              <li><a href="#pricing" onClick={(e) => { e.preventDefault(); window.showPage('pricing'); }} data-nav="pricing" className="nav-link">Pricing</a></li>
-              <li><a href="#blog" onClick={(e) => { e.preventDefault(); window.showPage('blog'); }} data-nav="blog" className="nav-link">Blog</a></li>
-            </ul>
-
-            <div className="nav-actions" role="group" aria-label="Account actions">
-              {/* Theme toggle button in navbar */}
-              <button
-                id="theme-toggle-navbar"
-                onClick={() => window.toggleTheme && window.toggleTheme()}
-                title="Toggle light/dark mode"
-                className="theme-toggle-btn"
-                style={{ width: '36px', height: '36px', padding: '0', justifyContent: 'center' }}
-              >
-                <span className="theme-toggle-icon">🌙</span>
-              </button>
-              <button className="btn btn-ghost" onClick={() => window.showPage('auth')}>Sign In</button>
-              <button className="btn btn-primary" onClick={() => window.showPage('auth')} aria-label="Start free for 30 days">Start Free</button>
-            </div>
-
-            <button className="mobile-menu-btn" onClick={() => setMobileMenuOpen(true)} aria-label="Open navigation menu" aria-expanded={mobileMenuOpen} aria-controls="mobile-drawer">
-              <Menu size={24} color="#fff" aria-hidden="true" />
-            </button>
-          </div>
-        </nav>
-
-        {/* Mobile Drawer */}
-        <div
-          id="mobile-drawer"
-          className={`mobile-drawer ${mobileMenuOpen ? 'open' : ''}`}
-          role="dialog"
-          aria-modal="true"
-          aria-label="Navigation menu"
-          aria-hidden={!mobileMenuOpen}
-        >
-          <button className="mobile-close-btn" onClick={() => setMobileMenuOpen(false)} aria-label="Close navigation menu">
-            <X size={24} color="#fff" aria-hidden="true" />
-          </button>
-          <ul className="mobile-nav-links">
-            <li><a href="#home" onClick={(e) => { e.preventDefault(); setMobileMenuOpen(false); window.showPage('home'); }} data-nav="home" className="nav-link active">Home</a></li>
-            <li><a href="#howitworks" onClick={(e) => { e.preventDefault(); setMobileMenuOpen(false); window.showPage('howitworks'); }} data-nav="howitworks" className="nav-link">How it Works</a></li>
-            <li><a href="#features" onClick={(e) => { e.preventDefault(); setMobileMenuOpen(false); window.showPage('features'); }} data-nav="features" className="nav-link">Features</a></li>
-            <li><a href="#demo" onClick={(e) => { e.preventDefault(); setMobileMenuOpen(false); window.showPage('demo'); }} data-nav="demo" className="nav-link">Demo</a></li>
-            <li><a href="#pricing" onClick={(e) => { e.preventDefault(); setMobileMenuOpen(false); window.showPage('pricing'); }} data-nav="pricing" className="nav-link">Pricing</a></li>
-            <li><a href="#blog" onClick={(e) => { e.preventDefault(); setMobileMenuOpen(false); window.showPage('blog'); }} data-nav="blog" className="nav-link">Blog</a></li>
+      <nav className={`navbar ${scrolled ? 'scrolled' : ''}`} role="navigation" aria-label="Main navigation">
+        <div className="container">
+          <a href="#" className="logo" aria-label="BlogzzUP — home">
+            <Sparkles className="logo-icon" size={24} aria-hidden="true" />
+            BlogzzUP
+          </a>
+          
+          <ul className="nav-links" role="list" aria-label="Site pages">
+            <li><a href="#home" onClick={(e) => { e.preventDefault(); window.showPage('home'); }} data-nav="home" className="nav-link active" aria-current="page">Home</a></li>
+            <li><a href="#howitworks" onClick={(e) => { e.preventDefault(); window.showPage('howitworks'); }} data-nav="howitworks" className="nav-link">How it Works</a></li>
+            <li><a href="#features" onClick={(e) => { e.preventDefault(); window.showPage('features'); }} data-nav="features" className="nav-link">Features</a></li>
+            <li><a href="#demo" onClick={(e) => { e.preventDefault(); window.showPage('demo'); }} data-nav="demo" className="nav-link">Demo</a></li>
+            <li><a href="#pricing" onClick={(e) => { e.preventDefault(); window.showPage('pricing'); }} data-nav="pricing" className="nav-link">Pricing</a></li>
+            <li><a href="#blog" onClick={(e) => { e.preventDefault(); window.showPage('blog'); }} data-nav="blog" className="nav-link">Blog</a></li>
           </ul>
-          <div className="mobile-nav-actions">
-            <button onClick={() => { window.showPage('auth'); setMobileMenuOpen(false); }} className="btn btn-outline-white w-full">Sign In</button>
-            <button onClick={() => { window.showPage('auth'); setMobileMenuOpen(false); }} className="btn btn-primary w-full mt-4">Start Free</button>
+
+          <div className="nav-actions" role="group" aria-label="Account actions" style={{display: 'flex', alignItems: 'center', gap: '8px'}}>
+            <button 
+              id="theme-toggle" 
+              onClick={() => window.toggleTheme && window.toggleTheme()} 
+              title="Toggle light/dark mode"
+              style={{
+                background: 'rgba(255,255,255,0.06)',
+                border: '1px solid rgba(255,255,255,0.1)',
+                borderRadius: '999px',
+                width: '40px',
+                height: '40px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                cursor: 'pointer',
+                fontSize: '17px',
+                transition: 'background 0.2s, border-color 0.2s',
+                flexShrink: 0
+              }}
+              onMouseOver={(e) => { e.currentTarget.style.background='rgba(124,58,237,0.15)'; e.currentTarget.style.borderColor='rgba(124,58,237,0.4)'; }}
+              onMouseOut={(e) => { e.currentTarget.style.background='rgba(255,255,255,0.06)'; e.currentTarget.style.borderColor='rgba(255,255,255,0.1)'; }}
+            >
+              🌙
+            </button>
+            <button className="btn btn-ghost" onClick={() => window.showPage('auth')}>Sign In</button>
+            <button className="btn btn-primary" onClick={() => window.showPage('auth')} aria-label="Start free for 30 days">Start Free</button>
           </div>
+
+          <button className="mobile-menu-btn" onClick={() => setMobileMenuOpen(true)} aria-label="Open navigation menu" aria-expanded={mobileMenuOpen} aria-controls="mobile-drawer">
+            <Menu size={24} color="#fff" aria-hidden="true" />
+          </button>
         </div>
+      </nav>
 
+      {/* Mobile Drawer */}
+      <div
+        id="mobile-drawer"
+        className={`mobile-drawer ${mobileMenuOpen ? 'open' : ''}`}
+        role="dialog"
+        aria-modal="true"
+        aria-label="Navigation menu"
+        aria-hidden={!mobileMenuOpen}
+      >
+        <button className="mobile-close-btn" onClick={() => setMobileMenuOpen(false)} aria-label="Close navigation menu">
+          <X size={24} color="#fff" aria-hidden="true" />
+        </button>
+        <ul className="mobile-nav-links">
+          <li><a href="#home" onClick={(e) => { e.preventDefault(); setMobileMenuOpen(false); window.showPage('home'); }} data-nav="home" className="nav-link active">Home</a></li>
+          <li><a href="#howitworks" onClick={(e) => { e.preventDefault(); setMobileMenuOpen(false); window.showPage('howitworks'); }} data-nav="howitworks" className="nav-link">How it Works</a></li>
+          <li><a href="#features" onClick={(e) => { e.preventDefault(); setMobileMenuOpen(false); window.showPage('features'); }} data-nav="features" className="nav-link">Features</a></li>
+          <li><a href="#demo" onClick={(e) => { e.preventDefault(); setMobileMenuOpen(false); window.showPage('demo'); }} data-nav="demo" className="nav-link">Demo</a></li>
+          <li><a href="#pricing" onClick={(e) => { e.preventDefault(); setMobileMenuOpen(false); window.showPage('pricing'); }} data-nav="pricing" className="nav-link">Pricing</a></li>
+          <li><a href="#blog" onClick={(e) => { e.preventDefault(); setMobileMenuOpen(false); window.showPage('blog'); }} data-nav="blog" className="nav-link">Blog</a></li>
+        </ul>
+        <div className="mobile-nav-actions">
+          <button onClick={() => { window.showPage('auth'); setMobileMenuOpen(false); }} className="btn btn-outline-white w-full">Sign In</button>
+          <button onClick={() => { window.showPage('auth'); setMobileMenuOpen(false); }} className="btn btn-primary w-full mt-4">Start Free</button>
+        </div>
+      </div>
 
+      
 
+      
 
+      
 
+      
 
+      
 
+      
 
+      
 
+      
 
+      
 
-
-
-
-
-
-
-
-
-
-        <div className="page-section" id="page-home" style={{ display: 'none' }}>
-          <main className="hero fade-section" id="main-content" style={{ position: 'relative' }} tabIndex={-1}>
-            <div className="hero-glow-orb"></div>
-            <div className="container hero-content">
-              <div className="badge stagger-in-item">
-                <span className="badge-dot"></span>
-                ✦ India's #1 AI Blog Engine — Now in Beta
-              </div>
-
-              <h1 className="hero-title stagger-in-item">
-                Publish <span className="title-accent-violet">10x Output</span><br />
-                With Zero Writing.
-              </h1>
-
-              <p className="subheading stagger-in-item">
-                Stop fighting writer's block. BlogzzUP researches, writes, optimizes, and automatically publishes high-ranking SEO content directly to your WordPress, Webflow, or custom CMS.
-              </p>
-
-              <div className="hero-actions stagger-in-item">
-                <button className="btn btn-primary btn-lg" onClick={() => window.showDashboard()}>Start Free Trial →</button>
-                <button className="btn btn-outline btn-lg" onClick={() => window.showPage('demo')}><Play size={18} style={{ marginRight: '8px' }} /> Watch Demo</button>
-              </div>
-
-              <div className="feature-pill-grid stagger-in">
-                <div className="fp-card glass-card" onClick={(e) => { e.preventDefault(); window.showPage('howitworks'); }}>
-                  <div className="fp-card-header"><span style={{ fontSize: '20px' }}>🧠</span><span className="fp-title">AI Prompt Engine</span></div>
-                  <div className="fp-desc">7-stage pipeline from keyword to publish</div>
-                  <span className="fp-arrow">→</span>
-                </div>
-                <div className="fp-card glass-card" onClick={(e) => { e.preventDefault(); window.showPage('features'); }}>
-                  <div className="fp-card-header"><span style={{ fontSize: '20px' }}>🔍</span><span className="fp-title">SERP Gap Scanner</span></div>
-                  <div className="fp-desc">Find keywords competitors miss</div>
-                  <span className="fp-arrow">→</span>
-                </div>
-                <div className="fp-card glass-card" onClick={(e) => { e.preventDefault(); window.showPage('demo'); }}>
-                  <div className="fp-card-header"><span style={{ fontSize: '20px' }}>📊</span><span className="fp-title">Live SEO Scorer</span></div>
-                  <div className="fp-desc">Real-time 10-metric scoring</div>
-                  <span className="fp-arrow">→</span>
-                </div>
-                <div className="fp-card glass-card" onClick={(e) => { e.preventDefault(); window.showPage('features'); }}>
-                  <div className="fp-card-header"><span style={{ fontSize: '20px' }}>🗺️</span><span className="fp-title">Content Cluster Map</span></div>
-                  <div className="fp-desc">Visual topic universe builder</div>
-                  <span className="fp-arrow">→</span>
-                </div>
-                <div className="fp-card glass-card" onClick={(e) => { e.preventDefault(); window.showPage('features'); }}>
-                  <div className="fp-card-header"><span style={{ fontSize: '20px' }}>🌍</span><span className="fp-title">SEO optimization</span></div>
-                  <div className="fp-desc">Search-first blog optimization for visibility</div>
-                  <span className="fp-arrow">→</span>
-                </div>
-                <div className="fp-card glass-card" onClick={(e) => { e.preventDefault(); window.showPage('features'); }}>
-                  <div className="fp-card-header"><span style={{ fontSize: '20px' }}>🔁</span><span className="fp-title">Social Repurpose</span></div>
-                  <div className="fp-desc">One blog → 10 content pieces</div>
-                  <span className="fp-arrow">→</span>
-                </div>
-              </div>
-
-              <div className="home-stats-strip">
-                <div className="home-stats-flex">
-                  <div className="home-stat-item">
-                    <div className="home-stat-num">92%</div>
-                    <div className="home-stat-label">Time Saved</div>
-                  </div>
-                  <div className="home-stat-divider"></div>
-                  <div className="home-stat-item">
-                    <div className="home-stat-num">4x</div>
-                    <div className="home-stat-label">Better ROI</div>
-                  </div>
-                  <div className="home-stat-divider"></div>
-                  <div className="home-stat-item">
-                    <div className="home-stat-num">15x</div>
-                    <div className="home-stat-label">Faster Publishing</div>
-                  </div>
-                  <div className="home-stat-divider"></div>
-                  <div className="home-stat-item">
-                    <div className="home-stat-num">500+</div>
-                    <div className="home-stat-label">Startups</div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="home-marquee-section">
-                <div className="home-marquee-title">Publishes everywhere you already are</div>
-                <div className="home-marquee-container-wrapper" style={{ overflow: 'hidden' }}>
-                  <div className="home-marquee-container">
-                    <div style={{ display: 'flex', gap: '16px' }}>
-                      <div className="home-marquee-pill">WordPress</div>
-                      <div className="home-marquee-pill">Webflow</div>
-                      <div className="home-marquee-pill">Shopify</div>
-                      <div className="home-marquee-pill">Ghost</div>
-                      <div className="home-marquee-pill">Strapi</div>
-                      <div className="home-marquee-pill">Sanity</div>
-                      <div className="home-marquee-pill">Medium</div>
-                      <div className="home-marquee-pill">LinkedIn</div>
-                      <div className="home-marquee-pill">Notion</div>
-                    </div>
-                    <div style={{ display: 'flex', gap: '16px' }}>
-                      <div className="home-marquee-pill">WordPress</div>
-                      <div className="home-marquee-pill">Webflow</div>
-                      <div className="home-marquee-pill">Shopify</div>
-                      <div className="home-marquee-pill">Ghost</div>
-                      <div className="home-marquee-pill">Strapi</div>
-                      <div className="home-marquee-pill">Sanity</div>
-                      <div className="home-marquee-pill">Medium</div>
-                      <div className="home-marquee-pill">LinkedIn</div>
-                      <div className="home-marquee-pill">Notion</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <HomeFeaturesSection />
-
+      
+            <div className="page-section" id="page-home" style={{ display: 'none' }}>
+        <main className="hero fade-section" id="main-content" style={{ position: 'relative' }} tabIndex={-1}>
+          <div className="hero-glow-orb"></div>
+          <div className="container hero-content">
+            <div className="badge stagger-in-item">
+              <span className="badge-dot"></span>
+              ✦ India's #1 AI Blog Engine — Now in Beta
             </div>
-          </main>
-        </div>
+            
+            <h1 className="hero-title stagger-in-item">
+              Publish <span className="title-accent-violet">10x Output</span><br />
+              With Zero Writing.
+            </h1>
+            
+            <p className="subheading stagger-in-item">
+              Stop fighting writer's block. BlogzzUP researches, writes, optimizes, and automatically publishes high-ranking SEO content directly to your WordPress, Webflow, or custom CMS.
+            </p>
 
-        <div className="page-section" id="page-howitworks" style={{ display: 'none' }}>
-          <div className="container" style={{ paddingTop: '8rem' }}>
-            <div className="hiw-header">
-              <h1 className="hiw-title">How BlogzzUP Works</h1>
-              <p className="hiw-subtitle">From keyword to ranked blog post in under 10 minutes</p>
+            <div className="hero-actions stagger-in-item">
+              <button className="btn btn-primary btn-lg" onClick={() => window.showDashboard()}>Start Free Trial →</button>
+              <button 
+                onClick={() => window.showPage('demo')} 
+                style={{background:'transparent', border:'1px solid rgba(255,255,255,0.2)', color:'white', padding:'14px 28px', borderRadius:'999px', fontSize:'16px', fontWeight:500, cursor:'pointer', display:'flex', alignItems:'center', gap:'10px', transition:'all 0.2s'}}
+                onMouseEnter={(e) => { e.currentTarget.style.borderColor='#7C3AED'; e.currentTarget.style.color='#A78BFA'; }}
+                onMouseLeave={(e) => { e.currentTarget.style.borderColor='rgba(255,255,255,0.2)'; e.currentTarget.style.color='white'; }}
+              >
+                <span style={{fontSize:'18px'}}>▷</span> Watch Demo
+              </button>
             </div>
 
-            <div style={{ margin: '3rem auto 5rem', maxWidth: '1000px', width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', position: 'relative', padding: '0 20px', boxSizing: 'border-box' }}>
-              {/* Connector glow line */}
-              <div style={{ position: 'absolute', top: '50%', left: '12%', right: '12%', height: '2px', background: 'linear-gradient(90deg, rgba(124,58,237,0) 0%, rgba(124,58,237,0.5) 50%, rgba(6,182,212,0) 100%)', zIndex: 0 }}></div>
-              {/* Animated particles */}
-              <div style={{ position: 'absolute', top: 'calc(50% - 4px)', left: '20%', width: '8px', height: '8px', background: '#A78BFA', borderRadius: '50%', boxShadow: '0 0 10px #A78BFA', animation: 'moveRightParticle 3s linear infinite', zIndex: 1 }}></div>
-              <div style={{ position: 'absolute', top: 'calc(50% - 4px)', left: '20%', width: '8px', height: '8px', background: '#06B6D4', borderRadius: '50%', boxShadow: '0 0 10px #06B6D4', animation: 'moveRightParticle 3s linear infinite 1.5s', zIndex: 1 }}></div>
-              {/* Node 1 – Discovery */}
-              <div className="glass-card" style={{ padding: '24px', textAlign: 'center', width: '220px', flexShrink: 0, zIndex: 2 }}>
-                <div style={{ background: 'rgba(255,255,255,0.05)', width: '64px', height: '64px', borderRadius: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px', color: 'var(--text-muted)' }}><Search size={32} /></div>
-                <h3 style={{ color: 'white', fontSize: '18px', margin: '0 0 8px', fontWeight: 700 }}>1. Discovery</h3>
-                <p style={{ color: 'var(--text-subtle)', fontSize: '13px', margin: 0, lineHeight: 1.5 }}>Keyword & SERP analysis automatically extracts missing competitor topics.</p>
+            <div className="feature-pill-grid stagger-in">
+              <div className="fp-card glass-card" onClick={(e) => { e.preventDefault(); window.showPage('howitworks'); }}>
+                <div className="fp-card-header"><span style={{fontSize: '20px'}}>🧠</span><span className="fp-title">AI Prompt Engine</span></div>
+                <div className="fp-desc">7-stage pipeline from keyword to publish</div>
+                <span className="fp-arrow">→</span>
               </div>
-              {/* Node 2 – AI Engine (centre, glowing) */}
-              <div style={{ background: 'linear-gradient(135deg, #1A1333, #0D1526)', border: '1px solid rgba(124,58,237,0.4)', borderRadius: '24px', padding: '32px', textAlign: 'center', width: '240px', flexShrink: 0, zIndex: 2, boxShadow: '0 0 40px rgba(124,58,237,0.25)', position: 'relative' }}>
-                <div style={{ position: 'absolute', inset: 0, borderRadius: '24px', boxShadow: '0 0 0 0 rgba(124,58,237,0.4)', animation: 'pulseBorderGlow 2s infinite', pointerEvents: 'none' }}></div>
-                <div style={{ background: 'linear-gradient(135deg, #7C3AED, #5B21B6)', width: '80px', height: '80px', borderRadius: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px', color: 'white', boxShadow: '0 10px 20px rgba(124,58,237,0.4)' }}><Brain size={40} /></div>
-                <h3 style={{ color: 'white', fontSize: '22px', margin: '0 0 6px', fontWeight: 800 }}>AI Engine</h3>
-                <p style={{ color: '#A78BFA', fontSize: '13px', margin: 0 }}>Generates, scores & optimises NLP content in real time.</p>
+              <div className="fp-card glass-card" onClick={(e) => { e.preventDefault(); window.showPage('features'); }}>
+                <div className="fp-card-header"><span style={{fontSize: '20px'}}>🔍</span><span className="fp-title">SERP Gap Scanner</span></div>
+                <div className="fp-desc">Find keywords competitors miss</div>
+                <span className="fp-arrow">→</span>
               </div>
-              {/* Node 3 – Publishing */}
-              <div className="glass-card" style={{ padding: '24px', textAlign: 'center', width: '220px', flexShrink: 0, zIndex: 2 }}>
-                <div style={{ background: 'rgba(6,182,212,0.1)', width: '64px', height: '64px', borderRadius: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px', color: '#06B6D4' }}><Globe2 size={32} /></div>
-                <h3 style={{ color: 'white', fontSize: '18px', margin: '0 0 8px', fontWeight: 700 }}>3. Publishing</h3>
-                <p style={{ color: 'var(--text-subtle)', fontSize: '13px', margin: 0, lineHeight: 1.5 }}>One-click sync to major CMS platforms like WordPress or Ghost.</p>
+              <div className="fp-card glass-card" onClick={(e) => { e.preventDefault(); window.showPage('demo'); }}>
+                <div className="fp-card-header"><span style={{fontSize: '20px'}}>📊</span><span className="fp-title">Live SEO Scorer</span></div>
+                <div className="fp-desc">Real-time 10-metric scoring</div>
+                <span className="fp-arrow">→</span>
               </div>
-              <style dangerouslySetInnerHTML={{
-                __html: `
+              <div className="fp-card glass-card" onClick={(e) => { e.preventDefault(); window.showPage('features'); }}>
+                <div className="fp-card-header"><span style={{fontSize: '20px'}}>🗺️</span><span className="fp-title">Content Cluster Map</span></div>
+                <div className="fp-desc">Visual topic universe builder</div>
+                <span className="fp-arrow">→</span>
+              </div>
+              <div className="fp-card glass-card" onClick={(e) => { e.preventDefault(); window.showPage('features'); }}>
+                <div className="fp-card-header"><span style={{fontSize: '20px'}}>🌍</span><span className="fp-title">SEO optimization</span></div>
+                <div className="fp-desc">Search-first blog optimization for visibility</div>
+                <span className="fp-arrow">→</span>
+              </div>
+              <div className="fp-card glass-card" onClick={(e) => { e.preventDefault(); window.showPage('features'); }}>
+                <div className="fp-card-header"><span style={{fontSize: '20px'}}>🔁</span><span className="fp-title">Social Repurpose</span></div>
+                <div className="fp-desc">One blog → 10 content pieces</div>
+                <span className="fp-arrow">→</span>
+              </div>
+            </div>
+
+            <div className="home-stats-strip">
+              <div className="home-stats-flex">
+                <div className="home-stat-item">
+                  <div className="home-stat-num">92%</div>
+                  <div className="home-stat-label">Time Saved</div>
+                </div>
+                <div className="home-stat-divider"></div>
+                <div className="home-stat-item">
+                  <div className="home-stat-num">4x</div>
+                  <div className="home-stat-label">Better ROI</div>
+                </div>
+                <div className="home-stat-divider"></div>
+                <div className="home-stat-item">
+                  <div className="home-stat-num">15x</div>
+                  <div className="home-stat-label">Faster Publishing</div>
+                </div>
+                <div className="home-stat-divider"></div>
+                <div className="home-stat-item">
+                  <div className="home-stat-num">500+</div>
+                  <div className="home-stat-label">Startups</div>
+                </div>
+              </div>
+            </div>
+
+            <div className="home-marquee-section">
+              <div className="home-marquee-title">Publishes everywhere you already are</div>
+              <div className="home-marquee-container-wrapper" style={{overflow: 'hidden'}}>
+                <div className="home-marquee-container">
+                  <div style={{display: 'flex', gap: '16px'}}>
+                    <div className="home-marquee-pill">WordPress</div>
+                    <div className="home-marquee-pill">Webflow</div>
+                    <div className="home-marquee-pill">Shopify</div>
+                    <div className="home-marquee-pill">Ghost</div>
+                    <div className="home-marquee-pill">Strapi</div>
+                    <div className="home-marquee-pill">Sanity</div>
+                    <div className="home-marquee-pill">Medium</div>
+                    <div className="home-marquee-pill">LinkedIn</div>
+                    <div className="home-marquee-pill">Notion</div>
+                  </div>
+                  <div style={{display: 'flex', gap: '16px'}}>
+                    <div className="home-marquee-pill">WordPress</div>
+                    <div className="home-marquee-pill">Webflow</div>
+                    <div className="home-marquee-pill">Shopify</div>
+                    <div className="home-marquee-pill">Ghost</div>
+                    <div className="home-marquee-pill">Strapi</div>
+                    <div className="home-marquee-pill">Sanity</div>
+                    <div className="home-marquee-pill">Medium</div>
+                    <div className="home-marquee-pill">LinkedIn</div>
+                    <div className="home-marquee-pill">Notion</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <HomeFeaturesSection />
+
+          </div>
+        </main>
+      </div>
+
+      <div className="page-section" id="page-howitworks" style={{ display: 'none' }}>
+        <div className="container" style={{paddingTop: '8rem'}}>
+          <div className="hiw-header">
+            <h1 className="hiw-title">How BlogzzUP Works</h1>
+            <p className="hiw-subtitle">From keyword to ranked blog post in under 10 minutes</p>
+          </div>
+          
+          <div style={{margin: '3rem auto 5rem', maxWidth: '1000px', width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', position: 'relative', padding: '0 20px', boxSizing: 'border-box'}}>
+             {/* Connector glow line */}
+             <div style={{position: 'absolute', top: '50%', left: '12%', right: '12%', height: '2px', background: 'linear-gradient(90deg, rgba(124,58,237,0) 0%, rgba(124,58,237,0.5) 50%, rgba(6,182,212,0) 100%)', zIndex: 0}}></div>
+             {/* Animated particles */}
+             <div style={{position: 'absolute', top: 'calc(50% - 4px)', left: '20%', width: '8px', height: '8px', background: '#A78BFA', borderRadius: '50%', boxShadow: '0 0 10px #A78BFA', animation: 'moveRightParticle 3s linear infinite', zIndex: 1}}></div>
+             <div style={{position: 'absolute', top: 'calc(50% - 4px)', left: '20%', width: '8px', height: '8px', background: '#06B6D4', borderRadius: '50%', boxShadow: '0 0 10px #06B6D4', animation: 'moveRightParticle 3s linear infinite 1.5s', zIndex: 1}}></div>
+             {/* Node 1 – Discovery */}
+             <div className="glass-card" style={{padding: '24px', textAlign: 'center', width: '220px', flexShrink: 0, zIndex: 2}}>
+               <div style={{background: 'rgba(255,255,255,0.05)', width: '64px', height: '64px', borderRadius: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px', color: 'var(--text-muted)'}}><Search size={32}/></div>
+               <h3 style={{color: 'white', fontSize: '18px', margin: '0 0 8px', fontWeight: 700}}>1. Discovery</h3>
+               <p style={{color: 'var(--text-subtle)', fontSize: '13px', margin: 0, lineHeight: 1.5}}>Keyword & SERP analysis automatically extracts missing competitor topics.</p>
+             </div>
+             {/* Node 2 – AI Engine (centre, glowing) */}
+             <div style={{background: 'linear-gradient(135deg, #1A1333, #0D1526)', border: '1px solid rgba(124,58,237,0.4)', borderRadius: '24px', padding: '32px', textAlign: 'center', width: '240px', flexShrink: 0, zIndex: 2, boxShadow: '0 0 40px rgba(124,58,237,0.25)', position: 'relative'}}>
+               <div style={{position: 'absolute', inset: 0, borderRadius: '24px', boxShadow: '0 0 0 0 rgba(124,58,237,0.4)', animation: 'pulseBorderGlow 2s infinite', pointerEvents: 'none'}}></div>
+               <div style={{background: 'linear-gradient(135deg, #7C3AED, #5B21B6)', width: '80px', height: '80px', borderRadius: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px', color: 'white', boxShadow: '0 10px 20px rgba(124,58,237,0.4)'}}><Brain size={40}/></div>
+               <h3 style={{color: 'white', fontSize: '22px', margin: '0 0 6px', fontWeight: 800}}>AI Engine</h3>
+               <p style={{color: '#A78BFA', fontSize: '13px', margin: 0}}>Generates, scores & optimises NLP content in real time.</p>
+             </div>
+             {/* Node 3 – Publishing */}
+             <div className="glass-card" style={{padding: '24px', textAlign: 'center', width: '220px', flexShrink: 0, zIndex: 2}}>
+               <div style={{background: 'rgba(6,182,212,0.1)', width: '64px', height: '64px', borderRadius: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px', color: '#06B6D4'}}><Globe2 size={32}/></div>
+               <h3 style={{color: 'white', fontSize: '18px', margin: '0 0 8px', fontWeight: 700}}>3. Publishing</h3>
+               <p style={{color: 'var(--text-subtle)', fontSize: '13px', margin: 0, lineHeight: 1.5}}>One-click sync to major CMS platforms like WordPress or Ghost.</p>
+             </div>
+             <style dangerouslySetInnerHTML={{__html: `
                @keyframes moveRightParticle {
                  0%   { left: 20%; opacity: 0; transform: scale(0.5); }
                  10%  { opacity: 1; transform: scale(1); }
@@ -1629,312 +1767,312 @@ function App() {
                  100% { box-shadow: 0 0 0 0 rgba(124,58,237,0); }
                }
              `}} />
-            </div>
+          </div>
+          
+        <section className="works-section fade-section" id="works">
+        <div className="container">
+          
 
-            <section className="works-section fade-section" id="works">
-              <div className="container">
-
-
-                <div className="timeline-grid">
-                  <div className="timeline-line-animated"></div>
-
-                  <div className="step-card">
-                    <div className="step-header">
-                      <div className="step-icon-wrapper cyan">
-                        <LinkIcon size={32} />
-                      </div>
-                      <h3 className="step-title">1. Connect Your Brand</h3>
-                      <p className="step-desc">
-                        Connect your CMS (WordPress, Webflow, Shopify, etc.) and paste your website URL. BlogzzUP reads your brand, niche, and competitor landscape in 60 seconds.
-                      </p>
-                    </div>
-
-                    <div className="demo-visual-card">
-                      <div className="cms-connection-demo">
-                        <div className="cms-icons">
-                          <div className="cms-icon"><img src="https://cdn.simpleicons.org/wordpress/white" alt="WP" style={{ width: 20 }} /></div>
-                          <div className="cms-icon"><img src="https://cdn.simpleicons.org/webflow/white" alt="WF" style={{ width: 20 }} /></div>
-                          <div className="cms-icon"><img src="https://cdn.simpleicons.org/shopify/white" alt="SH" style={{ width: 20 }} /></div>
-                        </div>
-                        <div className="connection-path">
-                          <div className="data-packet"></div>
-                        </div>
-                        <div className="BlogzzUP-node">
-                          <Sparkles size={24} className="logo-icon block" />
-                        </div>
-                      </div>
-                    </div>
+          <div className="timeline-grid">
+            <div className="timeline-line-animated"></div>
+            
+            <div className="step-card">
+              <div className="step-header">
+                <div className="step-icon-wrapper cyan">
+                  <LinkIcon size={32} />
+                </div>
+                <h3 className="step-title">1. Connect Your Brand</h3>
+                <p className="step-desc">
+                  Connect your CMS (WordPress, Webflow, Shopify, etc.) and paste your website URL. BlogzzUP reads your brand, niche, and competitor landscape in 60 seconds.
+                </p>
+              </div>
+              
+              <div className="demo-visual-card">
+                <div className="cms-connection-demo">
+                  <div className="cms-icons">
+                    <div className="cms-icon"><img src="https://cdn.simpleicons.org/wordpress/white" alt="WP" style={{width: 20}}/></div>
+                    <div className="cms-icon"><img src="https://cdn.simpleicons.org/webflow/white" alt="WF" style={{width: 20}}/></div>
+                    <div className="cms-icon"><img src="https://cdn.simpleicons.org/shopify/white" alt="SH" style={{width: 20}}/></div>
                   </div>
-
-                  <div className="step-card">
-                    <div className="step-header">
-                      <div className="step-icon-wrapper violet">
-                        <Sparkles size={32} />
-                      </div>
-                      <h3 className="step-title">2. AI Does Everything</h3>
-                      <p className="step-desc">
-                        Our 7-stage prompt engine researches keywords, finds SERP gaps, writes a full SEO blog, scores it live, adds AI images, and optimizes for snippets — automatically.
-                      </p>
-                    </div>
-
-                    <div className="demo-visual-card">
-                      <div className="pipeline-demo">
-                        <div className="pipeline-item">Analyzing SEO Gap...</div>
-                        <div className="pipeline-item">Drafting Outline & Structure...</div>
-                        <div className="pipeline-item">Optimizing NLP Entities...</div>
-                        <div className="pipeline-item">Ready to Publish!</div>
-                      </div>
-                    </div>
+                  <div className="connection-path">
+                    <div className="data-packet"></div>
                   </div>
-
-                  <div className="step-card">
-                    <div className="step-header">
-                      <div className="step-icon-wrapper amber">
-                        <Rocket size={32} />
-                      </div>
-                      <h3 className="step-title">3. Blogs Go Live, Traffic Grows</h3>
-                      <p className="step-desc">
-                        Blogs auto-publish to your site on your schedule. You get daily fresh content, compounding organic traffic, and full analytics — without touching a keyboard.
-                      </p>
-                    </div>
-
-                    <div className="demo-visual-card">
-                      <div className="graph-demo">
-                        <svg className="growth-line" viewBox="0 0 100 50">
-                          <path className="growth-path" d="M0,45 Q20,40 40,25 T70,15 T100,5" fill="none" stroke="url(#gradient)" strokeWidth="3" />
-                          <circle cx="20" cy="37" r="2.5" fill="#F59E0B" className="pulse-dot delay-1" />
-                          <circle cx="55" cy="20" r="2.5" fill="#F59E0B" className="pulse-dot delay-2" />
-                          <circle cx="85" cy="10" r="2.5" fill="#F59E0B" className="pulse-dot delay-3" />
-                          <defs>
-                            <linearGradient id="gradient">
-                              <stop offset="0%" stopColor="#7C3AED" />
-                              <stop offset="100%" stopColor="#F59E0B" />
-                            </linearGradient>
-                          </defs>
-                        </svg>
-                      </div>
-                    </div>
+                  <div className="BlogzzUP-node">
+                    <Sparkles size={24} className="logo-icon block" />
                   </div>
                 </div>
               </div>
-            </section>
+            </div>
 
-            <HowItWorksAccordion />
+            <div className="step-card">
+              <div className="step-header">
+                <div className="step-icon-wrapper violet">
+                  <Sparkles size={32} />
+                </div>
+                <h3 className="step-title">2. AI Does Everything</h3>
+                <p className="step-desc">
+                  Our 7-stage prompt engine researches keywords, finds SERP gaps, writes a full SEO blog, scores it live, adds AI images, and optimizes for snippets — automatically.
+                </p>
+              </div>
+              
+              <div className="demo-visual-card">
+                <div className="pipeline-demo">
+                  <div className="pipeline-item">Analyzing SEO Gap...</div>
+                  <div className="pipeline-item">Drafting Outline & Structure...</div>
+                  <div className="pipeline-item">Optimizing NLP Entities...</div>
+                  <div className="pipeline-item">Ready to Publish!</div>
+                </div>
+              </div>
+            </div>
+
+            <div className="step-card">
+              <div className="step-header">
+                <div className="step-icon-wrapper amber">
+                  <Rocket size={32} />
+                </div>
+                <h3 className="step-title">3. Blogs Go Live, Traffic Grows</h3>
+                <p className="step-desc">
+                  Blogs auto-publish to your site on your schedule. You get daily fresh content, compounding organic traffic, and full analytics — without touching a keyboard.
+                </p>
+              </div>
+              
+              <div className="demo-visual-card">
+                <div className="graph-demo">
+                  <svg className="growth-line" viewBox="0 0 100 50">
+                    <path className="growth-path" d="M0,45 Q20,40 40,25 T70,15 T100,5" fill="none" stroke="url(#gradient)" strokeWidth="3" />
+                    <circle cx="20" cy="37" r="2.5" fill="#F59E0B" className="pulse-dot delay-1"/>
+                    <circle cx="55" cy="20" r="2.5" fill="#F59E0B" className="pulse-dot delay-2"/>
+                    <circle cx="85" cy="10" r="2.5" fill="#F59E0B" className="pulse-dot delay-3"/>
+                    <defs>
+                      <linearGradient id="gradient">
+                         <stop offset="0%" stopColor="#7C3AED" />
+                         <stop offset="100%" stopColor="#F59E0B" />
+                      </linearGradient>
+                    </defs>
+                  </svg>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
-
-        <div className="page-section" id="page-features" style={{ display: 'none' }}>
-          <FeaturesPage />
+      </section>
+      
+          <HowItWorksAccordion />
         </div>
+      </div>
 
-        <div className="page-section" id="page-demo" style={{ display: 'none' }}>
-          <DemoPage />
-        </div>
+      <div className="page-section" id="page-features" style={{ display: 'none' }}>
+        <FeaturesPage />
+      </div>
 
-        <div className="page-section" id="page-pricing" style={{ display: 'none' }}>
-          <PricingPage />
-        </div>
+      <div className="page-section" id="page-demo" style={{ display: 'none' }}>
+        <DemoPage />
+      </div>
 
-        <div className="page-section" id="page-blog" style={{ display: 'none' }}>
-          <BlogPage />
-        </div>
+      <div className="page-section" id="page-pricing" style={{ display: 'none' }}>
+        <PricingPage />
+      </div>
 
-        <div className="page-section" id="page-auth" style={{ display: 'none' }}>
-          <div className="auth-layout container">
-            <div className="auth-hero stagger-in">
-              <div className="glass-card auth-hero-content stagger-in-item">
-                <h2 className="auth-welcome-title">India's largest brands trust BlogzzUP</h2>
-                <p className="auth-welcome-desc">Join 500+ startups saving 92% of their content creation time.</p>
-                <div className="auth-quotes stagger-in-item">
-                  <div className="auth-quote">
-                    "BlogzzUP replaced our entire content agency. We're now publishing 4x more for 1/10th the cost."
-                    <div className="auth-author">— Founder, Delhi.AI</div>
-                  </div>
-                </div>
-                <div className="auth-stats-grid stagger-in-item">
-                  <div className="auth-stat"><div className="auth-stat-val">94%</div><div className="auth-stat-lab">Avg. SEO Score</div></div>
-                  <div className="auth-stat"><div className="auth-stat-val">10/10</div><div className="auth-stat-lab">Human Feel</div></div>
+      <div className="page-section" id="page-blog" style={{ display: 'none' }}>
+        <BlogPage />
+      </div>
+
+      <div className="page-section" id="page-auth" style={{ display: 'none' }}>
+        <div className="auth-layout container">
+          <div className="auth-hero stagger-in">
+            <div className="glass-card auth-hero-content stagger-in-item">
+              <h2 className="auth-welcome-title">India's largest brands trust BlogzzUP</h2>
+              <p className="auth-welcome-desc">Join 500+ startups saving 92% of their content creation time.</p>
+              <div className="auth-quotes stagger-in-item">
+                <div className="auth-quote">
+                  "BlogzzUP replaced our entire content agency. We're now publishing 4x more for 1/10th the cost."
+                  <div className="auth-author">— Founder, Delhi.AI</div>
                 </div>
               </div>
+              <div className="auth-stats-grid stagger-in-item">
+                <div className="auth-stat"><div className="auth-stat-val">94%</div><div className="auth-stat-lab">Avg. SEO Score</div></div>
+                <div className="auth-stat"><div className="auth-stat-val">10/10</div><div className="auth-stat-lab">Human Feel</div></div>
+              </div>
             </div>
+          </div>
 
-            <div className="auth-form-container stagger-in">
-              <div className="auth-form-card glass-card stagger-in-item">
-                <div className="auth-header">
-                  <h1 className="auth-title">{isLogin ? 'Welcome Back' : 'Create Account'}</h1>
-                  <p className="auth-subtitle">{isLogin ? 'Sign in to your BlogzzUP Workspace' : 'Get started with BlogzzUP'}</p>
-                </div>
+          <div className="auth-form-container stagger-in">
+            <div className="auth-form-card glass-card stagger-in-item">
+              <div className="auth-header">
+                <h1 className="auth-title">{isLogin ? 'Welcome Back' : 'Create Account'}</h1>
+                <p className="auth-subtitle">{isLogin ? 'Sign in to your BlogzzUP Workspace' : 'Get started with BlogzzUP'}</p>
+              </div>
 
-                {/* Error / Success Message */}
-                {authMsg.text && (
-                  <div style={{
-                    padding: '12px 16px', borderRadius: '10px', marginBottom: '16px', fontSize: '14px',
-                    background: authMsg.type === 'error' ? 'rgba(239,68,68,0.1)' : 'rgba(16,185,129,0.1)',
-                    border: `1px solid ${authMsg.type === 'error' ? 'rgba(239,68,68,0.3)' : 'rgba(16,185,129,0.3)'}`,
-                    color: authMsg.type === 'error' ? '#EF4444' : '#10B981',
-                  }}>
-                    {authMsg.text}
-                    {showResend && (
-                      <button
-                        onClick={async () => {
-                          try { await resendVerification(email, password); setAuthMsg({ type: 'success', text: 'Verification email resent! Check your inbox.' }); setShowResend(false); }
-                          catch (e) { setAuthMsg({ type: 'error', text: 'Could not resend: ' + e.message }); }
-                        }}
-                        style={{ display: 'block', marginTop: '8px', background: 'transparent', border: '1px solid currentColor', borderRadius: '6px', padding: '4px 10px', cursor: 'pointer', fontSize: '12px', color: 'inherit' }}
-                      >Resend verification email</button>
-                    )}
-                  </div>
-                )}
-
-                {/* Google Sign-In */}
-                <div className="auth-google-btn-wrap">
-                  <button
-                    className="btn btn-outline btn-lg w-full"
-                    disabled={authLoading}
-                    onClick={async () => {
-                      setAuthLoading(true); setAuthMsg({ type: '', text: '' });
-                      try {
-                        const user = await signInWithGoogle();
-                        window.updateUserInDashboard && window.updateUserInDashboard(user);
-                        document.getElementById('marketing-site').style.display = 'none';
-                        document.getElementById('dashboard-app').style.display = 'flex';
-                        if (window.showDashboardSection) window.showDashboardSection('overview');
-                        window.scrollTo(0, 0);
-                      } catch (e) {
-                        if (e.code !== 'auth/popup-closed-by-user') setAuthMsg({ type: 'error', text: e.message });
-                      } finally { setAuthLoading(false); }
-                    }}
-                  >
-                    <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/action/google.svg" width="18" alt="" />
-                    {authLoading ? 'Signing in…' : 'Continue with Google'}
-                  </button>
-                </div>
-
-                <div className="auth-divider"><span>or continue with email</span></div>
-
-                <div className="auth-fields">
-                  {!isLogin && (
-                    <div className="input-group">
-                      <label>Full Name</label>
-                      <input type="text" placeholder="John Doe" value={name} onChange={(e) => setName(e.target.value)} />
-                    </div>
+              {/* Error / Success Message */}
+              {authMsg.text && (
+                <div style={{
+                  padding: '12px 16px', borderRadius: '10px', marginBottom: '16px', fontSize: '14px',
+                  background: authMsg.type === 'error' ? 'rgba(239,68,68,0.1)' : 'rgba(16,185,129,0.1)',
+                  border: `1px solid ${authMsg.type === 'error' ? 'rgba(239,68,68,0.3)' : 'rgba(16,185,129,0.3)'}`,
+                  color: authMsg.type === 'error' ? '#EF4444' : '#10B981',
+                }}>
+                  {authMsg.text}
+                  {showResend && (
+                    <button
+                      onClick={async () => {
+                        try { await resendVerification(email, password); setAuthMsg({ type: 'success', text: 'Verification email resent! Check your inbox.' }); setShowResend(false); }
+                        catch(e) { setAuthMsg({ type: 'error', text: 'Could not resend: ' + e.message }); }
+                      }}
+                      style={{ display: 'block', marginTop: '8px', background: 'transparent', border: '1px solid currentColor', borderRadius: '6px', padding: '4px 10px', cursor: 'pointer', fontSize: '12px', color: 'inherit' }}
+                    >Resend verification email</button>
                   )}
-                  <div className="input-group">
-                    <label>Email Address</label>
-                    <input type="email" placeholder="name@company.com" value={email} onChange={(e) => setEmail(e.target.value)} />
-                  </div>
-                  <div className="input-group">
-                    <label>Password</label>
-                    <input type="password" placeholder="••••••••" value={password} onChange={(e) => setPassword(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter') document.getElementById('auth-submit-btn').click(); }} />
-                  </div>
                 </div>
+              )}
 
+              {/* Google Sign-In */}
+              <div className="auth-google-btn-wrap">
                 <button
-                  id="auth-submit-btn"
-                  className="btn btn-primary btn-lg w-full"
+                  className="btn btn-outline btn-lg w-full"
                   disabled={authLoading}
                   onClick={async () => {
-                    setAuthLoading(true); setAuthMsg({ type: '', text: '' }); setShowResend(false);
+                    setAuthLoading(true); setAuthMsg({ type: '', text: '' });
                     try {
-                      if (isLogin) {
-                        const user = await signIn(email, password);
-                        window.updateUserInDashboard && window.updateUserInDashboard(user);
-                        document.getElementById('marketing-site').style.display = 'none';
-                        document.getElementById('dashboard-app').style.display = 'flex';
-                        if (window.showDashboardSection) window.showDashboardSection('overview');
-                        window.scrollTo(0, 0);
-                      } else {
-                        if (!name.trim()) { setAuthMsg({ type: 'error', text: 'Please enter your full name.' }); setAuthLoading(false); return; }
-                        if (password.length < 6) { setAuthMsg({ type: 'error', text: 'Password must be at least 6 characters.' }); setAuthLoading(false); return; }
-                        await signUp(name.trim(), email, password);
-                        setAuthMsg({ type: 'success', text: '✅ Account created! We sent a verification email to ' + email + '. Please verify your email then sign in.' });
-                        setIsLogin(true); setPassword('');
-                      }
-                    } catch (e) {
-                      const msg = e.message || '';
-                      if (msg.includes('verify your email')) { setShowResend(true); setAuthMsg({ type: 'error', text: msg }); }
-                      else if (e.code === 'auth/user-not-found' || e.code === 'auth/wrong-password' || e.code === 'auth/invalid-credential') setAuthMsg({ type: 'error', text: 'Invalid email or password.' });
-                      else if (e.code === 'auth/email-already-in-use') setAuthMsg({ type: 'error', text: 'An account with this email already exists. Sign in instead.' });
-                      else if (e.code === 'auth/invalid-email') setAuthMsg({ type: 'error', text: 'Please enter a valid email address.' });
-                      else setAuthMsg({ type: 'error', text: msg });
+                      const user = await signInWithGoogle();
+                      window.updateUserInDashboard && window.updateUserInDashboard(user);
+                      document.getElementById('marketing-site').style.display = 'none';
+                      document.getElementById('dashboard-app').style.display = 'flex';
+                      if (window.showDashboardSection) window.showDashboardSection('overview');
+                      window.scrollTo(0, 0);
+                    } catch(e) {
+                      if (e.code !== 'auth/popup-closed-by-user') setAuthMsg({ type: 'error', text: e.message });
                     } finally { setAuthLoading(false); }
                   }}
                 >
-                  {authLoading ? (isLogin ? 'Signing in…' : 'Creating account…') : (isLogin ? 'Sign In' : 'Sign Up')}
+                  <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/action/google.svg" width="18" alt="" />
+                  {authLoading ? 'Signing in…' : 'Continue with Google'}
                 </button>
+              </div>
 
-                <div className="auth-footer">
-                  {isLogin ? (
-                    <>Don't have an account? <span className="auth-link" onClick={() => { setIsLogin(false); setAuthMsg({ type: '', text: '' }); }}>Sign Up</span></>
-                  ) : (
-                    <>Already have an account? <span className="auth-link" onClick={() => { setIsLogin(true); setAuthMsg({ type: '', text: '' }); }}>Sign In</span></>
-                  )}
+              <div className="auth-divider"><span>or continue with email</span></div>
+
+              <div className="auth-fields">
+                {!isLogin && (
+                  <div className="input-group">
+                    <label>Full Name</label>
+                    <input type="text" placeholder="John Doe" value={name} onChange={(e) => setName(e.target.value)} />
+                  </div>
+                )}
+                <div className="input-group">
+                  <label>Email Address</label>
+                  <input type="email" placeholder="name@company.com" value={email} onChange={(e) => setEmail(e.target.value)} />
                 </div>
+                <div className="input-group">
+                  <label>Password</label>
+                  <input type="password" placeholder="••••••••" value={password} onChange={(e) => setPassword(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter') document.getElementById('auth-submit-btn').click(); }} />
+                </div>
+              </div>
+
+              <button
+                id="auth-submit-btn"
+                className="btn btn-primary btn-lg w-full"
+                disabled={authLoading}
+                onClick={async () => {
+                  setAuthLoading(true); setAuthMsg({ type: '', text: '' }); setShowResend(false);
+                  try {
+                    if (isLogin) {
+                      const user = await signIn(email, password);
+                      window.updateUserInDashboard && window.updateUserInDashboard(user);
+                      document.getElementById('marketing-site').style.display = 'none';
+                      document.getElementById('dashboard-app').style.display = 'flex';
+                      if (window.showDashboardSection) window.showDashboardSection('overview');
+                      window.scrollTo(0, 0);
+                    } else {
+                      if (!name.trim()) { setAuthMsg({ type: 'error', text: 'Please enter your full name.' }); setAuthLoading(false); return; }
+                      if (password.length < 6) { setAuthMsg({ type: 'error', text: 'Password must be at least 6 characters.' }); setAuthLoading(false); return; }
+                      await signUp(name.trim(), email, password);
+                      setAuthMsg({ type: 'success', text: '✅ Account created! We sent a verification email to ' + email + '. Please verify your email then sign in.' });
+                      setIsLogin(true); setPassword('');
+                    }
+                  } catch(e) {
+                    const msg = e.message || '';
+                    if (msg.includes('verify your email')) { setShowResend(true); setAuthMsg({ type: 'error', text: msg }); }
+                    else if (e.code === 'auth/user-not-found' || e.code === 'auth/wrong-password' || e.code === 'auth/invalid-credential') setAuthMsg({ type: 'error', text: 'Invalid email or password.' });
+                    else if (e.code === 'auth/email-already-in-use') setAuthMsg({ type: 'error', text: 'An account with this email already exists. Sign in instead.' });
+                    else if (e.code === 'auth/invalid-email') setAuthMsg({ type: 'error', text: 'Please enter a valid email address.' });
+                    else setAuthMsg({ type: 'error', text: msg });
+                  } finally { setAuthLoading(false); }
+                }}
+              >
+                {authLoading ? (isLogin ? 'Signing in…' : 'Creating account…') : (isLogin ? 'Sign In' : 'Sign Up')}
+              </button>
+
+              <div className="auth-footer">
+                {isLogin ? (
+                  <>Don't have an account? <span className="auth-link" onClick={() => { setIsLogin(false); setAuthMsg({ type: '', text: '' }); }}>Sign Up</span></>
+                ) : (
+                  <>Already have an account? <span className="auth-link" onClick={() => { setIsLogin(true); setAuthMsg({ type: '', text: '' }); }}>Sign In</span></>
+                )}
               </div>
             </div>
           </div>
         </div>
-
-        <button className={`scroll-top ${showTop ? 'visible' : ''}`} onClick={scrollToTop} aria-label="Scroll to top of page">
-          <ArrowUp size={24} aria-hidden="true" />
-        </button>
-
-        <footer className="footer" role="contentinfo">
-          <div className="container">
-            <div className="footer-grid">
-              <div className="footer-brand">
-                <div className="logo">
-                  <Sparkles className="logo-icon" size={24} aria-hidden="true" />
-                  BlogzzUP
-                </div>
-                <p className="footer-desc">Empowering Indian startups with autonomous, SEO-winning content engines.</p>
-              </div>
-
-              <div className="footer-links">
-                <h4>Platform</h4>
-                <ul>
-                  <li><a href="#features" onClick={(e) => { e.preventDefault(); window.showPage('features'); }}>Features</a></li>
-                  <li><a href="#pricing" onClick={(e) => { e.preventDefault(); window.showPage('pricing'); }}>Pricing</a></li>
-                  <li><a href="#howitworks" onClick={(e) => { e.preventDefault(); window.showPage('howitworks'); }}>How it Works</a></li>
-                </ul>
-              </div>
-
-              <div className="footer-links">
-                <h4>Legal</h4>
-                <ul>
-                  <li><a href="#">Privacy Policy</a></li>
-                  <li><a href="#">Terms of Service</a></li>
-                  <li><a href="#">Security</a></li>
-                </ul>
-              </div>
-            </div>
-
-            <div className="footer-bottom">
-              <span>
-                © 2026 BlogzzUP. Built in India 🇮🇳. All rights reserved.
-              </span>
-              <div className="footer-socials" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <a href="#" className="social-icon" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '36px', height: '36px', borderRadius: '8px', background: '#000', color: 'white', textDecoration: 'none', fontSize: '15px', fontWeight: 900, fontFamily: 'sans-serif' }}>𝕏</a>
-                <a href="#" className="social-icon" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '36px', height: '36px', borderRadius: '8px', background: '#0A66C2', color: 'white', textDecoration: 'none', fontSize: '14px', fontWeight: 700, fontFamily: 'sans-serif', lineHeight: 1, flexShrink: 0 }}>in</a>
-                <a href="#" className="social-icon" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '36px', height: '36px', borderRadius: '50%', background: 'linear-gradient(135deg,#F58529,#DD2A7B,#8134AF)', color: 'white', textDecoration: 'none', fontSize: '16px' }}>◎</a>
-                <a href="#" className="social-icon" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '36px', height: '36px', borderRadius: '8px', background: '#24292E', color: 'white', textDecoration: 'none', fontSize: '18px' }}>⌥</a>
-              </div>
-            </div>
-          </div>
-        </footer>
-
-        {showTop && (
-          <button className="back-to-top" onClick={scrollToTop}>
-            <ArrowUp size={20} color="#fff" />
-          </button>
-        )}
-
-        {/* Sticky Bottom Bar for Mobile */}
-        <div className="mobile-sticky-bottom">
-          <button onClick={() => window.showDashboard()} className="btn btn-primary w-full shadow-lg">Start Free <ArrowRight size={16} className="ml-2" /></button>
-        </div>
-
       </div>
+
+      <button className={`scroll-top ${showTop ? 'visible' : ''}`} onClick={scrollToTop} aria-label="Scroll to top of page">
+        <ArrowUp size={24} aria-hidden="true" />
+      </button>
+
+      <footer className="footer" role="contentinfo">
+        <div className="container">
+          <div className="footer-grid">
+            <div className="footer-brand">
+              <div className="logo">
+                <Sparkles className="logo-icon" size={24} aria-hidden="true" />
+                BlogzzUP
+              </div>
+              <p className="footer-desc">Empowering Indian startups with autonomous, SEO-winning content engines.</p>
+            </div>
+            
+            <div className="footer-links">
+              <h4>Platform</h4>
+              <ul>
+                <li><a href="#features" onClick={(e) => { e.preventDefault(); window.showPage('features'); }}>Features</a></li>
+                <li><a href="#pricing" onClick={(e) => { e.preventDefault(); window.showPage('pricing'); }}>Pricing</a></li>
+                <li><a href="#howitworks" onClick={(e) => { e.preventDefault(); window.showPage('howitworks'); }}>How it Works</a></li>
+              </ul>
+            </div>
+
+            <div className="footer-links">
+              <h4>Legal</h4>
+              <ul>
+                <li><a href="#">Privacy Policy</a></li>
+                <li><a href="#">Terms of Service</a></li>
+                <li><a href="#">Security</a></li>
+              </ul>
+            </div>
+          </div>
+          
+          <div className="footer-bottom">
+            <span>
+              © 2026 BlogzzUP. Built in India 🇮🇳. All rights reserved.
+            </span>
+            <div className="footer-socials" style={{display: 'flex', alignItems: 'center', gap: '10px'}}>
+              <a href="#" className="social-icon" style={{display: 'flex', alignItems: 'center', justifyContent: 'center', width: '36px', height: '36px', borderRadius: '8px', background: '#000', color: 'white', textDecoration: 'none', fontSize: '15px', fontWeight: 900, fontFamily: 'sans-serif'}}>𝕏</a>
+              <a href="#" className="social-icon" style={{display: 'flex', alignItems: 'center', justifyContent: 'center', width: '36px', height: '36px', borderRadius: '8px', background: '#0A66C2', color: 'white', textDecoration: 'none', fontSize: '14px', fontWeight: 700, fontFamily: 'sans-serif', lineHeight: 1, flexShrink: 0}}>in</a>
+              <a href="#" className="social-icon" style={{display: 'flex', alignItems: 'center', justifyContent: 'center', width: '36px', height: '36px', borderRadius: '50%', background: 'linear-gradient(135deg,#F58529,#DD2A7B,#8134AF)', color: 'white', textDecoration: 'none', fontSize: '16px'}}>◎</a>
+              <a href="#" className="social-icon" style={{display: 'flex', alignItems: 'center', justifyContent: 'center', width: '36px', height: '36px', borderRadius: '8px', background: '#24292E', color: 'white', textDecoration: 'none', fontSize: '18px'}}>⌥</a>
+            </div>
+          </div>
+        </div>
+      </footer>
+
+      {showTop && (
+        <button className="back-to-top" onClick={scrollToTop}>
+          <ArrowUp size={20} color="#fff" />
+        </button>
+      )}
+
+      {/* Sticky Bottom Bar for Mobile */}
+      <div className="mobile-sticky-bottom">
+        <button onClick={() => window.showDashboard()} className="btn btn-primary w-full shadow-lg">Start Free <ArrowRight size={16} className="ml-2"/></button>
+      </div>
+
+          </div>
       <div id="dashboard-app" style={{ display: 'none', width: '100%', minHeight: '100vh' }}>
         <Dashboard />
       </div>

@@ -77,38 +77,71 @@
   --color-neutral-950: #020617;
 
   /* ─────────────────────────────────────────────
-   2. SEMANTIC COLOR ALIASES  (dark mode base)
+   2. THEME BASE VARIABLES (Variable Layer)
+   ───────────────────────────────────────────── */
+  /* Dark Mode Default Values */
+  --color-bg-primary: #0A0F1E;
+  --color-bg-secondary: #0D1526;
+  --color-bg-tertiary: #141B2D;
+  --color-bg-card: #0D1526;
+  --color-bg-sidebar: #0A0F1E;
+  --color-bg-input: #0D1526;
+  --color-bg-hover: rgba(255, 255, 255, 0.05);
+
+  --color-border: rgba(255, 255, 255, 0.09);
+  --color-border-hover: rgba(255, 255, 255, 0.18);
+
+  --color-text-primary: #ffffff;
+  --color-text-secondary: #e2e8f0;
+  --color-text-muted: #94a3b8;
+  --color-text-hint: rgba(255, 255, 255, 0.45);
+
+  --color-accent: var(--color-primary-500);
+  --color-accent-rgb: 139, 92, 246;
+  --color-accent-dark: var(--color-primary-600);
+  --color-accent-gradient: linear-gradient(135deg, var(--color-primary-500), var(--color-secondary-500));
+  --color-accent-secondary: var(--color-secondary-500);
+  --color-accent-secondary-rgb: 6, 182, 212;
+
+  --color-success: var(--color-success-500);
+  --color-success-rgb: 16, 185, 129;
+  --color-warning: var(--color-warning-500);
+  --color-warning-rgb: 245, 158, 11;
+  --color-danger: var(--color-danger-500);
+  --color-danger-rgb: 239, 68, 68;
+
+  --shadow-card: 0 4px 20px rgba(0, 0, 0, 0.2);
+  --shadow-card-hover: 0 12px 36px rgba(0, 0, 0, 0.35);
+  --shadow-sidebar: 4px 0 16px rgba(0, 0, 0, 0.3);
+
+  /* ─────────────────────────────────────────────
+   3. SEMANTIC COLOR ALIASES (Application Layer)
    ───────────────────────────────────────────── */
   /* Backgrounds */
-  --bg-base: #0A0F1E;
-  --bg-surface: #0D1526;
-  --bg-elevated: #141B2D;
+  --bg-base: var(--color-bg-primary);
+  --bg-surface: var(--color-bg-secondary);
+  --bg-elevated: var(--color-bg-tertiary);
   --bg-overlay: #1A2238;
-  --bg-input: #0D1526;
+  --bg-input: var(--color-bg-input);
 
   /* Text — all values verified ≥4.5:1 on --bg-surface (#0D1526) */
-  --text-primary: #ffffff;
-  /* 21:1   ✓ */
-  --text-secondary: #e2e8f0;
-  /* 13.4:1 ✓ */
-  --text-muted: #94a3b8;
-  /* 6.1:1  ✓ */
+  --text-primary: var(--color-text-primary);
+  --text-secondary: var(--color-text-secondary);
+  --text-muted: var(--color-text-muted);
   --text-subtle: #8b9eb5;
-  /* 4.7:1  ✓ — was #64748b (3.3:1 FAIL) */
   --text-disabled: #6b7f96;
-  /* 3.5:1  ✓ for UI/large text — was #475569 */
 
   /* Borders */
-  --border-subtle: rgba(255, 255, 255, 0.05);
-  --border-default: rgba(255, 255, 255, 0.09);
-  --border-strong: rgba(255, 255, 255, 0.18);
-  --border-focus: var(--color-primary-500);
+  --border-subtle: var(--border-default);
+  --border-default: var(--color-border);
+  --border-strong: var(--color-border-hover);
+  --border-focus: var(--color-accent);
 
   /* Glassmorphism V2 — Sophisticated transparency layers */
   --glass-bg: rgba(255, 255, 255, 0.03);
   --glass-border: rgba(255, 255, 255, 0.08);
   --glass-blur: blur(16px) saturate(180%);
-  --glass-bg-hover: rgba(255, 255, 255, 0.06);
+  --glass-bg-hover: var(--color-bg-hover);
   --glass-border-glow: rgba(167, 139, 250, 0.2);
 
   /* Shadows — Deep, multi-layered semantic scales */
@@ -281,52 +314,50 @@
    Components using var(--token) adapt automatically — no ad-hoc overrides needed.
    ───────────────────────────────────────────── */
 [data-theme="light"] {
-  /* Backgrounds */
-  --bg-base:    #F8F9FC;
-  --bg-surface: #FFFFFF;
-  --bg-elevated:#F0F2F8;
-  --bg-overlay: #E4E8F2;
-  --bg-input:   #FFFFFF;
+  --color-bg-primary: #FAF7F0;
+  --color-bg-secondary: #FFFFFF;
+  --color-bg-tertiary: #F5F0E8;
+  --color-bg-card: #FFFFFF;
+  --color-bg-sidebar: #FFFFFF;
+  --color-bg-input: #F5F0E8;
+  --color-bg-hover: rgba(196, 151, 74, 0.08);
 
-  /* Text */
-  --text-primary:   #0F172A;
-  --text-secondary: #1E293B;
-  --text-muted:     #475569;
-  --text-subtle:    #64748B;
-  --text-disabled:  #94A3B8;
+  --color-border: rgba(180, 150, 110, 0.18);
+  --color-border-hover: rgba(196, 151, 74, 0.4);
 
-  /* Borders */
-  --border-subtle:  rgba(0, 0, 0, 0.06);
-  --border-default: rgba(0, 0, 0, 0.10);
-  --border-strong:  rgba(0, 0, 0, 0.18);
-  --border-focus:   var(--color-primary-600);
+  --color-text-primary: #2C1A0E;
+  --color-text-secondary: #5C4A3A;
+  --color-text-muted: #8B7355;
+  --color-text-hint: rgba(92, 74, 58, 0.45);
 
-  /* Glass */
-  --glass-bg:          rgba(255, 255, 255, 0.70);
-  --glass-border:      rgba(0, 0, 0, 0.08);
-  --glass-blur:        blur(16px) saturate(180%);
-  --glass-bg-hover:    rgba(255, 255, 255, 0.90);
-  --glass-border-glow: rgba(124, 58, 237, 0.20);
+  --color-accent: #C4974A;
+  --color-accent-rgb: 196, 151, 74;
+  --color-accent-dark: #8B6914;
+  --color-accent-gradient: linear-gradient(135deg, #C4974A, #A67C3A);
+  --color-accent-secondary: #5C7A6E;
+  --color-accent-secondary-rgb: 92, 122, 110;
 
-  /* Shadows (lighter for light mode) */
-  --shadow-xs:   0 1px 2px rgba(0,0,0,0.06);
-  --shadow-sm:   0 2px 4px rgba(0,0,0,0.08);
-  --shadow-md:   0 4px 12px rgba(0,0,0,0.10);
-  --shadow-lg:   0 8px 24px rgba(0,0,0,0.12);
-  --shadow-xl:   0 16px 48px rgba(0,0,0,0.14);
-  --shadow-2xl:  0 24px 64px rgba(0,0,0,0.16);
-  --shadow-card: 0 4px 20px rgba(0,0,0,0.08);
-  --shadow-card-hover: 0 12px 36px rgba(0,0,0,0.14);
+  --color-success: #4A7C59;
+  --color-success-rgb: 74, 124, 89;
+  --color-warning: #C4974A;
+  --color-warning-rgb: 196, 151, 74;
+  --color-danger: #DC2626;
+  --color-danger-rgb: 220, 38, 38;
 
-  /* Theme helpers used in index.css */
-  --theme-bg:         #F8F9FC;
-  --theme-surface:    #FFFFFF;
-  --theme-text:       #0F172A;
-  --theme-text-muted: #475569;
-  --theme-border:     rgba(0, 0, 0, 0.08);
-  --theme-accent:     #7C3AED;
-  --bg-navy:          #F8F9FC;
-  --text-main:        #0F172A;
+  --shadow-card: 0 2px 16px rgba(0, 0, 0, 0.06);
+  --shadow-card-hover: 0 6px 28px rgba(0, 0, 0, 0.1);
+  --shadow-sidebar: 2px 0 12px rgba(0, 0, 0, 0.05);
+
+  /* Semantic Mappings for Light Mode */
+  --bg-base: var(--color-bg-primary);
+  --bg-surface: var(--color-bg-secondary);
+  --bg-elevated: var(--color-bg-tertiary);
+  --bg-input: var(--color-bg-input);
+  --text-primary: var(--color-text-primary);
+  --text-secondary: var(--color-text-secondary);
+  --text-muted: var(--color-text-muted);
+  --border-default: var(--color-border);
+  --border-strong: var(--color-border-hover);
 }
 
 /* ─────────────────────────────────────────────
@@ -513,14 +544,14 @@ select {
 }
 
 .btn-secondary {
-  background: rgba(6, 182, 212, 0.12);
-  color: var(--color-secondary-400);
-  border-color: rgba(6, 182, 212, 0.25);
+  background: rgba(var(--color-accent-secondary-rgb), 0.12);
+  color: var(--color-accent-secondary);
+  border-color: rgba(var(--color-accent-secondary-rgb), 0.25);
 }
 
 .btn-secondary:hover:not(:disabled) {
-  background: rgba(6, 182, 212, 0.2);
-  border-color: rgba(6, 182, 212, 0.4);
+  background: rgba(var(--color-accent-secondary-rgb), 0.2);
+  border-color: rgba(var(--color-accent-secondary-rgb), 0.4);
   transform: translateY(-1px);
   box-shadow: var(--shadow-glow-secondary);
 }
@@ -558,7 +589,7 @@ select {
 }
 
 .btn-danger:hover:not(:disabled) {
-  background: rgba(239, 68, 68, 0.2);
+  background: rgba(var(--color-danger-rgb), 0.2);
   box-shadow: var(--shadow-glow-danger);
   transform: translateY(-1px);
 }
@@ -570,7 +601,7 @@ select {
 }
 
 .btn-success:hover:not(:disabled) {
-  background: rgba(16, 185, 129, 0.2);
+  background: rgba(var(--color-success-rgb), 0.2);
   box-shadow: var(--shadow-glow-success);
   transform: translateY(-1px);
 }
@@ -807,15 +838,15 @@ select {
 }
 
 .badge-primary {
-  background: rgba(124, 58, 237, 0.12);
-  color: var(--color-primary-300);
-  border-color: rgba(124, 58, 237, 0.25);
+  background: rgba(var(--color-accent-rgb), 0.12);
+  color: var(--color-accent);
+  border-color: rgba(var(--color-accent-rgb), 0.25);
 }
 
 .badge-secondary {
-  background: rgba(6, 182, 212, 0.12);
-  color: var(--color-secondary-400);
-  border-color: rgba(6, 182, 212, 0.25);
+  background: rgba(var(--color-accent-secondary-rgb), 0.12);
+  color: var(--color-accent-secondary);
+  border-color: rgba(var(--color-accent-secondary-rgb), 0.25);
 }
 
 .badge-success {
@@ -890,9 +921,9 @@ select {
 }
 
 .alert-info {
-  background: rgba(124, 58, 237, 0.08);
-  border-color: rgba(124, 58, 237, 0.2);
-  color: var(--color-primary-300);
+  background: rgba(var(--color-accent-rgb), 0.08);
+  border-color: rgba(var(--color-accent-rgb), 0.2);
+  color: var(--color-accent);
 }
 
 .alert-success {
@@ -1595,4 +1626,7 @@ select {
 
 .animate-scale-in {
   animation: scale-in var(--duration-slow) var(--ease-spring);
+}
+[data-theme="light"] * {
+  scrollbar-color: rgba(180, 150, 110, 0.4) #F0EBE0;
 }
