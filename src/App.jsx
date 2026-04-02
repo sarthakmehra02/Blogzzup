@@ -2078,3 +2078,167 @@ function App() {
 }
 
 export default App;
+
+// =============================================
+// SCROLL ANIMATION OBSERVER
+// =============================================
+const initScrollAnimations = () => {
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    },
+    { threshold: 0.12, rootMargin: '0px 0px -40px 0px' }
+  );
+
+  // Auto-observe eligible elements
+  const selectors = [
+    '[class*="card"]', '[class*="Card"]',
+    '[class*="section"]', '[class*="Section"]',
+    '[class*="feature"]', '[class*="Feature"]',
+    '[class*="pricing"]', '[class*="Pricing"]',
+    '[class*="stat"]', '[class*="Stat"]',
+    '[class*="step"]', '[class*="Step"]',
+    '[class*="blog"]', '[class*="Blog"]',
+    'h1', 'h2', 'h3'
+  ];
+
+  selectors.forEach(sel => {
+    document.querySelectorAll(sel).forEach(el => {
+      el.classList.add('animate-on-scroll');
+      observer.observe(el);
+    });
+  });
+};
+
+// =============================================
+// SMOOTH CURSOR GLOW EFFECT
+// =============================================
+const initCursorGlow = () => {
+  const glow = document.createElement('div');
+  glow.id = 'cursor-glow';
+  glow.style.cssText = `
+    position: fixed;
+    width: 300px;
+    height: 300px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(124,58,237,0.06) 0%, transparent 70%);
+    pointer-events: none;
+    transform: translate(-50%, -50%);
+    z-index: 0;
+    transition: opacity 0.3s ease;
+    will-change: left, top;
+  `;
+  document.body.appendChild(glow);
+
+  let mouseX = 0, mouseY = 0;
+  let glowX = 0, glowY = 0;
+
+  document.addEventListener('mousemove', (e) => {
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+  });
+
+  const animateGlow = () => {
+    glowX += (mouseX - glowX) * 0.08;
+    glowY += (mouseY - glowY) * 0.08;
+    glow.style.left = glowX + 'px';
+    glow.style.top = glowY + 'px';
+    requestAnimationFrame(animateGlow);
+  };
+
+  animateGlow();
+
+  document.addEventListener('mouseleave', () => { glow.style.opacity = '0'; });
+  document.addEventListener('mouseenter', () => { glow.style.opacity = '1'; });
+};
+
+// =============================================
+// STAT COUNTER ANIMATION
+// =============================================
+const animateCounters = () => {
+  const counters = document.querySelectorAll(
+    '[class*="statValue"], [class*="stat-value"], [class*="kpiValue"], [class*="metricValue"]'
+  );
+
+  counters.forEach(counter => {
+    const target = parseFloat(counter.textContent.replace(/[^0-9.]/g, ''));
+    if (isNaN(target) || target === 0) return;
+
+    const suffix = counter.textContent.replace(/[0-9.]/g, '');
+    const duration = 1500;
+    const start = performance.now();
+
+    const update = (now) => {
+      const elapsed = now - start;
+      const progress = Math.min(elapsed / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      counter.textContent = Math.round(target * eased) + suffix;
+      if (progress < 1) requestAnimationFrame(update);
+    };
+
+    requestAnimationFrame(update);
+  });
+};
+
+// =============================================
+// TILT EFFECT ON PREMIUM CARDS
+// =============================================
+const initTiltEffect = () => {
+  const cards = document.querySelectorAll(
+    '[class*="featureCard"], [class*="pricingCard"], [class*="statCard"], [class*="planCard"]'
+  );
+
+  cards.forEach(card => {
+    card.addEventListener('mousemove', (e) => {
+      const rect = card.getBoundingClientRect();
+      const x = ((e.clientX - rect.left) / rect.width - 0.5) * 10;
+      const y = ((e.clientY - rect.top) / rect.height - 0.5) * -10;
+      card.style.transform = `perspective(1000px) rotateX(${y}deg) rotateY(${x}deg) translateY(-4px)`;
+      card.style.boxShadow = `${-x * 2}px ${y * 2}px 32px rgba(124,58,237,0.15)`;
+    });
+
+    card.addEventListener('mouseleave', () => {
+      card.style.transform = '';
+      card.style.boxShadow = '';
+      card.style.transition = 'transform 0.5s ease, box-shadow 0.5s ease';
+    });
+
+    card.addEventListener('mouseenter', () => {
+      card.style.transition = 'none';
+    });
+  });
+};
+
+// =============================================
+// INIT ALL EFFECTS
+// =============================================
+if (typeof window !== 'undefined') {
+  const initAll = () => {
+    initScrollAnimations();
+    initCursorGlow();
+    initTiltEffect();
+    
+    // Re-run on route changes
+    const observer = new MutationObserver(() => {
+      initScrollAnimations();
+      initTiltEffect();
+      animateCounters();
+    });
+    
+    observer.observe(document.body, { childList: true, subtree: true });
+    
+    animateCounters();
+  };
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initAll);
+  } else {
+    initAll();
+  }
+}
+
