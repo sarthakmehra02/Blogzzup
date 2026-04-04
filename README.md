@@ -8,9 +8,9 @@
 [![Vite 8](https://img.shields.io/badge/Vite-8-646CFF?style=for-the-badge&logo=vite&logoColor=white)](https://vitejs.dev)
 [![License: MIT](https://img.shields.io/badge/License-MIT-10B981?style=for-the-badge)](LICENSE)
 
-**BlogForge AI** is a state-of-the-art content automation platform that transforms single keywords into high-ranking, 2,500+ word blog posts. Built for scale, it leverages a sophisticated 7-stage AI pipeline to handle research, SEO optimization, and localized GEO-targeting autonomously.
+**BlogForge AI** is a state-of-the-art content automation platform that transforms single keywords into high-ranking, 2,500+ word blog posts. Built for scale, it leverages a sophisticated 7-stage AI pipeline to handle research, SEO optimization, localized GEO-targeting consistently, all accessible via both Keyboard and Voice commands.
 
-[Explore the Code](https://github.com/nmnroy/blogforge-ai/tree/main/src) · [Report Bug](https://github.com/nmnroy/blogforge-ai/issues) · [Request Feature](https://github.com/nmnroy/blogforge-ai/issues)
+[Live Demo](https://blogzzup.netlify.app/#home) · [Explore the Code](https://github.com/nmnroy/blogforge-ai/tree/main/src) · [Report Bug](https://github.com/nmnroy/blogforge-ai/issues) · [Request Feature](https://github.com/nmnroy/blogforge-ai/issues)
 
 </div>
 
@@ -25,7 +25,7 @@ BlogForge executes a multi-agent architectural flow to ensure human-grade qualit
 | **02** | **🏗️ Architecture** | Builds a hierarchical H2/H3 outline for "Topic Authority." |
 | **03** | **🧊 Synthesis** | Generates raw, high-density content blocks. |
 | **04** | **📈 SEO Injection** | Naturally integrates LSI keywords and entity optimization. |
-| **05** | **🎨 Polishing** | Applies brand voice, tone, and readability adjustments. |
+| **05** | **🎨 Polishing** | Applies brand voice, tone (including GenZ 🔥), and readability adjustments. |
 | **06** | **🔗 Linking** | (Beta) Suggests logical internal links. |
 | **07** | **🚀 Deployment** | Pushes directly to WordPress, Webflow, or Shopify. |
 
@@ -33,12 +33,14 @@ BlogForge executes a multi-agent architectural flow to ensure human-grade qualit
 
 ## 🔥 Key Features
 
-- **🧠 Autonomous Intelligence**: One keyword is all you need. The system handles intent extraction, SERP analysis, and drafting.
-- **✨ 3D Interactive UX**: A state-of-the-art landing experience featuring **Perspective tilts** and **Live AI Pipelines** that respond to user presence.
+- **🧠 Autonomous Intelligence**: One keyword or **Voice Input** is all you need. The system handles intent extraction, SERP analysis, and drafting.
+- **✨ 3D Interactive UX & Premium Animations**: A state-of-the-art landing experience featuring **Perspective tilts**, **Live AI Pipelines**, hover-triggered glass effects, scroll-triggered animations, and a dynamic chat interface.
+- **🎨 Comprehensive Theme Modes**: A full-featured dual-mode design system. Experience the high-performance **Obsidian Dark Mode** or the sophisticated **Ivory & Gold Light Mode**.
+- **🎤 Advanced Voice Engine**: Generate content by directly speaking your prompt ideas using an accurate, responsive Voice Input system. 
+- **🔥 GenZ Tone Mode**: Select our innovative GenZ generation mode to output deeply engaging content heavily styled with internet culture patterns for younger demographics ("no cap, it’s bussin").
 - **📊 Real-time SEO Scoring**: A dynamic 10-metric score that provides instant feedback on keyword density and NLP optimization.
 - **🏙️ GEO-Targeting (India Special)**: Localize content for Indian Tier-1 and Tier-2 cities with native landmark injection.
 - **🎙️ Brand Voice DNA**: Clone your unique founder voice by analyzing past newsletters and manifestos.
-- **🌓 Obsidian Core Design**: A premium Glassmorphism-based UI/UX system optimized for high-performance dark mode.
 - **📋 Management Actions**: Integrated 3-dot menus for View, Copy, Publish, and Schedule with real-time Toasts.
 - **📑 Premium Marketing Hub**: A fully functional, SEO-optimized blog grid with AI-generated covers and deep-article detail views.
 
@@ -50,8 +52,8 @@ BlogForge executes a multi-agent architectural flow to ensure human-grade qualit
 | :--- | :--- | :--- |
 | **Frontend** | React 19 + Vite 8 | UI Architecture & Build |
 | **AI Engine** | Google Gemini (JSON Mode) | Content & Logic Generation |
-| **Visuals** | CSS 3D Transforms | 3D Interactive Persistence (v2) |
-| **Design** | Vanilla CSS Tokens | Obsidian Core Design System |
+| **Visuals** | CSS 3D Transforms & Keyframes| 3D Interactive Persistence (v2), Tilt Animations, Glow FX |
+| **Design** | Vanilla CSS Tokens | Dual-Theme Token Design System (Obsidian/Ivory) |
 | **Auth** | Firebase Auth | Secure Google OAuth Integration |
 | **Management** | LocalStorage + Hooks | High-performance State Management |
 
