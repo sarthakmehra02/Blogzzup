@@ -1262,18 +1262,4 @@
   border-color: var(--color-border);
 }
 
-background: var(--color-bg-hover);
-border-color: var(--color-accent);
-}
-
-[data-theme="light"] .be-tone-card.selected {
-  background: rgba(196, 151, 74, 0.08);
-  border-color: var(--color-accent);
-  box-shadow: 0 0 0 3px rgba(196, 151, 74, 0.2);
-}
-
-[data-theme="light"] .be-preview-placeholder {
-  background: #fff;
-  border-style: solid;
-  border-color: var(--color-border);
-}
+}

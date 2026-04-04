@@ -1106,7 +1106,11 @@ Return ONLY a valid JSON object:
               <div className="be-progress-pct">{progress.pct}%</div>
 
               {/* Step stepper */}
-              <GenerationStepper steps={tone === 'genz' ? GENZ_GENERATION_STEPS : GENERATION_STEPS} currentPct={progress.pct} currentText={progress.text} />
+              <GenerationStepper
+                steps={tone === 'genz' ? GENZ_GENERATION_STEPS : GENERATION_STEPS}
+                currentPct={progress.pct}
+                currentText={progress.text}
+              />
 
               {/* Keyword context */}
               <div className="be-gen-context">
