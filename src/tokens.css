@@ -4,7 +4,7 @@
    Import FIRST in index.css before any component styles.
    ===================================================================== */
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap');
+/* @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap'); moved to index.html */
 
 /* ─────────────────────────────────────────────
    1. COLOR TOKENS

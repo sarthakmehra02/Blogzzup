@@ -25,5 +25,8 @@ export default defineConfig({
         rewrite: (path) => path.replace(/^\/api\/medium/, '')
       }
     }
+  },
+  build: {
+    cssMinify: false
   }
 })
