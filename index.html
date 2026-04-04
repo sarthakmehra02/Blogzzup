@@ -1005,11 +1005,7 @@
   color: #5C4A3A !important;
 }
 
-[data-theme="light"] [style*="background:#141B2D"][style*="border:1px solid rgba(255,255,255,0.06)"][style*="padding:24px"] {
-  background: #FFFFFF !important;
-  border-color: rgba(180, 150, 110, 0.15) !important;
-  box-shadow: 0 2px 16px rgba(0,0,0,0.05) !important;
-}
+/* Removed aggressive override to prioritize CSS variable system */
 
 [data-theme="light"] [style*="font-size:12px"][style*="text-transform:uppercase"][style*="letter-spacing"] {
   color: rgba(92, 74, 58, 0.55) !important;
@@ -1077,28 +1073,7 @@
   color: #5C4A3A !important;
 }
 
-[data-theme="light"] #serp-results [style*="background:#141B2D"],
-[data-theme="light"] #serp-results [style*="background:#0D1526"] {
-  background: #FFFFFF !important;
-  border-color: rgba(180, 150, 110, 0.15) !important;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.05) !important;
-}
-
-[data-theme="light"] #seo-score-results [style*="background:#141B2D"],
-[data-theme="light"] #seo-score-results [style*="background:#0D1526"] {
-  background: #FFFFFF !important;
-  border-color: rgba(180, 150, 110, 0.15) !important;
-}
-
-[data-theme="light"] [style*="background:#141B2D"][style*="border-radius:50%"],
-[data-theme="light"] [style*="background:#080E1C"][style*="border-radius:50%"] {
-  background: #F5F0E8 !important;
-}
-
-[data-theme="light"] [style*="background:#0D1526"][style*="border-radius:10px"],
-[data-theme="light"] [style*="background:#0D1526"][style*="border-radius:12px"] {
-  background: #F5F0E8 !important;
-}
+/* Broad background overrides removed to prevent contrast issues */
 
 [data-theme="light"] #roi-report-area {
   background: #FFFFFF !important;
@@ -1170,16 +1145,13 @@
           const navBtn = document.getElementById('theme-toggle');
           if (navBtn) navBtn.textContent = isDark ? '🌙' : '☀️';
 
-          // Sidebar toggle
           const sideIcon = document.getElementById('sidebar-theme-icon');
           const sideLabel = document.getElementById('sidebar-theme-label');
-          const track = document.getElementById('toggle-track');
-          const thumb = document.getElementById('toggle-thumb');
+          const toggleCheckbox = document.getElementById('sidebar-theme-toggle');
 
           if (sideIcon) sideIcon.textContent = isDark ? '🌙' : '☀️';
           if (sideLabel) sideLabel.textContent = isDark ? 'Dark Mode' : 'Light Mode';
-          if (track) track.style.background = isDark ? '#7C3AED' : '#CBD5E1';
-          if (thumb) thumb.style.transform = isDark ? 'translateX(0)' : 'translateX(-17px)';
+          if (toggleCheckbox) toggleCheckbox.checked = !isDark;
         }
 
         function initTheme() {

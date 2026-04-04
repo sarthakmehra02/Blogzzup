@@ -54,11 +54,11 @@ button,
   overflow: hidden;
   transition:
     background-color 150ms ease,
-    border-color     150ms ease,
-    color            150ms ease,
-    box-shadow       150ms ease,
-    opacity          150ms ease,
-    transform        100ms ease;
+    border-color 150ms ease,
+    color 150ms ease,
+    box-shadow 150ms ease,
+    opacity 150ms ease,
+    transform 100ms ease;
 }
 
 button:active:not(:disabled),
@@ -73,14 +73,13 @@ button:active:not(:disabled),
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(
-    105deg,
-    transparent 30%,
-    rgba(255, 255, 255, 0.12) 50%,
-    transparent 70%
-  );
+  background: linear-gradient(105deg,
+      transparent 30%,
+      rgba(255, 255, 255, 0.12) 50%,
+      transparent 70%);
   transform: translateX(-100%);
-  transition: transform 0s; /* reset; shimmer fires on hover */
+  transition: transform 0s;
+  /* reset; shimmer fires on hover */
 }
 
 .btn-primary:hover:not(:disabled)::after,
@@ -99,11 +98,11 @@ button:active:not(:disabled),
 /* btn-outline hover: fill from bottom */
 .btn-outline {
   transition:
-    color            150ms ease,
+    color 150ms ease,
     background-color 200ms ease,
-    border-color     150ms ease,
-    box-shadow       150ms ease,
-    transform        100ms ease;
+    border-color 150ms ease,
+    box-shadow 150ms ease,
+    transform 100ms ease;
 }
 
 .btn-outline:hover:not(:disabled) {
@@ -186,8 +185,8 @@ a {
 .be-tone-card,
 .be-history-item {
   transition:
-    transform    200ms cubic-bezier(0.34, 1.56, 0.64, 1),
-    box-shadow   200ms ease,
+    transform 200ms cubic-bezier(0.34, 1.56, 0.64, 1),
+    box-shadow 200ms ease,
     border-color 150ms ease;
 }
 
@@ -231,7 +230,7 @@ a {
 
 .step-card:hover {
   transform: translateY(-8px) rotateX(4deg) rotateY(-2deg);
-  box-shadow: 
+  box-shadow:
     0 20px 40px rgba(0, 0, 0, 0.4),
     0 0 0 1px rgba(124, 58, 237, 0.15);
   border-color: rgba(124, 58, 237, 0.3);
@@ -256,8 +255,15 @@ a {
 }
 
 @keyframes float-3d {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-8px); }
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-8px);
+  }
 }
 
 /* Enhanced Pipeline "Running" Feel */
@@ -267,10 +273,32 @@ a {
 }
 
 @keyframes pipeline-running {
-  0%, 5% { opacity: 0; transform: translateX(-15px) translateZ(0); border-left-color: transparent; }
-  10% { opacity: 1; transform: translateX(0) translateZ(10px); border-left-color: var(--color-primary-400); }
-  85% { opacity: 1; transform: translateX(0) translateZ(10px); border-left-color: var(--color-primary-400); }
-  95%, 100% { opacity: 0; transform: translateX(15px) translateZ(0); border-left-color: transparent; }
+
+  0%,
+  5% {
+    opacity: 0;
+    transform: translateX(-15px) translateZ(0);
+    border-left-color: transparent;
+  }
+
+  10% {
+    opacity: 1;
+    transform: translateX(0) translateZ(10px);
+    border-left-color: var(--color-primary-400);
+  }
+
+  85% {
+    opacity: 1;
+    transform: translateX(0) translateZ(10px);
+    border-left-color: var(--color-primary-400);
+  }
+
+  95%,
+  100% {
+    opacity: 0;
+    transform: translateX(15px) translateZ(0);
+    border-left-color: transparent;
+  }
 }
 
 /* Graph demo 3D depth */
@@ -301,9 +329,9 @@ tr[onmouseover] {
 
 .accordion-container {
   transition:
-    background  200ms ease,
+    background 200ms ease,
     border-color 200ms ease,
-    box-shadow  200ms ease;
+    box-shadow 200ms ease;
   cursor: pointer;
 }
 
@@ -336,7 +364,7 @@ tr[onmouseover] {
 }
 
 /* Inner wrapper needed for grid-based height trick */
-.accordion-body > * {
+.accordion-body>* {
   overflow: hidden;
   min-height: 0;
 }
@@ -348,9 +376,9 @@ tr[onmouseover] {
 .feature-tab-btn {
   position: relative;
   transition:
-    color            150ms ease,
-    background       150ms ease,
-    border-color     150ms ease;
+    color 150ms ease,
+    background 150ms ease,
+    border-color 150ms ease;
 }
 
 /* Hover state */
@@ -372,8 +400,15 @@ tr[onmouseover] {
 }
 
 @keyframes tab-bar-in {
-  from { transform: scaleX(0); opacity: 0; }
-  to   { transform: scaleX(1); opacity: 1; }
+  from {
+    transform: scaleX(0);
+    opacity: 0;
+  }
+
+  to {
+    transform: scaleX(1);
+    opacity: 1;
+  }
 }
 
 /* Pricing toggle buttons */
@@ -381,7 +416,9 @@ tr[onmouseover] {
   transition: background 150ms ease, color 150ms ease, transform 100ms ease;
 }
 
-.pt-btn:active { transform: scale(0.96); }
+.pt-btn:active {
+  transform: scale(0.96);
+}
 
 /* Tab panel content: fade + slide-up on appear */
 .tab-panel-container {
@@ -389,8 +426,15 @@ tr[onmouseover] {
 }
 
 @keyframes panel-enter {
-  from { opacity: 0; transform: translateY(10px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* ─────────────────────────────────────────────────
@@ -411,6 +455,7 @@ tr[onmouseover] {
 
 /* @starting-style is a modern trick to animate from display:none */
 @supports (transition-behavior: allow-discrete) {
+
   .page-section[style*="display: block"],
   .page-section[style*="display:block"] {
     animation: page-enter 260ms ease both;
@@ -419,13 +464,21 @@ tr[onmouseover] {
 }
 
 @keyframes page-enter {
-  from { opacity: 0; transform: translateY(12px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* Dashboard section transitions — already have dash-section class */
 .dash-section {
-  animation: none; /* reset — enter animation applied via JS class */
+  animation: none;
+  /* reset — enter animation applied via JS class */
 }
 
 .dash-section.section-entering {
@@ -444,8 +497,15 @@ div[style*="position: fixed"][style*="z-index: 1000"] {
 }
 
 @keyframes modal-backdrop-in {
-  from { opacity: 0; backdrop-filter: blur(0); }
-  to   { opacity: 1; backdrop-filter: blur(4px); }
+  from {
+    opacity: 0;
+    backdrop-filter: blur(0);
+  }
+
+  to {
+    opacity: 1;
+    backdrop-filter: blur(4px);
+  }
 }
 
 /* History drawer (already animated via be-history-panel) — ensure backdrop also fades */
@@ -478,8 +538,8 @@ select,
 textarea {
   transition:
     border-color 150ms ease,
-    box-shadow   150ms ease,
-    background   150ms ease;
+    box-shadow 150ms ease,
+    background 150ms ease;
 }
 
 /* Range track fill — visual progress colour (already in BlogEditor.css;
@@ -507,12 +567,10 @@ textarea {
 .skeleton-text,
 .skeleton-avatar,
 .skeleton-btn {
-  background: linear-gradient(
-    90deg,
-    var(--bg-elevated, #141b2d) 0%,
-    rgba(255, 255, 255, 0.05) 40%,
-    var(--bg-elevated, #141b2d) 80%
-  );
+  background: linear-gradient(90deg,
+      var(--bg-elevated, #141b2d) 0%,
+      rgba(255, 255, 255, 0.05) 40%,
+      var(--bg-elevated, #141b2d) 80%);
   background-size: 300% 100%;
   border-radius: var(--radius-md, 8px);
   animation: skeleton-shimmer 1.6s ease-in-out infinite;
@@ -520,17 +578,37 @@ textarea {
   user-select: none;
 }
 
-.skeleton-text  { height: 14px; border-radius: 4px; }
-.skeleton-avatar { border-radius: 50%; }
-.skeleton-btn   { height: 40px; border-radius: var(--radius-xl, 12px); }
+.skeleton-text {
+  height: 14px;
+  border-radius: 4px;
+}
+
+.skeleton-avatar {
+  border-radius: 50%;
+}
+
+.skeleton-btn {
+  height: 40px;
+  border-radius: var(--radius-xl, 12px);
+}
 
 /* Skeleton line groups — useful for text blocks */
-.skeleton-lines .skeleton-text + .skeleton-text { margin-top: 8px; }
-.skeleton-lines .skeleton-text:last-child        { width: 65%; }
+.skeleton-lines .skeleton-text+.skeleton-text {
+  margin-top: 8px;
+}
+
+.skeleton-lines .skeleton-text:last-child {
+  width: 65%;
+}
 
 @keyframes skeleton-shimmer {
-  0%   { background-position: 200% 0; }
-  100% { background-position: -200% 0; }
+  0% {
+    background-position: 200% 0;
+  }
+
+  100% {
+    background-position: -200% 0;
+  }
 }
 
 /* ─────────────────────────────────────────────────
@@ -539,8 +617,8 @@ textarea {
 
 .nav-item {
   transition:
-    background  150ms ease,
-    color       150ms ease,
+    background 150ms ease,
+    color 150ms ease,
     padding-left 150ms ease;
 }
 
@@ -551,9 +629,17 @@ textarea {
 }
 
 @keyframes nav-activate {
-  0%   { box-shadow: inset 3px 0 0 transparent; }
-  40%  { box-shadow: inset 3px 0 0 rgba(124, 58, 237, 0.9); }
-  100% { box-shadow: inset 3px 0 0 rgba(124, 58, 237, 0.6); }
+  0% {
+    box-shadow: inset 3px 0 0 transparent;
+  }
+
+  40% {
+    box-shadow: inset 3px 0 0 rgba(124, 58, 237, 0.9);
+  }
+
+  100% {
+    box-shadow: inset 3px 0 0 rgba(124, 58, 237, 0.6);
+  }
 }
 
 /* Nav hover: subtle indent */
@@ -583,7 +669,7 @@ textarea {
   white-space: nowrap;
   padding: 4px 8px;
   border-radius: 6px;
-  border: 1px solid var(--border-subtle, rgba(255,255,255,0.08));
+  border: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.08));
   pointer-events: none;
   opacity: 0;
   transition: opacity 150ms ease, transform 150ms ease;
@@ -613,23 +699,46 @@ textarea {
    ───────────────────────────────────────────────── */
 
 /* Hero CTA buttons group: stagger children */
-.hero-cta > *:nth-child(1) { animation-delay: 0ms; }
-.hero-cta > *:nth-child(2) { animation-delay: 80ms; }
+.hero-cta>*:nth-child(1) {
+  animation-delay: 0ms;
+}
+
+.hero-cta>*:nth-child(2) {
+  animation-delay: 80ms;
+}
 
 /* Stats / trust bar: subtle entrance */
 .stats-bar .stat-item,
-.trust-row > * {
+.trust-row>* {
   animation: fade-up-sm 400ms ease both;
 }
 
-.stats-bar .stat-item:nth-child(1) { animation-delay: 100ms; }
-.stats-bar .stat-item:nth-child(2) { animation-delay: 180ms; }
-.stats-bar .stat-item:nth-child(3) { animation-delay: 260ms; }
-.stats-bar .stat-item:nth-child(4) { animation-delay: 340ms; }
+.stats-bar .stat-item:nth-child(1) {
+  animation-delay: 100ms;
+}
+
+.stats-bar .stat-item:nth-child(2) {
+  animation-delay: 180ms;
+}
+
+.stats-bar .stat-item:nth-child(3) {
+  animation-delay: 260ms;
+}
+
+.stats-bar .stat-item:nth-child(4) {
+  animation-delay: 340ms;
+}
 
 @keyframes fade-up-sm {
-  from { opacity: 0; transform: translateY(8px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* CTA pricing cards — pop in sequence */
@@ -637,9 +746,17 @@ textarea {
   animation: fade-up-sm 350ms ease both;
 }
 
-.pricing-grid-3 .pc-card:nth-child(1) { animation-delay: 0ms; }
-.pricing-grid-3 .pc-card:nth-child(2) { animation-delay: 80ms; }
-.pricing-grid-3 .pc-card:nth-child(3) { animation-delay: 160ms; }
+.pricing-grid-3 .pc-card:nth-child(1) {
+  animation-delay: 0ms;
+}
+
+.pricing-grid-3 .pc-card:nth-child(2) {
+  animation-delay: 80ms;
+}
+
+.pricing-grid-3 .pc-card:nth-child(3) {
+  animation-delay: 160ms;
+}
 
 /* ─────────────────────────────────────────────────
    15. CONTENT TABLE ROWS (Dashboard)
@@ -673,8 +790,15 @@ textarea {
 }
 
 @keyframes modal-scale-in {
-  from { opacity: 0; transform: scale(0.95) translateY(-8px); }
-  to   { opacity: 1; transform: scale(1)    translateY(0); }
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(-8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
 }
 
 /* ─────────────────────────────────────────────────
@@ -700,13 +824,14 @@ textarea {
    ───────────────────────────────────────────────── */
 
 @media (prefers-reduced-motion: reduce) {
+
   *,
   *::before,
   *::after {
-    animation-duration:        0.01ms !important;
-    animation-iteration-count: 1      !important;
-    transition-duration:       0.01ms !important;
-    scroll-behavior:           auto   !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 
   /* Skeleton: replace shimmer with static bg */

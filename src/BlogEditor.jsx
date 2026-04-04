@@ -26,22 +26,22 @@ const Icon = ({ d, size = 16 }) => (
 );
 
 const Icons = {
-  Sparkles:  () => <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><path d="M12 3l1.68 5.17H19l-4.41 3.2 1.68 5.17L12 13.34l-4.27 3.2 1.68-5.17L5 8.17h5.32z"/></svg>,
-  Zap:       () => <Icon d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>,
-  Copy:      () => <Icon d="M8 4H6a2 2 0 00-2 2v14a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-2M8 4a2 2 0 012-2h4a2 2 0 012 2M8 4h8"/>,
-  Save:      () => <Icon d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2zM17 21v-8H7v8M7 3v5h8"/>,
-  Check:     () => <Icon d="M20 6L9 17l-5-5"/>,
-  X:         () => <Icon d="M18 6L6 18M6 6l12 12"/>,
-  RotateCcw: () => <Icon d="M1 4v6h6M3.51 15a9 9 0 102.13-9.36L1 10"/>,
-  History:   () => <Icon d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>,
-  Send:      () => <Icon d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/>,
-  Eye:       () => <Icon d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8zM12 9a3 3 0 100 6 3 3 0 000-6z"/>,
-  Edit:      () => <Icon d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7M18.5 2.5a2.12 2.12 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/>,
-  ChevronDown: () => <Icon d="M6 9l6 6 6-6"/>,
-  AlertCircle: () => <Icon d="M12 22c5.52 0 10-4.48 10-10S17.52 2 12 2 2 6.48 2 12s4.48 10 10 10zM12 8v4M12 16h.01"/>,
-  Globe:     () => <Icon d="M12 2a10 10 0 100 20A10 10 0 0012 2zM2 12h20M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/>,
-  Trash2:    () => <Icon d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/>,
-  Clock:     () => <Icon d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>,
+  Sparkles: () => <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><path d="M12 3l1.68 5.17H19l-4.41 3.2 1.68 5.17L12 13.34l-4.27 3.2 1.68-5.17L5 8.17h5.32z" /></svg>,
+  Zap: () => <Icon d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />,
+  Copy: () => <Icon d="M8 4H6a2 2 0 00-2 2v14a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-2M8 4a2 2 0 012-2h4a2 2 0 012 2M8 4h8" />,
+  Save: () => <Icon d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2zM17 21v-8H7v8M7 3v5h8" />,
+  Check: () => <Icon d="M20 6L9 17l-5-5" />,
+  X: () => <Icon d="M18 6L6 18M6 6l12 12" />,
+  RotateCcw: () => <Icon d="M1 4v6h6M3.51 15a9 9 0 102.13-9.36L1 10" />,
+  History: () => <Icon d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />,
+  Send: () => <Icon d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" />,
+  Eye: () => <Icon d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8zM12 9a3 3 0 100 6 3 3 0 000-6z" />,
+  Edit: () => <Icon d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7M18.5 2.5a2.12 2.12 0 013 3L12 15l-4 1 1-4 9.5-9.5z" />,
+  ChevronDown: () => <Icon d="M6 9l6 6 6-6" />,
+  AlertCircle: () => <Icon d="M12 22c5.52 0 10-4.48 10-10S17.52 2 12 2 2 6.48 2 12s4.48 10 10 10zM12 8v4M12 16h.01" />,
+  Globe: () => <Icon d="M12 2a10 10 0 100 20A10 10 0 0012 2zM2 12h20M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z" />,
+  Trash2: () => <Icon d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6" />,
+  Clock: () => <Icon d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />,
 };
 
 // ─── Keyword example prompts ────────────────────────────────────────────────
@@ -54,20 +54,31 @@ const KEYWORD_EXAMPLES = [
 ];
 
 const TONE_OPTIONS = [
-  { value: 'professional',    label: 'Professional',    desc: 'Formal, trusted, authoritative' },
-  { value: 'conversational',  label: 'Conversational',  desc: 'Friendly, readable, approachable' },
-  { value: 'authoritative',   label: 'Authoritative',   desc: 'Expert-led, confident, credible' },
-  { value: 'educational',     label: 'Educational',     desc: 'Structured, clear, informative' },
+  { value: 'professional', label: 'Professional', desc: 'Formal, trusted, authoritative' },
+  { value: 'conversational', label: 'Conversational', desc: 'Friendly, readable, approachable' },
+  { value: 'authoritative', label: 'Authoritative', desc: 'Expert-led, confident, credible' },
+  { value: 'educational', label: 'Educational', desc: 'Structured, clear, informative' },
+  { value: 'genz', label: 'GenZ Mode 🔥', desc: 'No cap, hits different fr fr ✨' },
 ];
 
 const GENERATION_STEPS = [
-  { text: 'Analyzing keyword intent',         pct: 12 },
-  { text: 'Scanning SERP gaps',              pct: 25 },
-  { text: 'Building content brief',          pct: 40 },
-  { text: 'Drafting blog content',           pct: 60 },
-  { text: 'Running SEO optimization pass',   pct: 76 },
-  { text: 'Humanizing content',              pct: 88 },
-  { text: 'Structuring featured snippets',   pct: 95 },
+  { text: 'Analyzing keyword intent', pct: 12 },
+  { text: 'Scanning SERP gaps', pct: 25 },
+  { text: 'Building content brief', pct: 40 },
+  { text: 'Drafting blog content', pct: 60 },
+  { text: 'Running SEO optimization pass', pct: 76 },
+  { text: 'Humanizing content', pct: 88 },
+  { text: 'Structuring featured snippets', pct: 95 },
+];
+
+const GENZ_GENERATION_STEPS = [
+  { text: 'no cap, analyzing the keyword bestie 🔍', pct: 12 },
+  { text: 'slay — scanning what\'s actually bussin on Google ✨', pct: 25 },
+  { text: 'brain ain\'t empty, building the content outline fr 🧠', pct: 40 },
+  { text: 'ok i\'m cooking, writing the actual banger 🔥', pct: 60 },
+  { text: 'SEO era just hit different, optimizing rn 💅', pct: 76 },
+  { text: 'making it lowkey hit like a certified vibe ✌️', pct: 88 },
+  { text: 'almost there bestie, adding the final slay ⚡', pct: 95 },
 ];
 
 // ─── Helper ─────────────────────────────────────────────────────────────────
@@ -146,48 +157,83 @@ const API_KEYS = [
   import.meta.env.VITE_API10
 ].filter(Boolean);
 
-const getScoreColor = (s) => s >= 90 ? '#10B981' : s >= 80 ? '#34D399' : s >= 70 ? '#FBBF24' : s >= 55 ? '#F59E0B' : '#EF4444';
+const getScoreColor = (s) => s >= 90 ? 'var(--color-success-500)' : s >= 80 ? 'var(--color-success-400)' : s >= 70 ? 'var(--color-warning-400)' : s >= 55 ? 'var(--color-warning-500)' : 'var(--color-error-500)';
 
 // ─── Main Component ──────────────────────────────────────────────────────────
 const BlogEditor = ({ callGemini, publishBlog, uid }) => {
   // ── Form state ──
-  const [keyword, setKeyword]         = useState('');
-  const [tone, setTone]               = useState('professional');
-  const [wordCount, setWordCount]     = useState(1500);
-  const [geo, setGeo]                 = useState('');
+  const [keyword, setKeyword] = useState('');
+  const [tone, setTone] = useState('professional');
+  const [wordCount, setWordCount] = useState(1500);
+  const [geo, setGeo] = useState('');
   const [instructions, setInstructions] = useState('');
   const [showExamples, setShowExamples] = useState(false);
 
   // ── Generation state ──
-  const [stage, setStage]             = useState('configure'); // configure | generating | review
-  const [progress, setProgress]       = useState({ pct: 0, text: '' });
-  const [error, setError]             = useState(null);
-  const [output, setOutput]           = useState(null);
+  const [stage, setStage] = useState('configure'); // configure | generating | review
+  const [progress, setProgress] = useState({ pct: 0, text: '' });
+  const [error, setError] = useState(null);
+  const [output, setOutput] = useState(null);
 
   // ── Editor/review state ──
-  const [editableTitle, setEditableTitle]     = useState('');
-  const [editableBody, setEditableBody]       = useState('');
-  const [editableMeta, setEditableMeta]       = useState('');
-  const [previewMode, setPreviewMode]         = useState(false); // false = edit, true = preview
-  const [autoSaveStatus, setAutoSaveStatus]   = useState(null); // null | 'saving' | 'saved'
-  const [saveBanner, setSaveBanner]           = useState(null); // { message, type }
+  const [editableTitle, setEditableTitle] = useState('');
+  const [editableBody, setEditableBody] = useState('');
+  const [editableMeta, setEditableMeta] = useState('');
+  const [previewMode, setPreviewMode] = useState(false); // false = edit, true = preview
+  const [autoSaveStatus, setAutoSaveStatus] = useState(null); // null | 'saving' | 'saved'
+  const [saveBanner, setSaveBanner] = useState(null); // { message, type }
 
   // ── History state ──
-  const [isPreparingPub, setIsPreparingPub]   = useState(false);
-  const [preparedBlog, setPreparedBlog]       = useState(null);
-  const [showPubModal, setShowPubModal]       = useState(false);
-  const [pubPlatform, setPubPlatform]         = useState('');
-  const [pubStatus, setPubStatus]             = useState('');
-  const [isScheduled, setIsScheduled]         = useState(false);
-  const [scheduledAt, setScheduledAt]         = useState('');
-  const [historyOpen, setHistoryOpen]   = useState(false);
-  const [versions, setVersions]         = useState([]);
+  const [isPreparingPub, setIsPreparingPub] = useState(false);
+  const [preparedBlog, setPreparedBlog] = useState(null);
+  const [showPubModal, setShowPubModal] = useState(false);
+  const [pubPlatform, setPubPlatform] = useState('');
+  const [pubStatus, setPubStatus] = useState('');
+  const [isScheduled, setIsScheduled] = useState(false);
+  const [scheduledAt, setScheduledAt] = useState('');
+  const [historyOpen, setHistoryOpen] = useState(false);
+  const [versions, setVersions] = useState([]);
   const [detailedScores, setDetailedScores] = useState(null);
   const [isAnalyzingSeo, setIsAnalyzingSeo] = useState(false);
 
-  const keywordRef   = useRef(null);
-  const bodyRef      = useRef(null);
-  const progressRef  = useRef(null);
+  const showGenZToast = () => {
+    const existing = document.getElementById('genz-activation-toast');
+    if (existing) existing.remove();
+
+    const toast = document.createElement('div');
+    toast.id = 'genz-activation-toast';
+    toast.style.cssText = `
+      position: fixed;
+      bottom: 28px;
+      left: 50%;
+      transform: translateX(-50%) translateY(0px);
+      background: linear-gradient(135deg, #FF6B6B, #FFD93D, #C77DFF);
+      background-size: 200%;
+      animation: genz-border 2s ease infinite;
+      color: white;
+      padding: 12px 24px;
+      border-radius: 999px;
+      font-size: 15px;
+      font-weight: 700;
+      z-index: 9999;
+      box-shadow: 0 8px 32px rgba(199, 125, 255, 0.5);
+      white-space: nowrap;
+      letter-spacing: 0.3px;
+    `;
+    toast.textContent = '⚡ GenZ Mode activated — no cap fr fr 🔥';
+    document.body.appendChild(toast);
+
+    setTimeout(() => {
+      toast.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+      toast.style.opacity = '0';
+      toast.style.transform = 'translateX(-50%) translateY(20px)';
+      setTimeout(() => toast.remove(), 500);
+    }, 3000);
+  };
+
+  const keywordRef = useRef(null);
+  const bodyRef = useRef(null);
+  const progressRef = useRef(null);
 
   // ── Load version history from localStorage ──
   useEffect(() => {
@@ -211,7 +257,7 @@ const BlogEditor = ({ callGemini, publishBlog, uid }) => {
         if (uid && output.firestoreId) {
           try {
             await updateBlog(uid, output.firestoreId, { title: editableTitle, body: editableBody, metaDescription: editableMeta });
-          } catch(e) { console.error('Auto-save to Firestore failed:', e); }
+          } catch (e) { console.error('Auto-save to Firestore failed:', e); }
         }
 
         setAutoSaveStatus('saved');
@@ -259,20 +305,34 @@ const BlogEditor = ({ callGemini, publishBlog, uid }) => {
 
     let stepIndex = 0;
     const interval = setInterval(() => {
-      if (stepIndex < GENERATION_STEPS.length) {
-        setProgress({ pct: GENERATION_STEPS[stepIndex].pct, text: GENERATION_STEPS[stepIndex].text });
+      const steps = tone === 'genz' ? GENZ_GENERATION_STEPS : GENERATION_STEPS;
+      if (stepIndex < steps.length) {
+        setProgress({ pct: steps[stepIndex].pct, text: steps[stepIndex].text });
         stepIndex++;
       }
     }, 700);
 
-    const geoText   = geo ? `Target location: ${geo}. Include local entities and city-specific examples.` : '';
+    const geoText = geo ? `Target location: ${geo}. Include local entities and city-specific examples.` : '';
     const extraText = instructions ? `Additional requirements: ${instructions}` : '';
+
+    const activeSteps = tone === 'genz' ? GENZ_GENERATION_STEPS : GENERATION_STEPS;
+    const toneInstruction = tone === 'genz'
+      ? `Tone: GenZ / internet culture style. MANDATORY style rules for GenZ mode:
+- Write like a Gen Z creator — use phrases like "no cap", "it hits different", "fr fr", "lowkey", "slay", "bussin", "main character energy", "rent free", "era", "bestie", etc.
+- Use ✨🔥💅👀💯 emojis naturally through the text (not forced)
+- Short punchy sentences. Almost conversational like a Twitter thread that accidentally became a blog.
+- Rhetorical questions like "And honestly? That's the move."
+- No corporate jargon. Ever. That's cringe.
+- Hook aggressively in the first sentence — don't ease in
+- Use "we" and "you" constantly — make it feel personal
+- Subheadings should be spicy, not boring`
+      : `Tone: ${tone}`;
 
     const prompt = `You are an expert SEO content writer for Indian startups and businesses.
 
 Write a comprehensive, SEO-optimized blog post with these specifications:
 - Primary keyword: "${keyword}"
-- Tone: ${tone}
+- ${toneInstruction}
 - Target word count: ${wordCount} words
 - ${geoText}
 - ${extraText}
@@ -294,7 +354,7 @@ STRICT RULES for the body field:
 - Return ONLY the raw JSON object, nothing else before or after`;
 
     try {
-      const cleaned  = await callGemini(prompt, 8192);
+      const cleaned = await callGemini(prompt, 8192);
       clearInterval(interval);
       setProgress({ pct: 100, text: 'Complete! ✓' });
 
@@ -308,12 +368,12 @@ STRICT RULES for the body field:
           const match = text.match(regex);
           return match ? match[1].replace(/\\n/g, '\n').replace(/\\"/g, '"') : '';
         };
-        
+
         const titleMatch = cleaned.match(/"title"\s*:\s*"([^"]+)"/);
         const metaMatch = cleaned.match(/"metaDescription"\s*:\s*"([^"]+)"/);
         const seoMatch = cleaned.match(/"seoScore":\s*(\d+)/);
         const seoScoreValue = seoMatch ? parseInt(seoMatch[1]) : 85;
-        
+
         // For body — extract everything between "body": " and the truncation point
         const bodyStart = cleaned.indexOf('"body"');
         let body = '';
@@ -333,7 +393,7 @@ STRICT RULES for the body field:
             }
           }
         }
-        
+
         blogData = {
           title: titleMatch ? titleMatch[1] : 'Generated Blog',
           metaDescription: metaMatch ? metaMatch[1] : '',
@@ -342,13 +402,13 @@ STRICT RULES for the body field:
         };
       }
       const wordCountActual = blogData.body.split(' ').length;
-      const readTime        = Math.ceil(wordCountActual / 200);
-      const id              = Date.now();
-      const createdAt       = new Date().toISOString();
+      const readTime = Math.ceil(wordCountActual / 200);
+      const id = Date.now();
+      const createdAt = new Date().toISOString();
 
       const sanitizedKeyword = keyword.trim().replace(/\s+/g, '');
       setKeyword(sanitizedKeyword);
-      
+
       const full = { ...blogData, id, keyword: sanitizedKeyword, tone, geo, wordCountActual, readTime, createdAt };
 
       // Save version snapshot
@@ -405,7 +465,7 @@ STRICT RULES for the body field:
             localStorage.setItem('bf_blogs', JSON.stringify(latestBlogs));
           }
         }
-      } catch(e) { console.error('Firestore save failed:', e); }
+      } catch (e) { console.error('Firestore save failed:', e); }
     }
 
     if (window.loadDashboardBlogs) await window.loadDashboardBlogs();
@@ -426,7 +486,7 @@ STRICT RULES for the body field:
 
   const handlePublish = async () => {
     if (!output) return;
-    
+
     setPreparedBlog({
       title: editableTitle,
       content: editableBody,
@@ -439,7 +499,7 @@ STRICT RULES for the body field:
 
   const executePublish = async () => {
     if (!pubPlatform || !preparedBlog) return;
-    
+
     const credsStr = localStorage.getItem('bf_credentials');
     if (!credsStr) {
       setPubStatus('Error: Credentials not found. Setup in Settings.');
@@ -457,7 +517,7 @@ STRICT RULES for the body field:
         return;
       }
       setPubStatus('Scheduling for ' + scheduledAt + '...');
-      
+
       const blogs = JSON.parse(localStorage.getItem('bf_blogs') || '[]');
       const bIdx = blogs.findIndex(b => b.id === output.id);
       const entry = {
@@ -484,7 +544,7 @@ STRICT RULES for the body field:
 
       if (bIdx !== -1) blogs[bIdx] = entry; else blogs.unshift(entry);
       localStorage.setItem('bf_blogs', JSON.stringify(blogs));
-      
+
       setPubStatus('✓ Blog scheduled!');
       if (window.loadDashboardBlogs) await window.loadDashboardBlogs();
       if (window.loadMyBlogs) window.loadMyBlogs();
@@ -506,7 +566,7 @@ STRICT RULES for the body field:
         credentials: creds
       });
       setPubStatus('✓ Published successfully!');
-      
+
       const blogs = JSON.parse(localStorage.getItem('bf_blogs') || '[]');
       const bIdx = blogs.findIndex(b => b.id === output.id);
       const entry = {
@@ -563,8 +623,8 @@ STRICT RULES for the body field:
 
     const wordCount = editableBody.trim().split(/\s+/).filter(w => w).length;
     const escapedKeyword = (output?.keyword || keyword).trim().toLowerCase().replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
-    const kwCount = (editableBody.toLowerCase().match(new RegExp(`\\b${escapedKeyword}\\b`, 'g')) || 
-                    editableBody.toLowerCase().match(new RegExp(escapedKeyword, 'g')) || []).length;
+    const kwCount = (editableBody.toLowerCase().match(new RegExp(`\\b${escapedKeyword}\\b`, 'g')) ||
+      editableBody.toLowerCase().match(new RegExp(escapedKeyword, 'g')) || []).length;
     const kwDensity = wordCount > 0 ? ((kwCount / wordCount) * 100).toFixed(2) : 0;
 
     const prompt = `You are an expert SEO auditor. Analyze this blog content for SEO quality.
@@ -594,7 +654,7 @@ Return ONLY a valid JSON object:
     try {
       const raw = await callGemini(prompt, 1500);
       const res = JSON.parse(raw);
-      setDetailedScores({...res, kwDensity});
+      setDetailedScores({ ...res, kwDensity });
       // Optionally update the main score
       setOutput(prev => ({ ...prev, seoScore: res.overallScore }));
     } catch (err) {
@@ -632,92 +692,92 @@ Return ONLY a valid JSON object:
 
       {/* ── Preparing for Publication Overlay ── */}
       {isPreparingPub && (
-        <div className="be-history-overlay" style={{zIndex: 1000, display:'flex', alignItems:'center', justifyContent:'center'}}>
-           <div className="be-gen-card" style={{maxWidth:'400px', textAlign:'center', position:'relative'}}>
-              {/* Close button in case it hangs */}
-              <button 
-                className="be-icon-btn" 
-                style={{position:'absolute', top:'10px', right:'10px'}}
-                onClick={() => setIsPreparingPub(false)}
-              >
-                <Icons.X />
-              </button>
+        <div className="be-history-overlay" style={{ zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div className="be-gen-card" style={{ maxWidth: '400px', textAlign: 'center', position: 'relative' }}>
+            {/* Close button in case it hangs */}
+            <button
+              className="be-icon-btn"
+              style={{ position: 'absolute', top: '10px', right: '10px' }}
+              onClick={() => setIsPreparingPub(false)}
+            >
+              <Icons.X />
+            </button>
 
-              {!pubStatus.startsWith('Error') ? (
-                <>
-                  <div className="be-pulse" style={{width:'48px', height:'48px', margin:'0 auto 16px'}} />
-                  <h3>AI Assistant preparing your blog...</h3>
-                  <p style={{color:'var(--text-subtle)', fontSize:'13px', marginTop:'8px'}}>Optimizing tags, fixing grammar, and formatting for cross-platform safety.</p>
-                </>
-              ) : (
-                <>
-                  <Icons.AlertCircle size={48} style={{color:'var(--color-warning-400)', marginBottom:'16px'}} />
-                  <h3 style={{color:'var(--color-warning-400)'}}>Preparation Failed</h3>
-                  <p style={{color:'var(--text-subtle)', fontSize:'13px', marginTop:'8px'}}>{pubStatus}</p>
-                  <button className="btn btn-primary mt-4" onClick={() => { setIsPreparingPub(false); setPubStatus(''); }}>Back to Editor</button>
-                </>
-              )}
-           </div>
+            {!pubStatus.startsWith('Error') ? (
+              <>
+                <div className="be-pulse" style={{ width: '48px', height: '48px', margin: '0 auto 16px' }} />
+                <h3>AI Assistant preparing your blog...</h3>
+                <p style={{ color: 'var(--text-subtle)', fontSize: '13px', marginTop: '8px' }}>Optimizing tags, fixing grammar, and formatting for cross-platform safety.</p>
+              </>
+            ) : (
+              <>
+                <Icons.AlertCircle size={48} style={{ color: 'var(--color-warning-400)', marginBottom: '16px' }} />
+                <h3 style={{ color: 'var(--color-warning-400)' }}>Preparation Failed</h3>
+                <p style={{ color: 'var(--text-subtle)', fontSize: '13px', marginTop: '8px' }}>{pubStatus}</p>
+                <button className="btn btn-primary mt-4" onClick={() => { setIsPreparingPub(false); setPubStatus(''); }}>Back to Editor</button>
+              </>
+            )}
+          </div>
         </div>
       )}
 
       {/* ── Platform Selection Modal ── */}
       {showPubModal && (
-        <div className="be-history-overlay" onClick={() => !pubStatus.includes('...') && setShowPubModal(false)} style={{zIndex: 1001}}>
-          <div className="be-history-panel" onClick={e => e.stopPropagation()} style={{maxWidth:'500px', height:'auto', padding:'24px'}}>
-             <div className="be-history-header" style={{marginBottom:'20px'}}>
-                <span><Icons.Send /> Select Platform</span>
-                <button className="be-icon-btn" onClick={() => setShowPubModal(false)}><Icons.X /></button>
-             </div>
-             
-             <div className="be-tone-grid" style={{gridTemplateColumns:'repeat(auto-fit, minmax(140px, 1fr))', gap:'12px'}}>
-                {['wordpress', 'blogger', 'devto', 'hashnode', 'medium'].map(p => (
-                   <label key={p} className={`be-tone-card${pubPlatform === p ? ' selected' : ''}`} style={{padding:'16px', textAlign:'center'}}>
-                      <input type="radio" className="sr-only" name="pubPlatform" value={p} onChange={() => setPubPlatform(p)} />
-                      <div style={{fontSize:'24px', marginBottom:'8px'}}>
-                        {p === 'wordpress' && '📝'}
-                        {p === 'blogger' && '🍊'}
-                        {p === 'devto' && '📑'}
-                        {p === 'hashnode' && '⚡'}
-                        {p === 'medium' && 'Ⓜ️'}
-                      </div>
-                      <span style={{textTransform:'capitalize', fontWeight:600}}>{p}</span>
-                   </label>
-                ))}
-             </div>
+        <div className="be-history-overlay" onClick={() => !pubStatus.includes('...') && setShowPubModal(false)} style={{ zIndex: 1001 }}>
+          <div className="be-history-panel" onClick={e => e.stopPropagation()} style={{ maxWidth: '500px', height: 'auto', padding: '24px' }}>
+            <div className="be-history-header" style={{ marginBottom: '20px' }}>
+              <span><Icons.Send /> Select Platform</span>
+              <button className="be-icon-btn" onClick={() => setShowPubModal(false)}><Icons.X /></button>
+            </div>
 
-             {/* Scheduling Options */}
-             <div style={{marginTop:'24px', padding:'16px', background:'rgba(255,255,255,0.03)', borderRadius:'12px', border:'1px solid rgba(255,255,255,0.05)'}}>
-                <label style={{display:'flex', alignItems:'center', gap:'10px', cursor:'pointer', marginBottom: isScheduled ? '12px' : '0'}}>
-                   <input type="checkbox" checked={isScheduled} onChange={e => setIsScheduled(e.target.checked)} style={{width:'18px', height:'18px', accentColor:'var(--color-primary-500)'}} />
-                   <span style={{fontSize:'14px', fontWeight:500, color:'white'}}>Schedule for later</span>
+            <div className="be-tone-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '12px' }}>
+              {['wordpress', 'blogger', 'devto', 'hashnode', 'medium'].map(p => (
+                <label key={p} className={`be-tone-card${pubPlatform === p ? ' selected' : ''}`} style={{ padding: '16px', textAlign: 'center' }}>
+                  <input type="radio" className="sr-only" name="pubPlatform" value={p} onChange={() => setPubPlatform(p)} />
+                  <div style={{ fontSize: '24px', marginBottom: '8px' }}>
+                    {p === 'wordpress' && '📝'}
+                    {p === 'blogger' && '🍊'}
+                    {p === 'devto' && '📑'}
+                    {p === 'hashnode' && '⚡'}
+                    {p === 'medium' && 'Ⓜ️'}
+                  </div>
+                  <span style={{ textTransform: 'capitalize', fontWeight: 600 }}>{p}</span>
                 </label>
-                
-                {isScheduled && (
-                   <div style={{display:'flex', flexDirection:'column', gap:'8px'}}>
-                      <label style={{fontSize:'12px', color:'#64748B'}}>Select Date & Time</label>
-                      <input 
-                        type="datetime-local" 
-                        value={scheduledAt} 
-                        onChange={e => setScheduledAt(e.target.value)}
-                        style={{background:'#0D1526', border:'1px solid rgba(255,255,255,0.1)', color:'white', padding:'10px', borderRadius:'8px', outline:'none', width:'100%', boxSizing:'border-box'}}
-                      />
-                   </div>
-                )}
-             </div>
+              ))}
+            </div>
 
-             {pubStatus && (
-                <div style={{marginTop:'20px', padding:'12px', borderRadius:'8px', background:pubStatus.startsWith('Error') ? 'rgba(239,68,68,0.1)' : 'rgba(16,185,129,0.1)', color:pubStatus.startsWith('Error') ? 'var(--color-warning-400)' : 'var(--color-success-400)', fontSize:'13px', display:'flex', alignItems:'center', gap:'8px'}}>
-                   {pubStatus.includes('...') ? <span className="be-pulse" style={{width:'12px', height:'12px'}} /> : <Icons.Check />}
-                   {pubStatus}
+            {/* Scheduling Options */}
+            <div style={{ marginTop: '24px', padding: '16px', background: 'rgba(255,255,255,0.03)', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)' }}>
+              <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', marginBottom: isScheduled ? '12px' : '0' }}>
+                <input type="checkbox" checked={isScheduled} onChange={e => setIsScheduled(e.target.checked)} style={{ width: '18px', height: '18px', accentColor: 'var(--color-primary-500)' }} />
+                <span style={{ fontSize: '14px', fontWeight: 500, color: 'white' }}>Schedule for later</span>
+              </label>
+
+              {isScheduled && (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                  <label style={{ fontSize: '12px', color: '#64748B' }}>Select Date & Time</label>
+                  <input
+                    type="datetime-local"
+                    value={scheduledAt}
+                    onChange={e => setScheduledAt(e.target.value)}
+                    style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-default)', color: 'var(--text-primary)', padding: '10px', borderRadius: '8px', outline: 'none', width: '100%', boxSizing: 'border-box' }}
+                  />
                 </div>
-             )}
+              )}
+            </div>
 
-             <div style={{marginTop:'24px', display:'flex', gap:'12px'}}>
-                <button className="btn btn-primary" style={{flex:1}} onClick={executePublish} disabled={!pubPlatform || pubStatus.includes('...')}>
-                   {isScheduled ? 'Schedule Blog' : 'Publish Now'}
-                </button>
-             </div>
+            {pubStatus && (
+              <div style={{ marginTop: '20px', padding: '12px', borderRadius: '8px', background: pubStatus.startsWith('Error') ? 'var(--color-warning-border)' : 'var(--color-success-border)', color: pubStatus.startsWith('Error') ? 'var(--color-warning-500)' : 'var(--color-success-500)', fontSize: '13px', display: 'flex', alignItems: 'center', gap: '8px', border: '1px solid transparent' }}>
+                {pubStatus.includes('...') ? <span className="be-pulse" style={{ width: '12px', height: '12px' }} /> : <Icons.Check />}
+                {pubStatus}
+              </div>
+            )}
+
+            <div style={{ marginTop: '24px', display: 'flex', gap: '12px' }}>
+              <button className="btn btn-primary" style={{ flex: 1 }} onClick={executePublish} disabled={!pubPlatform || pubStatus.includes('...')}>
+                {isScheduled ? 'Schedule Blog' : 'Publish Now'}
+              </button>
+            </div>
           </div>
         </div>
       )}
@@ -832,21 +892,96 @@ Return ONLY a valid JSON object:
               <div className="form-group">
                 <label className="form-label" htmlFor="be-tone">Writing Tone</label>
                 <div className="be-tone-grid" role="radiogroup" aria-labelledby="be-tone">
-                  {TONE_OPTIONS.map(t => (
-                    <label
-                      key={t.value}
-                      className={`be-tone-card${tone === t.value ? ' selected' : ''}`}
-                    >
-                      <input
-                        type="radio" name="tone" value={t.value}
-                        checked={tone === t.value}
-                        onChange={() => setTone(t.value)}
-                        className="sr-only"
-                      />
-                      <span className="be-tone-label">{t.label}</span>
-                      <span className="be-tone-desc">{t.desc}</span>
-                    </label>
-                  ))}
+                  {TONE_OPTIONS.map(t => {
+                    if (t.value === 'genz') {
+                      return (
+                        <label
+                          key="genz"
+                          className={`be-tone-card genz-card${tone === 'genz' ? ' selected' : ''}`}
+                          style={{
+                            position: 'relative',
+                            overflow: 'hidden',
+                            cursor: 'pointer',
+                            gridColumn: 'span 2',
+                            padding: 0,
+                            border: 'none',
+                            background: 'none'
+                          }}
+                        >
+                          <input
+                            type="radio" name="tone" value="genz"
+                            checked={tone === 'genz'}
+                            onChange={() => {
+                              setTone('genz');
+                              showGenZToast();
+                            }}
+                            className="sr-only"
+                          />
+                          <div style={{
+                            position: 'absolute',
+                            inset: 0,
+                            background: 'linear-gradient(135deg, #FF6B6B, #FFD93D, #6BCB77, #4D96FF, #C77DFF)',
+                            backgroundSize: '300% 300%',
+                            animation: 'genz-border 3s ease infinite',
+                            borderRadius: 'inherit',
+                            zIndex: 0,
+                            padding: '2px'
+                          }} />
+                          <div style={{
+                            position: 'relative',
+                            zIndex: 1,
+                            background: tone === 'genz' ? 'transparent' : 'var(--bg-elevated)',
+                            borderRadius: 'inherit',
+                            padding: '12px 16px',
+                            height: '100%',
+                            boxSizing: 'border-box'
+                          }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '6px' }}>
+                              <span style={{ fontSize: '20px' }}>⚡</span>
+                              <span style={{
+                                fontWeight: 700,
+                                fontSize: '15px',
+                                background: 'linear-gradient(135deg, #FF6B6B, #FFD93D, #C77DFF)',
+                                backgroundSize: '200%',
+                                WebkitBackgroundClip: 'text',
+                                WebkitTextFillColor: 'transparent',
+                                animation: 'genz-border 2s ease infinite'
+                              }}>
+                                GenZ Mode 🔥
+                              </span>
+                              <span style={{
+                                fontSize: '10px',
+                                background: 'linear-gradient(135deg, #FF6B6B, #C77DFF)',
+                                color: 'white',
+                                borderRadius: '999px',
+                                padding: '2px 8px',
+                                fontWeight: 700,
+                                WebkitTextFillColor: 'white'
+                              }}>NEW</span>
+                            </div>
+                            <span style={{ fontSize: '13px', color: tone === 'genz' ? 'white' : '#94A3B8' }}>
+                              No cap, hits different fr fr ✨
+                            </span>
+                          </div>
+                        </label>
+                      );
+                    }
+                    return (
+                      <label
+                        key={t.value}
+                        className={`be-tone-card${tone === t.value ? ' selected' : ''}`}
+                      >
+                        <input
+                          type="radio" name="tone" value={t.value}
+                          checked={tone === t.value}
+                          onChange={() => setTone(t.value)}
+                          className="sr-only"
+                        />
+                        <span className="be-tone-label">{t.label}</span>
+                        <span className="be-tone-desc">{t.desc}</span>
+                      </label>
+                    );
+                  })}
                 </div>
               </div>
 
@@ -858,7 +993,7 @@ Return ONLY a valid JSON object:
                     (~{Math.ceil(wordCount / 200)} min read)
                   </span>
                 </label>
-                <div className="be-range-wrapper">
+                <div className="be-range-wrapper" style={{ marginTop: '24px' }}>
                   <input
                     id="be-wordcount"
                     type="range" min={800} max={3000} step={100}
@@ -971,7 +1106,7 @@ Return ONLY a valid JSON object:
               <div className="be-progress-pct">{progress.pct}%</div>
 
               {/* Step stepper */}
-              <GenerationStepper steps={GENERATION_STEPS} currentPct={progress.pct} currentText={progress.text} />
+              <GenerationStepper steps={tone === 'genz' ? GENZ_GENERATION_STEPS : GENERATION_STEPS} currentPct={progress.pct} currentText={progress.text} />
 
               {/* Keyword context */}
               <div className="be-gen-context">
@@ -1142,10 +1277,10 @@ Return ONLY a valid JSON object:
                 {/* SEO score card */}
                 <div className="be-seo-card">
                   <div className="be-seo-ring-container">
-                    <div 
-                      className="be-seo-ring-bar" 
-                      style={{ 
-                        background: `conic-gradient(${getScoreColor(detailedScores?.overallScore || output.seoScore)} ${(detailedScores?.overallScore || output.seoScore)}%, var(--bg-overlay) 0%)` 
+                    <div
+                      className="be-seo-ring-bar"
+                      style={{
+                        background: `conic-gradient(${getScoreColor(detailedScores?.overallScore || output.seoScore)} ${(detailedScores?.overallScore || output.seoScore)}%, var(--bg-overlay) 0%)`
                       }}
                     />
                     <div className="be-seo-ring-inner">
@@ -1157,9 +1292,9 @@ Return ONLY a valid JSON object:
                   <div className="be-seo-desc">
                     {(detailedScores?.overallScore || output.seoScore) >= 90 ? '🟢 Excellent' : (detailedScores?.overallScore || output.seoScore) >= 75 ? '🟡 Good' : '🔴 Needs work'}
                   </div>
-                  
-                  <button 
-                    className="btn btn-sm btn-ghost" 
+
+                  <button
+                    className="btn btn-sm btn-ghost"
                     style={{ width: '100%', marginTop: 'var(--space-3)', fontSize: '11px', height: 'auto', padding: '6px' }}
                     onClick={runDetailedSeoScore}
                     disabled={isAnalyzingSeo}
@@ -1170,19 +1305,19 @@ Return ONLY a valid JSON object:
 
                 {detailedScores && (
                   <div className="be-seo-breakdown" style={{ marginTop: 'var(--space-4)', background: 'rgba(255,255,255,0.02)', borderRadius: '12px', padding: '12px', border: '1px solid rgba(255,255,255,0.04)' }}>
-                     <div style={{ fontSize: '11px', color: 'var(--text-subtle)', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Metrics</div>
-                     {[
-                       { label: 'Title', key: 'titleOptimization' },
-                       { label: 'Density', key: 'keywordDensityScore' },
-                       { label: 'Depth', key: 'contentDepth' },
-                       { label: 'Readability', key: 'readabilityScore' },
-                       { label: 'AI Safety', key: 'aiDetectionRisk' }
-                     ].map(m => (
-                       <div key={m.key} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px', fontSize: '12px' }}>
-                         <span style={{ color: 'var(--text-muted)' }}>{m.label}</span>
-                         <span style={{ color: detailedScores[m.key] >= 80 ? 'var(--color-success-400)' : detailedScores[m.key] >= 60 ? 'var(--color-warning-400)' : 'var(--color-danger-400)', fontWeight: 700 }}>{detailedScores[m.key]}</span>
-                       </div>
-                     ))}
+                    <div style={{ fontSize: '11px', color: 'var(--text-subtle)', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Metrics</div>
+                    {[
+                      { label: 'Title', key: 'titleOptimization' },
+                      { label: 'Density', key: 'keywordDensityScore' },
+                      { label: 'Depth', key: 'contentDepth' },
+                      { label: 'Readability', key: 'readabilityScore' },
+                      { label: 'AI Safety', key: 'aiDetectionRisk' }
+                    ].map(m => (
+                      <div key={m.key} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px', fontSize: '12px' }}>
+                        <span style={{ color: 'var(--text-muted)' }}>{m.label}</span>
+                        <span style={{ color: detailedScores[m.key] >= 80 ? 'var(--color-success-400)' : detailedScores[m.key] >= 60 ? 'var(--color-warning-400)' : 'var(--color-danger-400)', fontWeight: 700 }}>{detailedScores[m.key]}</span>
+                      </div>
+                    ))}
                   </div>
                 )}
 

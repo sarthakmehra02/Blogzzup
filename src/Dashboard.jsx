@@ -7,7 +7,7 @@ import {
 import './Dashboard.css';
 import './BlogEditor.css';
 import { publishBlog } from './utils/publishBlog';
-import { fetchUserBlogs, createBlog, updateBlog, deleteBlog, saveCredentials, fetchCredentials } from './utils/blogStorage';
+import { fetchUserBlogs, createBlog, updateBlog, deleteBlog, saveCredentials, fetchCredentials, verifyAndClaimCredential } from './utils/blogStorage';
 import BlogEditor from './BlogEditor';
 import { useAuth } from './AuthContext';
 import { callGemini } from './utils/gemini';
@@ -17,13 +17,6 @@ const MyBlogsSection = () => {
   const [search, setSearch] = useState('');
   const [filter, setFilter] = useState('all');
   const [modalBlog, setModalBlog] = useState(null);
-
-
-
-
-
-
-
 
   const loadMyBlogs = () => {
     let saved = JSON.parse(localStorage.getItem('bf_blogs') || '[]');
@@ -40,9 +33,6 @@ const MyBlogsSection = () => {
     };
   }, []);
 
-  // Redundant local deleteBlog removed, now using window.confirmDeleteBlog
-
-
   const copyBlogFromModal = (blog, e) => {
     const text = blog.title + '\n\n' + blog.metaDescription + '\n\n' + blog.body;
     navigator.clipboard.writeText(text).then(() => {
@@ -50,7 +40,7 @@ const MyBlogsSection = () => {
       const oldText = btn.textContent;
       btn.textContent = '✓ Copied!';
       btn.style.color = '#10B981';
-      setTimeout(() => { btn.textContent = oldText; btn.style.color = '#94A3B8'; }, 2000);
+      setTimeout(() => { btn.textContent = oldText; btn.style.color = 'var(--text-muted)'; }, 2000);
     });
   };
 
@@ -61,20 +51,20 @@ const MyBlogsSection = () => {
   });
 
   return (
-    <div id="dash-myblogs" className="dash-section" style={{ display: 'none', padding: '40px', color: '#fff' }}>
+    <div id="dash-myblogs" className="dash-section" style={{ display: 'none', padding: '40px', color: 'var(--text-primary)' }}>
       {/* Header */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '28px' }}>
         <div>
-          <h2 style={{ fontSize: '24px', fontWeight: 700, color: 'white', margin: 0 }}>My Blogs</h2>
-          <p style={{ fontSize: '14px', color: '#64748B', marginTop: '4px' }}>All your generated and saved blog posts</p>
+          <h2 style={{ fontSize: '24px', fontWeight: 700, color: 'var(--text-primary)', margin: 0 }}>My Blogs</h2>
+          <p style={{ fontSize: '14px', color: 'var(--text-muted)', marginTop: '4px' }}>All your generated and saved blog posts</p>
         </div>
-        <button onClick={() => window.showDashboardSection && window.showDashboardSection('newblog')} style={{ background: 'linear-gradient(135deg,#7C3AED,#5B21B6)', color: 'white', border: 'none', borderRadius: '10px', padding: '10px 20px', fontSize: '14px', fontWeight: 600, cursor: 'pointer' }}>+ New Blog</button>
+        <button onClick={() => window.showDashboardSection && window.showDashboardSection('newblog')} style={{ background: 'var(--color-accent-gradient)', color: 'white', border: 'none', borderRadius: '10px', padding: '10px 20px', fontSize: '14px', fontWeight: 600, cursor: 'pointer' }}>+ New Blog</button>
       </div>
 
       {/* Filter/Search */}
       <div style={{ display: 'flex', gap: '12px', marginBottom: '24px', flexWrap: 'wrap' }}>
-        <input type="text" placeholder="Search blogs..." value={search} onChange={e => setSearch(e.target.value)} style={{ flex: 1, minWidth: '200px', background: '#141B2D', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '10px', padding: '10px 16px', color: 'white', fontSize: '14px', outline: 'none' }} />
-        <select value={filter} onChange={e => setFilter(e.target.value)} style={{ background: '#141B2D', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '10px', padding: '10px 16px', color: 'white', fontSize: '14px', outline: 'none', cursor: 'pointer' }}>
+        <input type="text" placeholder="Search blogs..." value={search} onChange={e => setSearch(e.target.value)} style={{ flex: 1, minWidth: '200px', background: 'var(--bg-surface)', border: '1px solid var(--border-default)', borderRadius: '10px', padding: '10px 16px', color: 'var(--text-primary)', fontSize: '14px', outline: 'none' }} />
+        <select value={filter} onChange={e => setFilter(e.target.value)} style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-default)', borderRadius: '10px', padding: '10px 16px', color: 'var(--text-primary)', fontSize: '14px', outline: 'none', cursor: 'pointer' }}>
           <option value="all">All Status</option>
           <option value="draft">Drafts</option>
           <option value="published">Published</option>
@@ -83,44 +73,43 @@ const MyBlogsSection = () => {
       </div>
 
       {/* Table */}
-      <div style={{ background: '#141B2D', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '16px', overflow: 'hidden' }}>
+      <div style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border-default)', borderRadius: '16px', overflow: 'hidden' }}>
         <table style={{ width: '100%', borderCollapse: 'collapse' }}>
           <thead>
-            <tr style={{ background: '#0D1526' }}>
-              <th style={{ textAlign: 'left', padding: '14px 20px', fontSize: '12px', color: '#64748B', fontWeight: 600, letterSpacing: '0.5px' }}>TITLE</th>
-              <th style={{ textAlign: 'left', padding: '14px 20px', fontSize: '12px', color: '#64748B', fontWeight: 600 }}>SEO SCORE</th>
-              <th style={{ textAlign: 'left', padding: '14px 20px', fontSize: '12px', color: '#64748B', fontWeight: 600 }}>STATUS</th>
-              <th style={{ textAlign: 'left', padding: '14px 20px', fontSize: '12px', color: '#64748B', fontWeight: 600 }}>DATE</th>
-              <th style={{ textAlign: 'left', padding: '14px 20px', fontSize: '12px', color: '#64748B', fontWeight: 600 }}>ACTIONS</th>
+            <tr style={{ background: 'var(--bg-surface)' }}>
+              <th style={{ textAlign: 'left', padding: '14px 20px', fontSize: '12px', color: 'var(--text-muted)', fontWeight: 600, letterSpacing: '0.5px' }}>TITLE</th>
+              <th style={{ textAlign: 'left', padding: '14px 20px', fontSize: '12px', color: 'var(--text-muted)', fontWeight: 600 }}>SEO SCORE</th>
+              <th style={{ textAlign: 'left', padding: '14px 20px', fontSize: '12px', color: 'var(--text-muted)', fontWeight: 600 }}>STATUS</th>
+              <th style={{ textAlign: 'left', padding: '14px 20px', fontSize: '12px', color: 'var(--text-muted)', fontWeight: 600 }}>DATE</th>
+              <th style={{ textAlign: 'left', padding: '14px 20px', fontSize: '12px', color: 'var(--text-muted)', fontWeight: 600 }}>ACTIONS</th>
             </tr>
           </thead>
           <tbody>
             {filteredBlogs.length === 0 ? (
               <tr>
-                <td colSpan="5" style={{ textAlign: 'center', padding: '48px', color: '#4B5563', fontSize: '14px' }}>
-                  No blogs found. {blogs.length === 0 ? <span style={{ color: '#7C3AED', cursor: 'pointer' }} onClick={() => window.showDashboardSection && window.showDashboardSection('newblog')}>Generate your first blog →</span> : ''}
+                <td colSpan="5" style={{ textAlign: 'center', padding: '48px', color: 'var(--text-muted)', fontSize: '14px' }}>
+                  No blogs found. {blogs.length === 0 ? <span style={{ color: 'var(--color-accent)', cursor: 'pointer' }} onClick={() => window.showDashboardSection && window.showDashboardSection('newblog')}>Generate your first blog →</span> : ''}
                 </td>
               </tr>
             ) : (
               filteredBlogs.map((blog) => {
-                const scoreColor = blog.seoScore >= 90 ? '#10B981' : blog.seoScore >= 75 ? '#F59E0B' : '#EF4444';
-                const statusStyle = blog.status === 'published' ? { background: 'rgba(16,185,129,0.1)', color: '#10B981' } : blog.status === 'scheduled' ? { background: 'rgba(245,158,11,0.1)', color: '#F59E0B' } : { background: 'rgba(100,116,139,0.1)', color: '#94A3B8' };
+                const scoreColor = blog.seoScore >= 90 ? 'var(--color-success-500)' : blog.seoScore >= 75 ? 'var(--color-warning-500)' : 'var(--color-error-500)';
+                const statusStyle = blog.status === 'published' ? { background: 'var(--color-success-border)', color: 'var(--color-success-500)' } : blog.status === 'scheduled' ? { background: 'var(--color-warning-border)', color: 'var(--color-warning-500)' } : { background: 'var(--bg-card-hover)', color: 'var(--text-muted)' };
                 const displayDate = blog.status === 'scheduled' ? (blog.scheduledAt || blog.createdAt) : blog.createdAt;
-                // Formatted with time
                 const date = displayDate ? new Date(displayDate).toLocaleString('en-IN', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : 'No date';
                 return (
-                  <tr key={blog.id} style={{ borderTop: '1px solid rgba(255,255,255,0.04)', transition: 'background 0.15s' }} onMouseOver={e => e.currentTarget.style.background = 'rgba(124,58,237,0.05)'} onMouseOut={e => e.currentTarget.style.background = 'transparent'}>
-                    <td onClick={() => setModalBlog(blog)} style={{ padding: '14px 20px', fontSize: '14px', color: 'white', fontWeight: 500, maxWidth: '280px', cursor: 'pointer', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  <tr key={blog.id} style={{ borderBottom: '1px solid var(--border-default)', transition: 'background 0.15s' }} onMouseOver={e => e.currentTarget.style.background = 'var(--color-bg-hover)'} onMouseOut={e => e.currentTarget.style.background = 'transparent'}>
+                    <td onClick={() => setModalBlog(blog)} style={{ padding: '14px 20px', fontSize: '14px', color: 'var(--text-primary)', fontWeight: 500, maxWidth: '280px', cursor: 'pointer', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                       {blog.title}
                     </td>
                     <td style={{ padding: '14px 20px' }}><span style={{ color: scoreColor, fontWeight: 700, fontSize: '14px' }}>● {blog.seoScore}/100</span></td>
                     <td style={{ padding: '14px 20px' }}><span style={{ ...statusStyle, borderRadius: '999px', padding: '4px 12px', fontSize: '12px', fontWeight: 600 }}>{String(blog.status).charAt(0).toUpperCase() + String(blog.status).slice(1)}</span></td>
-                    <td style={{ padding: '14px 20px', fontSize: '13px', color: '#64748B' }}>{date}</td>
+                    <td style={{ padding: '14px 20px', fontSize: '13px', color: 'var(--text-muted)' }}>{date}</td>
                     <td style={{ padding: '14px 20px' }}>
                       <div style={{ display: 'flex', gap: '8px' }}>
-                        <button onClick={() => window.viewBlog && window.viewBlog(blog.id)} style={{ background: 'rgba(124,58,237,0.15)', border: 'none', color: '#A78BFA', borderRadius: '6px', padding: '5px 12px', fontSize: '12px', cursor: 'pointer' }}>View</button>
-                        <button onClick={() => window.showPublishModal && window.showPublishModal(blog.id)} style={{ background: 'rgba(16,185,129,0.15)', border: 'none', color: '#10B981', borderRadius: '6px', padding: '5px 12px', fontSize: '12px', cursor: 'pointer' }}>Publish</button>
-                        <button onClick={() => window.confirmDeleteBlog && window.confirmDeleteBlog(blog.id)} style={{ background: 'rgba(239,68,68,0.1)', border: 'none', color: '#EF4444', borderRadius: '6px', padding: '5px 12px', fontSize: '12px', cursor: 'pointer' }}>Delete</button>
+                        <button onClick={() => window.viewBlog && window.viewBlog(blog.id)} style={{ background: 'var(--bg-surface)', border: '1px solid var(--color-accent-border)', color: 'var(--color-accent)', borderRadius: '6px', padding: '5px 12px', fontSize: '12px', cursor: 'pointer' }}>View</button>
+                        <button onClick={() => window.showPublishModal && window.showPublishModal(blog.id)} style={{ background: 'var(--bg-surface)', border: '1px solid var(--color-success-border)', color: 'var(--color-success-500)', borderRadius: '6px', padding: '5px 12px', fontSize: '12px', cursor: 'pointer' }}>Publish</button>
+                        <button onClick={() => window.confirmDeleteBlog && window.confirmDeleteBlog(blog.id)} style={{ background: 'var(--bg-surface)', border: '1px solid var(--color-danger-border)', color: 'var(--color-danger-500)', borderRadius: '6px', padding: '5px 12px', fontSize: '12px', cursor: 'pointer' }}>Delete</button>
                       </div>
                     </td>
                   </tr>
@@ -131,23 +120,21 @@ const MyBlogsSection = () => {
         </table>
       </div>
 
-
-
       {/* Modal */}
       {modalBlog && (
-        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', zIndex: 1000, overflowY: 'auto', padding: '40px 20px', display: 'block' }}>
-          <div style={{ maxWidth: '800px', margin: '0 auto', background: '#141B2D', border: '1px solid rgba(124,58,237,0.3)', borderRadius: '20px', padding: '32px', position: 'relative' }}>
-            <button onClick={() => setModalBlog(null)} style={{ position: 'absolute', top: '16px', right: '16px', background: 'rgba(255,255,255,0.05)', border: 'none', color: 'white', width: '32px', height: '32px', borderRadius: '50%', cursor: 'pointer', fontSize: '16px' }}>✕</button>
-            <h2 style={{ fontSize: '22px', fontWeight: 700, color: 'white', marginBottom: '8px' }}>{modalBlog.title}</h2>
-            <p style={{ fontSize: '13px', color: '#64748B', background: '#0D1526', borderRadius: '8px', padding: '10px 14px', marginBottom: '20px' }}>{modalBlog.metaDescription}</p>
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.8)', zIndex: 1000, overflowY: 'auto', padding: '40px 20px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div style={{ maxWidth: '800px', width: '100%', background: 'var(--bg-elevated)', border: '1px solid var(--border-default)', borderRadius: '20px', padding: '32px', position: 'relative', boxShadow: '0 20px 50px rgba(0,0,0,0.5)' }}>
+            <button onClick={() => setModalBlog(null)} style={{ position: 'absolute', top: '16px', right: '16px', background: 'var(--bg-surface)', border: '1px solid var(--border-default)', color: 'var(--text-primary)', width: '32px', height: '32px', borderRadius: '50%', cursor: 'pointer', fontSize: '16px' }}>✕</button>
+            <h2 style={{ fontSize: '22px', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '8px' }}>{modalBlog.title}</h2>
+            <p style={{ fontSize: '13px', color: 'var(--text-muted)', background: 'var(--bg-surface)', borderRadius: '8px', padding: '10px 14px', marginBottom: '20px', border: '1px solid var(--border-default)' }}>{modalBlog.metaDescription}</p>
             <div style={{ display: 'flex', gap: '12px', marginBottom: '20px' }}>
-              <span style={{ background: 'rgba(16,185,129,0.1)', color: '#10B981', borderRadius: '8px', padding: '6px 14px', fontSize: '12px', fontWeight: 600 }}>SEO: {modalBlog.seoScore}/100</span>
+              <span style={{ background: 'var(--color-success-border)', color: 'var(--color-success-500)', borderRadius: '8px', padding: '6px 14px', fontSize: '12px', fontWeight: 600 }}>SEO: {modalBlog.seoScore}/100</span>
               <span style={{ background: 'rgba(124,58,237,0.1)', color: '#A78BFA', borderRadius: '8px', padding: '6px 14px', fontSize: '12px', fontWeight: 600 }}>🔑 {modalBlog.keyword}</span>
             </div>
-            <div style={{ fontSize: '14px', color: '#94A3B8', lineHeight: 1.8, whiteSpace: 'pre-wrap', maxHeight: '400px', overflowY: 'auto', paddingRight: '8px' }}>{modalBlog.body}</div>
+            <div style={{ fontSize: '14px', color: 'var(--text-secondary)', lineHeight: 1.8, whiteSpace: 'pre-wrap', maxHeight: '400px', overflowY: 'auto', paddingRight: '12px', borderTop: '1px solid var(--border-default)', paddingTop: '20px' }}>{modalBlog.body}</div>
             <div style={{ display: 'flex', gap: '10px', marginTop: '24px' }}>
-              <button onClick={(e) => copyBlogFromModal(modalBlog, e)} style={{ flex: 1, background: '#141B2D', border: '1px solid rgba(255,255,255,0.1)', color: '#94A3B8', borderRadius: '10px', padding: '12px', fontSize: '14px', cursor: 'pointer' }}>Copy Content</button>
-              <button onClick={() => setModalBlog(null)} style={{ flex: 1, background: 'linear-gradient(135deg,#7C3AED,#06B6D4)', border: 'none', color: 'white', borderRadius: '10px', padding: '12px', fontSize: '14px', fontWeight: 600, cursor: 'pointer' }}>Close</button>
+              <button onClick={(e) => copyBlogFromModal(modalBlog, e)} style={{ flex: 1, background: 'var(--bg-surface)', border: '1px solid var(--border-default)', color: 'var(--text-primary)', borderRadius: '10px', padding: '12px', fontSize: '14px', cursor: 'pointer', fontWeight: 600 }}>Copy Content</button>
+              <button onClick={() => setModalBlog(null)} style={{ flex: 1, background: 'var(--color-accent-gradient)', border: 'none', color: 'white', borderRadius: '10px', padding: '12px', fontSize: '14px', fontWeight: 600, cursor: 'pointer' }}>Close</button>
             </div>
           </div>
         </div>
@@ -231,7 +218,7 @@ const VoiceToBlogSection = () => {
     recognition.onend = () => {
       if (isRecording) {
         // Auto-restart if still supposed to be recording (browser timeout)
-        try { recognition.start(); } catch(e) {}
+        try { recognition.start(); } catch (e) { }
       }
     };
 
@@ -244,7 +231,7 @@ const VoiceToBlogSection = () => {
     setIsRecording(false);
     setInterimText('');
     if (recognitionRef.current) {
-      try { recognitionRef.current.stop(); } catch(e) {}
+      try { recognitionRef.current.stop(); } catch (e) { }
       recognitionRef.current = null;
     }
     // After stopping, auto-trigger SEO analysis if there's content
@@ -252,6 +239,19 @@ const VoiceToBlogSection = () => {
     if (finalText) {
       setTimeout(() => runSeoAnalysis(finalText), 400);
     }
+  };
+  const resetToDefault = () => {
+    if (isRecording) stopRecording();
+    setTitle('');
+    setTranscript('');
+    setInterimText('');
+    setSeoResult(null);
+    setSeoError(null);
+    setSaveStatus('');
+    setSavedBlogId(null);
+    transcriptRef.current = '';
+    const titleEl = document.getElementById('vtb-title-input');
+    if (titleEl) titleEl.style.borderColor = 'var(--border-default)';
   };
 
   const runSeoAnalysis = async (text) => {
@@ -390,7 +390,7 @@ JSON schema (all numbers 0-100, recommendations max 60 chars each):
   ] : [];
 
   return (
-    <div id="dash-voicetoblog" className="dash-section" style={{ display: 'none', padding: '40px', color: '#fff' }}>
+    <div id="dash-voicetoblog" className="dash-section" style={{ display: 'none', padding: '40px', color: 'var(--text-primary)' }}>
       <style>{`
         @keyframes voicePulse {
           0%, 100% { transform: scale(1); opacity: 1; }
@@ -410,11 +410,11 @@ JSON schema (all numbers 0-100, recommendations max 60 chars each):
       {/* Header */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '32px' }}>
         <div>
-          <h2 style={{ fontSize: '26px', fontWeight: 700, color: 'white', margin: 0, display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <h2 style={{ fontSize: '26px', fontWeight: 700, color: 'var(--text-primary)', margin: 0, display: 'flex', alignItems: 'center', gap: '12px' }}>
             <span style={{ background: 'linear-gradient(135deg,#7C3AED,#06B6D4)', padding: '8px', borderRadius: '12px', display: 'flex' }}><Mic size={22} color="white" /></span>
             Voice to Blog
           </h2>
-          <p style={{ fontSize: '14px', color: '#64748B', marginTop: '6px' }}>Speak your ideas — we'll transcribe, analyze SEO, and save your blog instantly.</p>
+          <p style={{ fontSize: '14px', color: 'var(--text-muted)', marginTop: '6px' }}>Speak your ideas — we'll transcribe, analyze SEO, and save your blog instantly.</p>
         </div>
       </div>
 
@@ -423,22 +423,22 @@ JSON schema (all numbers 0-100, recommendations max 60 chars each):
         <div>
           {/* Title Input */}
           <div style={{ marginBottom: '20px' }}>
-            <label style={{ fontSize: '13px', color: '#94A3B8', fontWeight: 500, display: 'block', marginBottom: '8px' }}>Blog Title *</label>
+            <label style={{ fontSize: '13px', color: 'var(--text-muted)', fontWeight: 500, display: 'block', marginBottom: '8px' }}>Blog Title *</label>
             <input
               id="vtb-title-input"
               type="text"
               placeholder="Enter your blog title before recording..."
               value={title}
-              onChange={e => { setTitle(e.target.value); e.target.style.borderColor = 'rgba(255,255,255,0.1)'; }}
+              onChange={e => { setTitle(e.target.value); e.target.style.borderColor = 'var(--border-default)'; }}
               disabled={isRecording}
-              style={{ width: '100%', background: '#141B2D', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px', padding: '14px 16px', color: 'white', fontSize: '15px', outline: 'none', boxSizing: 'border-box', fontWeight: 500, opacity: isRecording ? 0.6 : 1 }}
+              style={{ width: '100%', background: 'var(--bg-surface)', border: '1px solid var(--border-default)', borderRadius: '12px', padding: '14px 16px', color: 'var(--text-primary)', fontSize: '15px', outline: 'none', boxSizing: 'border-box', fontWeight: 500, opacity: isRecording ? 0.6 : 1 }}
               onFocus={e => e.target.style.borderColor = '#7C3AED'}
-              onBlur={e => e.target.style.borderColor = 'rgba(255,255,255,0.1)'}
+              onBlur={e => e.target.style.borderColor = 'var(--border-default)'}
             />
           </div>
 
           {/* Recording Controls */}
-          <div style={{ background: '#141B2D', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '16px', padding: '28px', marginBottom: '20px', textAlign: 'center' }}>
+          <div style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-default)', borderRadius: '16px', padding: '28px', marginBottom: '20px', textAlign: 'center' }}>
             {!isRecording ? (
               <div>
                 <div style={{ marginBottom: '20px' }}>
@@ -449,12 +449,18 @@ JSON schema (all numbers 0-100, recommendations max 60 chars each):
                   >
                     <Mic size={28} color="white" />
                   </div>
-                  <p style={{ fontSize: '14px', color: '#64748B', margin: 0 }}>{transcript ? 'Click to continue recording' : 'Click the mic to start recording'}</p>
+                  <p style={{ fontSize: '14px', color: 'var(--text-muted)', margin: 0 }}>{transcript ? 'Click to continue recording' : 'Click the mic to start recording'}</p>
                 </div>
-                <button onClick={startRecording} style={{ background: 'linear-gradient(135deg,#7C3AED,#06B6D4)', color: 'white', border: 'none', borderRadius: '10px', padding: '12px 32px', fontSize: '15px', fontWeight: 600, cursor: 'pointer', transition: 'all 0.2s' }}
-                  onMouseOver={e => e.target.style.opacity = '0.9'} onMouseOut={e => e.target.style.opacity = '1'}>
-                  🎙️ {transcript ? 'Resume Recording' : 'Start Recording'}
-                </button>
+                <div style={{ display: 'flex', gap: '12px', justifyContent: 'center' }}>
+                  <button onClick={startRecording} style={{ background: 'linear-gradient(135deg,#7C3AED,#06B6D4)', color: 'white', border: 'none', borderRadius: '10px', padding: '12px 28px', fontSize: '15px', fontWeight: 600, cursor: 'pointer', transition: 'all 0.2s', display: 'flex', alignItems: 'center', gap: '8px' }}
+                    onMouseOver={e => e.target.style.opacity = '0.9'} onMouseOut={e => e.target.style.opacity = '1'}>
+                    <Mic size={18} /> {transcript ? 'Resume' : 'Start'}
+                  </button>
+                  <button onClick={resetToDefault} style={{ background: 'var(--bg-elevated)', color: 'var(--text-secondary)', border: '1px solid var(--border-default)', borderRadius: '10px', padding: '12px 20px', fontSize: '15px', fontWeight: 600, cursor: 'pointer', transition: 'all 0.2s', display: 'flex', alignItems: 'center', gap: '8px' }}
+                    onMouseOver={e => e.target.style.background = 'var(--bg-card-hover)'} onMouseOut={e => e.target.style.background = 'var(--bg-elevated)'}>
+                    <Plus size={18} style={{ transform: 'rotate(45deg)' }} /> Reset
+                  </button>
+                </div>
               </div>
             ) : (
               <div>
@@ -466,32 +472,32 @@ JSON schema (all numbers 0-100, recommendations max 60 chars each):
                     <span className="vtb-wave-bar" /><span className="vtb-wave-bar" /><span className="vtb-wave-bar" /><span className="vtb-wave-bar" /><span className="vtb-wave-bar" />
                   </div>
                   <p style={{ fontSize: '13px', color: '#EF4444', fontWeight: 600, margin: 0 }}>● Recording in progress...</p>
-                  <p style={{ fontSize: '12px', color: '#64748B', margin: '4px 0 0' }}>{wordCount} words captured</p>
+                  <p style={{ fontSize: '12px', color: 'var(--text-muted)', margin: '4px 0 0' }}>{wordCount} words captured</p>
                 </div>
-                <button onClick={stopRecording} style={{ background: 'rgba(239,68,68,0.15)', color: '#EF4444', border: '1px solid rgba(239,68,68,0.3)', borderRadius: '10px', padding: '12px 32px', fontSize: '15px', fontWeight: 600, cursor: 'pointer', transition: 'all 0.2s' }}
+                <button onClick={stopRecording} style={{ background: 'rgba(239,68,68,0.15)', color: '#EF4444', border: '1px solid rgba(239,68,68,0.3)', borderRadius: '10px', padding: '12px 32px', fontSize: '15px', fontWeight: 600, cursor: 'pointer', transition: 'all 0.2s', display: 'flex', alignItems: 'center', gap: '8px', margin: '0 auto' }}
                   onMouseOver={e => { e.target.style.background = 'rgba(239,68,68,0.25)'; }} onMouseOut={e => { e.target.style.background = 'rgba(239,68,68,0.15)'; }}>
-                  ⏹ End Recording
+                  <MicOff size={18} /> Stop Recording
                 </button>
               </div>
             )}
           </div>
 
           {/* Live Transcript */}
-          <div style={{ background: '#141B2D', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '16px', overflow: 'hidden' }}>
-            <div style={{ padding: '14px 20px', borderBottom: '1px solid rgba(255,255,255,0.06)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <h3 style={{ fontSize: '14px', fontWeight: 600, color: 'white', margin: 0 }}>📝 Live Transcript</h3>
-              <span style={{ fontSize: '12px', color: '#64748B' }}>{wordCount} words</span>
+          <div style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-default)', borderRadius: '16px', overflow: 'hidden' }}>
+            <div style={{ padding: '14px 20px', borderBottom: '1px solid var(--border-default)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <h3 style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-primary)', margin: 0 }}>📝 Live Transcript</h3>
+              <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>{wordCount} words</span>
             </div>
             <div style={{ padding: '20px', minHeight: '200px', maxHeight: '320px', overflowY: 'auto' }}>
               {!transcript && !interimText ? (
-                <div style={{ textAlign: 'center', padding: '40px 0', color: '#4B5563' }}>
+                <div style={{ textAlign: 'center', padding: '40px 0', color: 'var(--text-muted)' }}>
                   <div style={{ fontSize: '36px', marginBottom: '12px' }}>🎤</div>
                   <div style={{ fontSize: '14px' }}>Your spoken words will appear here in real-time...</div>
                 </div>
               ) : (
-                <div style={{ fontSize: '15px', lineHeight: 1.8, color: '#CBD5E1' }}>
-                  <span style={{ color: '#E2E8F0' }}>{transcript}</span>
-                  {interimText && <span style={{ color: '#64748B', fontStyle: 'italic' }}>{interimText}</span>}
+                <div style={{ fontSize: '15px', lineHeight: 1.8, color: 'var(--text-secondary)' }}>
+                  <span style={{ color: 'var(--text-primary)' }}>{transcript}</span>
+                  {interimText && <span style={{ color: 'var(--text-muted)', fontStyle: 'italic' }}>{interimText}</span>}
                 </div>
               )}
             </div>
@@ -502,16 +508,16 @@ JSON schema (all numbers 0-100, recommendations max 60 chars each):
         <div>
           {/* SEO Analysis Panel */}
           {(isAnalyzing || seoResult || seoError) ? (
-            <div style={{ background: '#141B2D', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '16px', overflow: 'hidden', marginBottom: '20px' }}>
-              <div style={{ padding: '14px 20px', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
-                <h3 style={{ fontSize: '14px', fontWeight: 600, color: 'white', margin: 0 }}>📊 SEO Analysis</h3>
+            <div style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-default)', borderRadius: '16px', overflow: 'hidden', marginBottom: '20px' }}>
+              <div style={{ padding: '14px 20px', borderBottom: '1px solid var(--border-default)' }}>
+                <h3 style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-primary)', margin: 0 }}>📊 SEO Analysis</h3>
               </div>
               <div style={{ padding: '24px' }}>
                 {isAnalyzing && (
                   <div style={{ textAlign: 'center', padding: '32px 0' }}>
                     <div style={{ width: '44px', height: '44px', border: '3px solid #7C3AED', borderTopColor: 'transparent', borderRadius: '50%', margin: '0 auto 16px', animation: 'spin 1s linear infinite' }} />
                     <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
-                    <div style={{ fontSize: '14px', color: '#94A3B8' }}>Analyzing SEO for your spoken content...</div>
+                    <div style={{ fontSize: '14px', color: 'var(--text-muted)' }}>Analyzing SEO for your spoken content...</div>
                   </div>
                 )}
                 {seoError && (
@@ -520,15 +526,15 @@ JSON schema (all numbers 0-100, recommendations max 60 chars each):
                 {seoResult && !isAnalyzing && (
                   <div>
                     {/* Score Ring */}
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '20px', marginBottom: '24px', paddingBottom: '20px', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
-                      <div style={{ width: '90px', height: '90px', borderRadius: '50%', background: `conic-gradient(${sc(seoResult.overallScore)} 0% ${seoResult.overallScore}%, #1E293B ${seoResult.overallScore}% 100%)`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                        <div style={{ width: '68px', height: '68px', background: '#141B2D', borderRadius: '50%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-                          <span style={{ fontSize: '22px', fontWeight: 800, color: 'white', lineHeight: 1 }}>{seoResult.overallScore}</span>
-                          <span style={{ fontSize: '11px', color: '#64748B' }}>/100</span>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '20px', marginBottom: '24px', paddingBottom: '20px', borderBottom: '1px solid var(--border-default)' }}>
+                      <div style={{ width: '90px', height: '90px', borderRadius: '50%', background: `conic-gradient(${sc(seoResult.overallScore)} 0% ${seoResult.overallScore}%, var(--border-default) ${seoResult.overallScore}% 100%)`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                        <div style={{ width: '68px', height: '68px', background: 'var(--bg-surface)', borderRadius: '50%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+                          <span style={{ fontSize: '22px', fontWeight: 800, color: 'var(--text-primary)', lineHeight: 1 }}>{seoResult.overallScore}</span>
+                          <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>/100</span>
                         </div>
                       </div>
                       <div>
-                        <div style={{ fontSize: '18px', fontWeight: 700, color: 'white', marginBottom: '4px' }}>
+                        <div style={{ fontSize: '18px', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '4px' }}>
                           {seoResult.overallScore >= 90 ? '🏆 Excellent' : seoResult.overallScore >= 80 ? '✅ Great' : seoResult.overallScore >= 70 ? '👍 Good' : seoResult.overallScore >= 55 ? '⚠️ Needs Work' : '❌ Poor'}
                         </div>
                         {seoResult.suggestedKeyword && (
@@ -540,12 +546,12 @@ JSON schema (all numbers 0-100, recommendations max 60 chars each):
                     {/* Metric Bars */}
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '20px' }}>
                       {seoMetrics.map((m, i) => (
-                        <div key={i} style={{ background: '#0D1526', borderRadius: '10px', padding: '12px 14px' }}>
+                        <div key={i} style={{ background: 'var(--bg-elevated)', borderRadius: '10px', padding: '12px 14px' }}>
                           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '7px' }}>
-                            <span style={{ fontSize: '11px', color: '#94A3B8' }}>{m.icon} {m.label}</span>
+                            <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>{m.icon} {m.label}</span>
                             <span style={{ fontSize: '13px', fontWeight: 700, color: sc(seoResult[m.key]) }}>{seoResult[m.key]}</span>
                           </div>
-                          <div style={{ background: '#1E293B', borderRadius: '999px', height: '4px', overflow: 'hidden' }}>
+                          <div style={{ background: 'var(--bg-surface)', borderRadius: '999px', height: '4px', overflow: 'hidden' }}>
                             <div style={{ height: '100%', background: sc(seoResult[m.key]), width: seoResult[m.key] + '%', borderRadius: '999px' }} />
                           </div>
                         </div>
@@ -553,10 +559,10 @@ JSON schema (all numbers 0-100, recommendations max 60 chars each):
                     </div>
 
                     {/* Recommendations */}
-                    <div style={{ background: '#0D1526', borderRadius: '12px', padding: '16px', marginBottom: '20px' }}>
-                      <h4 style={{ fontSize: '13px', fontWeight: 600, color: 'white', margin: '0 0 12px' }}>💡 Recommendations</h4>
+                    <div style={{ background: 'var(--bg-base)', borderRadius: '12px', padding: '16px', marginBottom: '20px' }}>
+                      <h4 style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)', margin: '0 0 12px' }}>💡 Recommendations</h4>
                       {seoResult.recommendations.map((r, i) => (
-                        <div key={i} style={{ fontSize: '13px', color: '#94A3B8', padding: '7px 0', borderBottom: i < seoResult.recommendations.length - 1 ? '1px solid rgba(255,255,255,0.04)' : 'none', display: 'flex', gap: '10px', alignItems: 'flex-start' }}>
+                        <div key={i} style={{ fontSize: '13px', color: 'var(--text-muted)', padding: '7px 0', borderBottom: i < seoResult.recommendations.length - 1 ? '1px solid var(--border-default)' : 'none', display: 'flex', gap: '10px', alignItems: 'flex-start' }}>
                           <span style={{ color: '#7C3AED', flexShrink: 0 }}>→</span>{r}
                         </div>
                       ))}
@@ -564,9 +570,9 @@ JSON schema (all numbers 0-100, recommendations max 60 chars each):
 
                     {/* Save / Publish Buttons */}
                     <div style={{ display: 'flex', gap: '12px' }}>
-                      <button onClick={handleSave} style={{ flex: 1, background: '#141B2D', border: '1px solid rgba(255,255,255,0.15)', color: '#94A3B8', borderRadius: '10px', padding: '12px', fontSize: '14px', fontWeight: 600, cursor: 'pointer', transition: 'all 0.2s' }}
+                      <button onClick={handleSave} style={{ flex: 1, background: 'var(--bg-elevated)', border: '1px solid var(--border-strong)', color: 'var(--text-muted)', borderRadius: '10px', padding: '12px', fontSize: '14px', fontWeight: 600, cursor: 'pointer', transition: 'all 0.2s' }}
                         onMouseOver={e => { e.target.style.borderColor = '#7C3AED'; e.target.style.color = '#A78BFA'; }}
-                        onMouseOut={e => { e.target.style.borderColor = 'rgba(255,255,255,0.15)'; e.target.style.color = '#94A3B8'; }}>
+                        onMouseOut={e => { e.target.style.borderColor = 'var(--border-strong)'; e.target.style.color = 'var(--text-muted)'; }}>
                         💾 Save as Draft
                       </button>
                       <button onClick={handlePublish} style={{ flex: 1, background: 'linear-gradient(135deg,#10B981,#059669)', color: 'white', border: 'none', borderRadius: '10px', padding: '12px', fontSize: '14px', fontWeight: 600, cursor: 'pointer', transition: 'all 0.2s' }}
@@ -583,7 +589,7 @@ JSON schema (all numbers 0-100, recommendations max 60 chars each):
             </div>
           ) : (
             /* Placeholder before recording */
-            <div style={{ background: '#141B2D', border: '1px dashed rgba(124,58,237,0.3)', borderRadius: '16px', padding: '60px 32px', textAlign: 'center', color: '#4B5563', marginBottom: '20px' }}>
+            <div style={{ background: 'var(--bg-elevated)', border: '1px dashed var(--border-default)', borderRadius: '16px', padding: '60px 32px', textAlign: 'center', color: 'var(--text-muted)', marginBottom: '20px' }}>
               <div style={{ fontSize: '52px', marginBottom: '16px' }}>🎙️</div>
               <div style={{ fontSize: '16px', fontWeight: 600, color: '#64748B', marginBottom: '8px' }}>SEO Analysis Awaits</div>
               <div style={{ fontSize: '13px', color: '#4B5563', lineHeight: 1.6 }}>Enter a title, start speaking, and click <strong style={{ color: '#94A3B8' }}>End Recording</strong> to get your instant SEO score and recommendations.</div>
@@ -591,7 +597,7 @@ JSON schema (all numbers 0-100, recommendations max 60 chars each):
           )}
 
           {/* Tips Card */}
-          <div style={{ background: 'linear-gradient(135deg, rgba(124,58,237,0.1), rgba(6,182,212,0.08))', border: '1px solid rgba(124,58,237,0.2)', borderRadius: '16px', padding: '20px' }}>
+          <div style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-default)', borderRadius: '16px', padding: '20px' }}>
             <h4 style={{ fontSize: '13px', fontWeight: 600, color: '#A78BFA', margin: '0 0 12px', display: 'flex', alignItems: 'center', gap: '6px' }}>✨ Tips for Better Voice Blogs</h4>
             {[
               'Speak naturally — the AI handles formatting.',
@@ -600,7 +606,7 @@ JSON schema (all numbers 0-100, recommendations max 60 chars each):
               'Aim for 300+ words for better SEO depth.',
               'Pause briefly between sentences for accuracy.',
             ].map((tip, i) => (
-              <div key={i} style={{ fontSize: '12px', color: '#64748B', padding: '6px 0', borderBottom: i < 4 ? '1px solid rgba(255,255,255,0.04)' : 'none', display: 'flex', gap: '8px' }}>
+              <div key={i} style={{ fontSize: '12px', color: 'var(--text-muted)', padding: '6px 0', borderBottom: i < 4 ? '1px solid var(--border-default)' : 'none', display: 'flex', gap: '8px' }}>
                 <span style={{ color: '#7C3AED', flexShrink: 0 }}>•</span>{tip}
               </div>
             ))}
@@ -683,31 +689,31 @@ Return ONLY a valid JSON object with exactly this structure, no explanation:
   const diffColor = d => d === 'Easy' ? '#10B981' : d === 'Medium' ? '#F59E0B' : '#EF4444';
 
   return (
-    <div id="dash-serpgap" className="dash-section" style={{ display: 'none', padding: '40px', color: '#fff' }}>
+    <div id="dash-serpgap" className="dash-section" style={{ display: 'none', padding: '40px', color: 'var(--text-primary)' }}>
       <div style={{ marginBottom: '28px' }}>
-        <h2 style={{ fontSize: '24px', fontWeight: 700, color: 'white', margin: 0 }}>SERP Gap Scanner</h2>
-        <p style={{ fontSize: '14px', color: '#64748B', marginTop: '4px' }}>Find content gaps your competitors aren't covering</p>
+        <h2 style={{ fontSize: '24px', fontWeight: 700, color: 'var(--text-primary)', margin: 0 }}>SERP Gap Scanner</h2>
+        <p style={{ fontSize: '14px', color: 'var(--text-muted)', marginTop: '4px' }}>Find content gaps your competitors aren't covering</p>
       </div>
 
-      <div style={{ background: '#141B2D', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '16px', padding: '28px', marginBottom: '24px' }}>
+      <div style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border-default)', borderRadius: '16px', padding: '28px', marginBottom: '24px' }}>
         <div style={{ marginBottom: '16px' }}>
-          <label style={{ fontSize: '13px', color: '#94A3B8', fontWeight: 500, display: 'block', marginBottom: '8px' }}>Target Keyword *</label>
+          <label style={{ fontSize: '13px', color: 'var(--text-muted)', fontWeight: 500, display: 'block', marginBottom: '8px' }}>Target Keyword *</label>
           <input id="serp-keyword" type="text" placeholder="e.g. project management tools India"
-            value={keyword} onChange={e => { setKeyword(e.target.value); e.target.style.borderColor = 'rgba(255,255,255,0.1)'; }}
-            style={{ width: '100%', background: '#0D1526', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '10px', padding: '12px 16px', color: 'white', fontSize: '14px', outline: 'none', boxSizing: 'border-box' }}
-            onFocus={e => e.target.style.borderColor = '#7C3AED'} onBlur={e => e.target.style.borderColor = 'rgba(255,255,255,0.1)'}
+            value={keyword} onChange={e => { setKeyword(e.target.value); e.target.style.borderColor = 'var(--border-default)'; }}
+            style={{ width: '100%', background: 'var(--bg-surface)', border: '1px solid var(--border-default)', borderRadius: '10px', padding: '12px 16px', color: 'var(--text-primary)', fontSize: '14px', outline: 'none', boxSizing: 'border-box' }}
+            onFocus={e => e.target.style.borderColor = '#7C3AED'} onBlur={e => e.target.style.borderColor = 'var(--border-default)'}
           />
         </div>
         <div style={{ marginBottom: '20px' }}>
-          <label style={{ fontSize: '13px', color: '#94A3B8', fontWeight: 500, display: 'block', marginBottom: '8px' }}>Your Domain (optional)</label>
+          <label style={{ fontSize: '13px', color: 'var(--text-muted)', fontWeight: 500, display: 'block', marginBottom: '8px' }}>Your Domain (optional)</label>
           <input id="serp-domain" type="text" placeholder="e.g. myblog.com"
             value={domain} onChange={e => setDomain(e.target.value)}
-            style={{ width: '100%', background: '#0D1526', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '10px', padding: '12px 16px', color: 'white', fontSize: '14px', outline: 'none', boxSizing: 'border-box' }}
-            onFocus={e => e.target.style.borderColor = '#7C3AED'} onBlur={e => e.target.style.borderColor = 'rgba(255,255,255,0.1)'}
+            style={{ width: '100%', background: 'var(--bg-surface)', border: '1px solid var(--border-default)', borderRadius: '10px', padding: '12px 16px', color: 'var(--text-primary)', fontSize: '14px', outline: 'none', boxSizing: 'border-box' }}
+            onFocus={e => e.target.style.borderColor = '#7C3AED'} onBlur={e => e.target.style.borderColor = 'var(--border-default)'}
           />
         </div>
         <button onClick={runSerpScan} id="serp-btn" disabled={isScanning}
-          style={{ width: '100%', background: 'linear-gradient(135deg,#7C3AED,#06B6D4)', color: 'white', border: 'none', borderRadius: '10px', padding: '14px', fontSize: '15px', fontWeight: 600, cursor: isScanning ? 'not-allowed' : 'pointer', transition: 'all 0.2s', opacity: isScanning ? 0.7 : 1 }}
+          style={{ width: '100%', background: 'var(--color-accent-gradient)', color: 'white', border: 'none', borderRadius: '10px', padding: '14px', fontSize: '15px', fontWeight: 600, cursor: isScanning ? 'not-allowed' : 'pointer', transition: 'all 0.2s', opacity: isScanning ? 0.7 : 1, boxShadow: 'var(--shadow-glow-primary)' }}
           onMouseOver={e => !isScanning && (e.target.style.opacity = '0.9')} onMouseOut={e => !isScanning && (e.target.style.opacity = '1')}>
           {isScanning ? '⏳ Scanning SERP...' : results ? '🔍 Scan Again' : '🔍 Scan SERP Gaps'}
         </button>
@@ -722,42 +728,42 @@ Return ONLY a valid JSON object with exactly this structure, no explanation:
       {results && (
         <div id="serp-results">
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '16px', marginBottom: '24px' }}>
-            <div style={{ background: '#141B2D', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '12px', padding: '20px', textAlign: 'center' }}>
-              <div style={{ fontSize: '12px', color: '#64748B', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Search Volume</div>
+            <div style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border-default)', borderRadius: '12px', padding: '20px', textAlign: 'center' }}>
+              <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Search Volume</div>
               <div style={{ fontSize: '24px', fontWeight: 700, color: '#A78BFA' }}>{results.searchVolume}</div>
             </div>
-            <div style={{ background: '#141B2D', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '12px', padding: '20px', textAlign: 'center' }}>
-              <div style={{ fontSize: '12px', color: '#64748B', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Difficulty</div>
+            <div style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border-default)', borderRadius: '12px', padding: '20px', textAlign: 'center' }}>
+              <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Difficulty</div>
               <div style={{ fontSize: '24px', fontWeight: 700, color: diffColor(results.difficulty) }}>{results.difficulty}</div>
             </div>
-            <div style={{ background: '#141B2D', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '12px', padding: '20px', textAlign: 'center' }}>
-              <div style={{ fontSize: '12px', color: '#64748B', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Gaps Found</div>
+            <div style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border-default)', borderRadius: '12px', padding: '20px', textAlign: 'center' }}>
+              <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Gaps Found</div>
               <div style={{ fontSize: '24px', fontWeight: 700, color: '#06B6D4' }}>{results.topicGaps.length}</div>
             </div>
           </div>
 
-          <div style={{ background: '#141B2D', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '16px', overflow: 'hidden', marginBottom: '24px' }}>
-            <div style={{ padding: '16px 20px', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
-              <h3 style={{ fontSize: '15px', fontWeight: 600, color: 'white', margin: 0 }}>📊 Content Gap Opportunities</h3>
+          <div style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border-default)', borderRadius: '16px', overflow: 'hidden', marginBottom: '24px' }}>
+            <div style={{ padding: '16px 20px', borderBottom: '1px solid var(--border-default)' }}>
+              <h3 style={{ fontSize: '15px', fontWeight: 600, color: 'var(--text-primary)', margin: 0 }}>📊 Content Gap Opportunities</h3>
             </div>
             <div style={{ overflowX: 'auto' }}>
               <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: '600px' }}>
                 <thead>
-                  <tr style={{ background: '#0D1526' }}>
-                    <th style={{ textAlign: 'left', padding: '12px 20px', fontSize: '11px', color: '#64748B', fontWeight: 600, letterSpacing: '0.5px' }}>TOPIC GAP</th>
-                    <th style={{ padding: '12px 20px', fontSize: '11px', color: '#64748B', fontWeight: 600, textAlign: 'center' }}>COVERAGE</th>
-                    <th style={{ padding: '12px 20px', fontSize: '11px', color: '#64748B', fontWeight: 600, textAlign: 'center' }}>OPPORTUNITY</th>
-                    <th style={{ textAlign: 'left', padding: '12px 20px', fontSize: '11px', color: '#64748B', fontWeight: 600 }}>SUGGESTED TITLE</th>
-                    <th style={{ padding: '12px 20px', fontSize: '11px', color: '#64748B', fontWeight: 600 }}></th>
+                  <tr style={{ background: 'var(--bg-surface)' }}>
+                    <th style={{ textAlign: 'left', padding: '12px 20px', fontSize: '11px', color: 'var(--text-muted)', fontWeight: 600, letterSpacing: '0.5px' }}>TOPIC GAP</th>
+                    <th style={{ padding: '12px 20px', fontSize: '11px', color: 'var(--text-muted)', fontWeight: 600, textAlign: 'center' }}>COVERAGE</th>
+                    <th style={{ padding: '12px 20px', fontSize: '11px', color: 'var(--text-muted)', fontWeight: 600, textAlign: 'center' }}>OPPORTUNITY</th>
+                    <th style={{ textAlign: 'left', padding: '12px 20px', fontSize: '11px', color: 'var(--text-muted)', fontWeight: 600 }}>SUGGESTED TITLE</th>
+                    <th style={{ padding: '12px 20px', fontSize: '11px', color: 'var(--text-muted)', fontWeight: 600 }}></th>
                   </tr>
                 </thead>
                 <tbody>
                   {results.topicGaps.map((gap, i) => (
-                    <tr key={i} style={{ borderTop: '1px solid rgba(255,255,255,0.04)', transition: 'background 0.15s' }} onMouseOver={e => e.currentTarget.style.background = 'rgba(124,58,237,0.05)'} onMouseOut={e => e.currentTarget.style.background = 'transparent'}>
-                      <td style={{ padding: '14px 20px', fontSize: '14px', color: 'white', fontWeight: 500 }}>{gap.topic}</td>
+                    <tr key={i} style={{ borderTop: '1px solid var(--border-default)', transition: 'background 0.15s' }} onMouseOver={e => e.currentTarget.style.background = 'rgba(124,58,237,0.05)'} onMouseOut={e => e.currentTarget.style.background = 'transparent'}>
+                      <td style={{ padding: '14px 20px', fontSize: '14px', color: 'var(--text-primary)', fontWeight: 500 }}>{gap.topic}</td>
                       <td style={{ padding: '14px 20px', textAlign: 'center' }}><span style={{ background: 'rgba(16,185,129,0.1)', color: covColor(gap.coverage), borderRadius: '999px', padding: '3px 12px', fontSize: '12px', fontWeight: 600 }}>{gap.coverage}</span></td>
                       <td style={{ padding: '14px 20px', textAlign: 'center' }}><span style={{ background: 'rgba(16,185,129,0.1)', color: opColor(gap.opportunity), borderRadius: '999px', padding: '3px 12px', fontSize: '12px', fontWeight: 600 }}>{gap.opportunity}</span></td>
-                      <td style={{ padding: '14px 20px', fontSize: '13px', color: '#94A3B8', maxWidth: '250px' }}>{gap.suggestedTitle}</td>
+                      <td style={{ padding: '14px 20px', fontSize: '13px', color: 'var(--text-secondary)', maxWidth: '250px' }}>{gap.suggestedTitle}</td>
                       <td style={{ padding: '14px 20px' }}><button onClick={() => useGapTopic(gap.suggestedTitle)} style={{ background: 'rgba(124,58,237,0.2)', border: '1px solid rgba(124,58,237,0.3)', color: '#A78BFA', borderRadius: '6px', padding: '6px 14px', fontSize: '12px', cursor: 'pointer', whiteSpace: 'nowrap', transition: 'all 0.2s' }}>Write This →</button></td>
                     </tr>
                   ))}
@@ -767,14 +773,14 @@ Return ONLY a valid JSON object with exactly this structure, no explanation:
           </div>
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
-            <div style={{ background: '#141B2D', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '12px', padding: '20px' }}>
-              <h4 style={{ fontSize: '13px', fontWeight: 600, color: 'white', margin: '0 0 14px' }}>⭐ Featured Snippet Opportunities</h4>
+            <div style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border-default)', borderRadius: '12px', padding: '20px' }}>
+              <h4 style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)', margin: '0 0 14px' }}>⭐ Featured Snippet Opportunities</h4>
               {results.featuredSnippetOpportunities.map((s, i) => (
-                <div key={i} style={{ fontSize: '13px', color: '#94A3B8', padding: '8px 0', borderBottom: '1px solid rgba(255,255,255,0.04)', display: 'flex', gap: '10px', alignItems: 'flex-start' }}><span style={{ color: '#7C3AED', flexShrink: 0, marginTop: '1px' }}>✦</span>{s}</div>
+                <div key={i} style={{ fontSize: '13px', color: 'var(--text-secondary)', padding: '8px 0', borderBottom: '1px solid var(--border-default)', display: 'flex', gap: '10px', alignItems: 'flex-start' }}><span style={{ color: '#7C3AED', flexShrink: 0, marginTop: '1px' }}>✦</span>{s}</div>
               ))}
             </div>
-            <div style={{ background: '#141B2D', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '12px', padding: '20px' }}>
-              <h4 style={{ fontSize: '13px', fontWeight: 600, color: 'white', margin: '0 0 14px' }}>🔑 Recommended LSI Keywords</h4>
+            <div style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border-default)', borderRadius: '12px', padding: '20px' }}>
+              <h4 style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)', margin: '0 0 14px' }}>🔑 Recommended LSI Keywords</h4>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
                 {results.recommendedLSI.map((k, i) => (
                   <span key={i} style={{ background: 'rgba(124,58,237,0.1)', color: '#A78BFA', border: '1px solid rgba(124,58,237,0.2)', borderRadius: '999px', padding: '5px 14px', fontSize: '12px', fontWeight: 500 }}>{k}</span>
@@ -868,33 +874,33 @@ Return ONLY a valid JSON object with detailed scoring (0-100):
   ];
 
   return (
-    <div id="dash-seoscores" className="dash-section" style={{ display: 'none', padding: '40px', color: '#fff' }}>
+    <div id="dash-seoscores" className="dash-section" style={{ display: 'none', padding: '40px', color: 'var(--text-primary)' }}>
       <div style={{ marginBottom: '28px' }}>
-        <h2 style={{ fontSize: '24px', fontWeight: 700, color: 'white', margin: 0 }}>Live SEO Scorer</h2>
-        <p style={{ fontSize: '14px', color: '#64748B', marginTop: '4px' }}>Paste any content and get an instant 10-metric SEO analysis</p>
+        <h2 style={{ fontSize: '24px', fontWeight: 700, color: 'var(--text-primary)', margin: 0 }}>Live SEO Scorer</h2>
+        <p style={{ fontSize: '14px', color: 'var(--text-muted)', marginTop: '4px' }}>Paste any content and get an instant 10-metric SEO analysis</p>
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px', alignItems: 'start' }}>
-        <div style={{ background: '#141B2D', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '16px', padding: '24px' }}>
+        <div style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border-default)', borderRadius: '16px', padding: '24px' }}>
           <div style={{ marginBottom: '16px' }}>
-            <label style={{ fontSize: '13px', color: '#94A3B8', fontWeight: 500, display: 'block', marginBottom: '8px' }}>Target Keyword *</label>
+            <label style={{ fontSize: '13px', color: 'var(--text-muted)', fontWeight: 500, display: 'block', marginBottom: '8px' }}>Target Keyword *</label>
             <input id="seo-target-kw" type="text" placeholder="e.g. AI tools for startups"
-              value={keyword} onChange={e => { setKeyword(e.target.value); e.target.style.borderColor = 'rgba(255,255,255,0.1)'; }}
-              style={{ width: '100%', background: '#0D1526', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '10px', padding: '12px 16px', color: 'white', fontSize: '14px', outline: 'none', boxSizing: 'border-box' }}
-              onFocus={e => e.target.style.borderColor = '#7C3AED'} onBlur={e => e.target.style.borderColor = 'rgba(255,255,255,0.1)'}
+              value={keyword} onChange={e => { setKeyword(e.target.value); e.target.style.borderColor = 'var(--border-default)'; }}
+              style={{ width: '100%', background: 'var(--bg-surface)', border: '1px solid var(--border-default)', borderRadius: '10px', padding: '12px 16px', color: 'var(--text-primary)', fontSize: '14px', outline: 'none', boxSizing: 'border-box' }}
+              onFocus={e => e.target.style.borderColor = '#7C3AED'} onBlur={e => e.target.style.borderColor = 'var(--border-default)'}
             />
           </div>
           <div style={{ marginBottom: '20px' }}>
-            <label style={{ fontSize: '13px', color: '#94A3B8', fontWeight: 500, display: 'block', marginBottom: '8px' }}>Blog Content *</label>
+            <label style={{ fontSize: '13px', color: 'var(--text-muted)', fontWeight: 500, display: 'block', marginBottom: '8px' }}>Blog Content *</label>
             <textarea id="seo-content-input" rows="12" placeholder="Paste your full blog content here..."
-              value={content} onChange={e => { setContent(e.target.value); e.target.style.borderColor = 'rgba(255,255,255,0.1)'; }}
-              style={{ width: '100%', background: '#0D1526', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '10px', padding: '12px 16px', color: 'white', fontSize: '14px', outline: 'none', resize: 'vertical', boxSizing: 'border-box', lineHeight: 1.6 }}
-              onFocus={e => e.target.style.borderColor = '#7C3AED'} onBlur={e => e.target.style.borderColor = 'rgba(255,255,255,0.1)'}
+              value={content} onChange={e => { setContent(e.target.value); e.target.style.borderColor = 'var(--border-default)'; }}
+              style={{ width: '100%', background: 'var(--bg-surface)', border: '1px solid var(--border-default)', borderRadius: '10px', padding: '12px 16px', color: 'var(--text-primary)', fontSize: '14px', outline: 'none', resize: 'vertical', boxSizing: 'border-box', lineHeight: 1.6 }}
+              onFocus={e => e.target.style.borderColor = '#7C3AED'} onBlur={e => e.target.style.borderColor = 'var(--border-default)'}
             ></textarea>
           </div>
-          <div id="seo-word-count" style={{ fontSize: '12px', color: '#64748B', marginBottom: '16px' }}>{wordCount.toLocaleString()} words</div>
+          <div id="seo-word-count" style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '16px' }}>{wordCount.toLocaleString()} words</div>
           <button onClick={runSeoScore} id="seo-score-btn" disabled={isAnalyzing}
-            style={{ width: '100%', background: 'linear-gradient(135deg,#7C3AED,#06B6D4)', color: 'white', border: 'none', borderRadius: '10px', padding: '14px', fontSize: '15px', fontWeight: 600, cursor: isAnalyzing ? 'not-allowed' : 'pointer', transition: 'all 0.2s', opacity: isAnalyzing ? 0.7 : 1 }}
+            style={{ width: '100%', background: 'var(--color-accent-gradient)', color: 'white', border: 'none', borderRadius: '10px', padding: '14px', fontSize: '15px', fontWeight: 600, cursor: isAnalyzing ? 'not-allowed' : 'pointer', transition: 'all 0.2s', opacity: isAnalyzing ? 0.7 : 1, boxShadow: 'var(--shadow-glow-primary)' }}
             onMouseOver={e => !isAnalyzing && (e.target.style.opacity = '0.9')} onMouseOut={e => !isAnalyzing && (e.target.style.opacity = '1')}>
             {isAnalyzing ? '⏳ Analyzing...' : scores ? '📊 Analyze Again' : '📊 Analyze SEO Score'}
           </button>
@@ -902,18 +908,18 @@ Return ONLY a valid JSON object with detailed scoring (0-100):
 
         <div id="seo-score-results">
           {isAnalyzing && (
-            <div style={{ background: '#141B2D', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '16px', padding: '32px', textAlign: 'center' }}>
-              <div style={{ width: '48px', height: '48px', border: '3px solid #7C3AED', borderTopColor: 'transparent', borderRadius: '50%', margin: '0 auto 16px', animation: 'spin 1s linear infinite' }}></div>
-              <div style={{ fontSize: '14px', color: '#94A3B8' }}>Running 10-metric analysis...</div>
+            <div style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border-default)', borderRadius: '16px', padding: '32px', textAlign: 'center' }}>
+              <div style={{ width: '48px', height: '48px', border: '3px solid var(--color-primary-500)', borderTopColor: 'transparent', borderRadius: '50%', margin: '0 auto 16px', animation: 'spin 1s linear infinite' }}></div>
+              <div style={{ fontSize: '14px', color: 'var(--text-muted)' }}>Running 10-metric analysis...</div>
               <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
             </div>
           )}
 
           {!isAnalyzing && !scores && !error && (
-            <div style={{ background: '#141B2D', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '16px', padding: '32px', textAlign: 'center', color: '#4B5563' }}>
+            <div style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border-default)', borderRadius: '16px', padding: '32px', textAlign: 'center', color: 'var(--text-muted)' }}>
               <div style={{ fontSize: '48px', marginBottom: '16px' }}>📊</div>
-              <div style={{ fontSize: '15px', fontWeight: 500, color: '#64748B' }}>Score will appear here</div>
-              <div style={{ fontSize: '13px', marginTop: '8px', color: '#4B5563' }}>Paste content and click Analyze</div>
+              <div style={{ fontSize: '15px', fontWeight: 500, color: 'var(--text-muted)' }}>Score will appear here</div>
+              <div style={{ fontSize: '13px', marginTop: '8px', color: 'var(--text-muted)' }}>Paste content and click Analyze</div>
             </div>
           )}
 
@@ -924,39 +930,39 @@ Return ONLY a valid JSON object with detailed scoring (0-100):
           )}
 
           {scores && (
-            <div style={{ background: '#141B2D', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '16px', padding: '24px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '20px', marginBottom: '24px', paddingBottom: '20px', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
-                <div style={{ width: '100px', height: '100px', borderRadius: '50%', background: `conic-gradient(${sc(scores.overallScore)} 0% ${scores.overallScore}%, #1E293B ${scores.overallScore}% 100%)`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, position: 'relative' }}>
-                  <div style={{ width: '76px', height: '76px', background: '#141B2D', borderRadius: '50%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-                    <span style={{ fontSize: '26px', fontWeight: 800, color: 'white', lineHeight: 1 }}>{scores.overallScore}</span>
-                    <span style={{ fontSize: '11px', color: '#64748B' }}>/100</span>
+            <div style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border-default)', borderRadius: '16px', padding: '24px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '20px', marginBottom: '24px', paddingBottom: '20px', borderBottom: '1px solid var(--border-default)' }}>
+                <div style={{ width: '100px', height: '100px', borderRadius: '50%', background: `conic-gradient(${sc(scores.overallScore)} 0% ${scores.overallScore}%, var(--border-default) ${scores.overallScore}% 100%)`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, position: 'relative' }}>
+                  <div style={{ width: '76px', height: '76px', background: 'var(--bg-surface)', borderRadius: '50%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+                    <span style={{ fontSize: '26px', fontWeight: 800, color: 'var(--text-primary)', lineHeight: 1 }}>{scores.overallScore}</span>
+                    <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>/100</span>
                   </div>
                 </div>
                 <div>
-                  <div style={{ fontSize: '20px', fontWeight: 700, color: 'white', marginBottom: '6px' }}>
+                  <div style={{ fontSize: '20px', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '6px' }}>
                     {scores.overallScore >= 90 ? '🏆 Excellent' : scores.overallScore >= 80 ? '✅ Great' : scores.overallScore >= 70 ? '👍 Good' : scores.overallScore >= 55 ? '⚠️ Needs Work' : '❌ Poor'}
                   </div>
-                  <div style={{ fontSize: '13px', color: '#64748B', lineHeight: 1.6 }}>Keyword: <span style={{ color: '#A78BFA' }}>{keyword}</span><br />
+                  <div style={{ fontSize: '13px', color: 'var(--text-muted)', lineHeight: 1.6 }}>Keyword: <span style={{ color: '#A78BFA' }}>{keyword}</span><br />
                     {wordCount.toLocaleString()} words · Density: {scores.kwDensity}% · Flesch: {scores.fleschScore || '—'}</div>
                 </div>
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '20px' }}>
                 {metrics.map((m, i) => (
-                  <div key={i} style={{ background: '#0D1526', borderRadius: '10px', padding: '12px 14px' }}>
+                  <div key={i} style={{ background: 'var(--bg-surface)', borderRadius: '10px', padding: '12px 14px' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '7px' }}>
-                      <span style={{ fontSize: '12px', color: '#94A3B8' }}>{m.icon} {m.label}</span>
+                      <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>{m.icon} {m.label}</span>
                       <span style={{ fontSize: '13px', fontWeight: 700, color: sc(scores[m.key]) }}>{scores[m.key]}</span>
                     </div>
-                    <div style={{ background: '#1E293B', borderRadius: '999px', height: '4px', overflow: 'hidden' }}>
+                    <div style={{ background: 'var(--bg-base)', borderRadius: '999px', height: '4px', overflow: 'hidden' }}>
                       <div style={{ height: '100%', background: sc(scores[m.key]), width: scores[m.key] + '%', borderRadius: '999px' }}></div>
                     </div>
                   </div>
                 ))}
               </div>
-              <div style={{ background: '#0D1526', borderRadius: '12px', padding: '18px' }}>
-                <h4 style={{ fontSize: '13px', fontWeight: 600, color: 'white', margin: '0 0 14px' }}>💡 Recommendations</h4>
+              <div style={{ background: 'var(--bg-surface)', borderRadius: '12px', padding: '18px' }}>
+                <h4 style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)', margin: '0 0 14px' }}>💡 Recommendations</h4>
                 {scores.recommendations.map((r, i) => (
-                  <div key={i} style={{ fontSize: '13px', color: '#94A3B8', padding: '8px 0', borderBottom: '1px solid rgba(255,255,255,0.04)', display: 'flex', gap: '10px', alignItems: 'flex-start' }}><span style={{ color: '#7C3AED', flexShrink: 0 }}>→</span>{r}</div>
+                  <div key={i} style={{ fontSize: '13px', color: 'var(--text-muted)', padding: '8px 0', borderBottom: '1px solid var(--border-default)', display: 'flex', gap: '10px', alignItems: 'flex-start' }}><span style={{ color: '#7C3AED', flexShrink: 0 }}>→</span>{r}</div>
                 ))}
               </div>
             </div>
@@ -969,48 +975,48 @@ Return ONLY a valid JSON object with detailed scoring (0-100):
 
 const RoidashboardSection = () => {
   return (
-    <div id="dash-roi" className="dash-section" style={{ display: 'none', padding: '40px', color: '#fff' }}>
+    <div id="dash-roi" className="dash-section" style={{ display: 'none', padding: '40px', color: 'var(--text-primary)' }}>
       {/* Section Header */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '28px' }}>
         <div>
-          <h2 style={{ fontSize: '24px', fontWeight: '700', color: 'white', margin: 0 }}>ROI & Reports</h2>
-          <p style={{ fontSize: '14px', color: '#64748B', marginTop: '4px' }}>Track your content performance and organic growth</p>
+          <h2 style={{ fontSize: '24px', fontWeight: '700', color: 'var(--text-primary)', margin: 0 }}>ROI & Reports</h2>
+          <p style={{ fontSize: '14px', color: 'var(--text-muted)', marginTop: '4px' }}>Track your content performance and organic growth</p>
         </div>
-        <button onClick={(e) => window.generateReport && window.generateReport(e)} style={{ background: 'linear-gradient(135deg,#7C3AED,#06B6D4)', color: 'white', border: 'none', borderRadius: '10px', padding: '10px 20px', fontSize: '14px', fontWeight: '600', cursor: 'pointer' }}>
+        <button onClick={(e) => window.generateReport && window.generateReport(e)} style={{ background: 'var(--color-accent-gradient)', color: 'white', border: 'none', borderRadius: '10px', padding: '10px 20px', fontSize: '14px', fontWeight: '600', cursor: 'pointer' }}>
           ⚡ Generate AI Report
         </button>
       </div>
 
       {/* KPI Cards */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: '16px', marginBottom: '28px' }}>
-        <div style={{ background: '#141B2D', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '16px', padding: '24px' }}>
-          <div style={{ fontSize: '12px', color: '#64748B', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '12px' }}>Total Blogs</div>
-          <div id="roi-total-blogs" style={{ fontSize: '32px', fontWeight: '700', color: 'white' }}>0</div>
+        <div style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border-default)', borderRadius: '16px', padding: '24px' }}>
+          <div style={{ fontSize: '12px', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '12px' }}>Total Blogs</div>
+          <div id="roi-total-blogs" style={{ fontSize: '32px', fontWeight: '700', color: 'var(--text-primary)' }}>0</div>
         </div>
-        <div style={{ background: '#141B2D', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '16px', padding: '24px' }}>
-          <div style={{ fontSize: '12px', color: '#64748B', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '12px' }}>Avg SEO Score</div>
+        <div style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border-default)', borderRadius: '16px', padding: '24px' }}>
+          <div style={{ fontSize: '12px', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '12px' }}>Avg SEO Score</div>
           <div id="roi-avg-seo" style={{ fontSize: '32px', fontWeight: '700', color: '#06B6D4' }}>—</div>
         </div>
-        <div style={{ background: '#141B2D', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '16px', padding: '24px' }}>
-          <div style={{ fontSize: '12px', color: '#64748B', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '12px' }}>Est. Monthly Traffic</div>
+        <div style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border-default)', borderRadius: '16px', padding: '24px' }}>
+          <div style={{ fontSize: '12px', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '12px' }}>Est. Monthly Traffic</div>
           <div id="roi-traffic" style={{ fontSize: '32px', fontWeight: '700', color: '#10B981' }}>0</div>
-          <div style={{ fontSize: '12px', color: '#64748B', marginTop: '4px' }}>visits</div>
+          <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '4px' }}>visits</div>
         </div>
-        <div style={{ background: '#141B2D', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '16px', padding: '24px' }}>
-          <div style={{ fontSize: '12px', color: '#64748B', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '12px' }}>Content Health</div>
+        <div style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border-default)', borderRadius: '16px', padding: '24px' }}>
+          <div style={{ fontSize: '12px', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '12px' }}>Content Health</div>
           <div id="roi-health" style={{ fontSize: '32px', fontWeight: '700', color: '#A78BFA' }}>—</div>
         </div>
       </div>
 
       {/* Performance Table */}
-      <div style={{ background: '#141B2D', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '16px', overflow: 'hidden', marginBottom: '28px' }}>
-        <div style={{ padding: '18px 20px', borderBottom: '1px solid rgba(255,255,255,0.06)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <h3 style={{ fontSize: '15px', fontWeight: '600', color: 'white', margin: 0 }}>📊 Blog Performance Breakdown</h3>
+      <div style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border-default)', borderRadius: '16px', overflow: 'hidden', marginBottom: '28px' }}>
+        <div style={{ padding: '18px 20px', borderBottom: '1px solid var(--border-default)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <h3 style={{ fontSize: '15px', fontWeight: '600', color: 'var(--text-primary)', margin: 0 }}>📊 Blog Performance Breakdown</h3>
         </div>
         <div style={{ overflowX: 'auto' }}>
           <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: '600px' }}>
             <thead>
-              <tr style={{ background: '#0D1526' }}>
+              <tr style={{ background: 'var(--bg-surface)' }}>
                 <th style={{ textAlign: 'left', padding: '12px 20px', fontSize: '11px', color: '#64748B', fontWeight: '600', letterSpacing: '0.5px' }}>BLOG TITLE</th>
                 <th style={{ padding: '12px 20px', fontSize: '11px', color: '#64748B', fontWeight: '600', textAlign: 'center' }}>SEO SCORE</th>
                 <th style={{ padding: '12px 20px', fontSize: '11px', color: '#64748B', fontWeight: '600', textAlign: 'center' }}>WORD COUNT</th>
@@ -1047,11 +1053,19 @@ const RoidashboardSection = () => {
 
 
 const AutoPublisherSection = () => {
-  const [credentials, setCredentials] = useState(() => {
-    return JSON.parse(localStorage.getItem('bf_credentials') || '{}');
-  });
+  const { currentUser } = useAuth();
+  const [credentials, setCredentials] = useState({});
   const [activeTab, setActiveTab] = useState('wordpress');
   const [saveStatus, setSaveStatus] = useState('');
+  const [saveError, setSaveError] = useState('');
+
+  useEffect(() => {
+    if (currentUser) {
+      fetchCredentials(currentUser.uid).then(creds => {
+        setCredentials(creds || {});
+      });
+    }
+  }, [currentUser]);
 
   const updateCred = (platform, field, value) => {
     const updated = {
@@ -1062,16 +1076,39 @@ const AutoPublisherSection = () => {
       }
     };
     setCredentials(updated);
-    localStorage.setItem('bf_credentials', JSON.stringify(updated));
   };
 
-  const handleManualSave = (e) => {
+  const handleManualSave = async (e) => {
     e.preventDefault();
-    setSaveStatus('Connecting...');
-    setTimeout(() => {
+    setSaveStatus('Verifying & Saving...');
+    setSaveError('');
+    
+    try {
+      let tokenToVerify = '';
+      const creds = credentials[activeTab];
+      
+      if (creds) {
+        if (activeTab === 'wordpress') tokenToVerify = `${creds.url}_${creds.username}_${creds.applicationPassword}`;
+        else if (activeTab === 'blogger') tokenToVerify = creds.accessToken;
+        else if (activeTab === 'devto') tokenToVerify = creds.apiKey;
+        else if (activeTab === 'hashnode') tokenToVerify = creds.personalAccessToken;
+        else if (activeTab === 'medium') tokenToVerify = creds.integrationToken;
+      }
+      
+      if (tokenToVerify && currentUser) {
+        await verifyAndClaimCredential(currentUser.uid, activeTab, tokenToVerify);
+      }
+      
+      if (currentUser) {
+        await saveCredentials(currentUser.uid, credentials);
+      }
+      
       setSaveStatus('Saved successfully!');
       setTimeout(() => setSaveStatus(''), 2000);
-    }, 600);
+    } catch (err) {
+      setSaveStatus('');
+      setSaveError(err.message || 'Failed to save credentials.');
+    }
   };
 
   const platforms = [
@@ -1084,19 +1121,19 @@ const AutoPublisherSection = () => {
 
   const inputStyle = {
     display: 'block', width: '100%', marginBottom: '16px', padding: '14px 16px',
-    background: '#0D1526', border: '1px solid rgba(255,255,255,0.1)',
-    color: 'white', borderRadius: '10px', fontSize: '14px', outline: 'none',
+    background: 'var(--bg-surface)', border: '1px solid var(--border-default)',
+    color: 'var(--text-primary)', borderRadius: '10px', fontSize: '14px', outline: 'none',
     transition: 'border-color 0.2s'
   };
 
   const labelStyle = {
-    display: 'block', color: '#94A3B8', fontSize: '13px', marginBottom: '8px', fontWeight: 600
+    display: 'block', color: 'var(--text-muted)', fontSize: '13px', marginBottom: '8px', fontWeight: 600
   };
 
   return (
-    <div style={{ background: '#141B2D', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '16px', padding: '32px', maxWidth: '800px' }}>
-      <h3 style={{ color: 'white', fontSize: '22px', marginBottom: '8px', fontWeight: 700 }}>Platform Connections</h3>
-      <p style={{ color: '#64748B', fontSize: '14px', marginBottom: '28px' }}>Configure your external blogging platforms to enable one-click publishing.</p>
+    <div style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border-default)', borderRadius: '16px', padding: '32px', maxWidth: '800px' }}>
+      <h3 style={{ color: 'var(--text-primary)', fontSize: '22px', marginBottom: '8px', fontWeight: 700 }}>Platform Connections</h3>
+      <p style={{ color: 'var(--text-muted)', fontSize: '14px', marginBottom: '28px' }}>Configure your external blogging platforms to enable one-click publishing.</p>
 
       <div style={{ display: 'flex', gap: '12px', marginBottom: '32px', overflowX: 'auto', paddingBottom: '8px' }}>
         {platforms.map(p => (
@@ -1104,9 +1141,9 @@ const AutoPublisherSection = () => {
             key={p.id}
             onClick={(e) => { e.preventDefault(); setActiveTab(p.id); }}
             style={{
-              background: activeTab === p.id ? 'linear-gradient(135deg,#7C3AED,#5B21B6)' : '#0D1526',
-              color: activeTab === p.id ? 'white' : '#94A3B8',
-              border: '1px solid ' + (activeTab === p.id ? 'transparent' : 'rgba(255,255,255,0.1)'),
+              background: activeTab === p.id ? 'var(--color-accent-gradient)' : 'var(--bg-surface)',
+              color: activeTab === p.id ? 'white' : 'var(--text-muted)',
+              border: '1px solid ' + (activeTab === p.id ? 'transparent' : 'var(--border-default)'),
               padding: '12px 20px', borderRadius: '10px', cursor: 'pointer', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '8px',
               transition: 'all 0.2s', whiteSpace: 'nowrap'
             }}
@@ -1116,7 +1153,7 @@ const AutoPublisherSection = () => {
         ))}
       </div>
 
-      <div style={{ background: 'rgba(255,255,255,0.02)', padding: '28px', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.04)' }}>
+      <div style={{ background: 'var(--bg-base)', padding: '28px', borderRadius: '16px', border: '1px solid var(--border-default)' }}>
         <form onSubmit={handleManualSave}>
           {activeTab === 'wordpress' && (
             <div className="animation-fade-in">
@@ -1161,11 +1198,16 @@ const AutoPublisherSection = () => {
             </div>
           )}
 
+          {saveError && (
+            <div style={{ padding: '12px', background: 'var(--color-danger-100)', color: 'var(--color-danger-500)', borderRadius: '8px', fontSize: '14px', marginBottom: '16px', fontWeight: '500' }}>
+              ❌ {saveError}
+            </div>
+          )}
           <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginTop: '20px' }}>
-            <button type="submit" style={{ background: 'linear-gradient(135deg,#10B981,#059669)', color: 'white', padding: '14px 28px', border: 'none', borderRadius: '10px', cursor: 'pointer', fontWeight: 600, fontSize: '15px', transition: 'all 0.2s', boxShadow: '0 4px 12px rgba(16,185,129,0.2)' }}>
+            <button type="submit" style={{ background: 'var(--color-accent-gradient)', color: 'white', padding: '14px 28px', border: 'none', borderRadius: '10px', cursor: 'pointer', fontWeight: 600, fontSize: '15px', transition: 'all 0.2s', boxShadow: 'var(--shadow-glow-primary)' }}>
               {saveStatus ? saveStatus : 'Save & Connect'}
             </button>
-            <span style={{ color: '#94A3B8', fontSize: '13px' }}>Keys are stored securely in your browser\'s local cache.</span>
+            <span style={{ color: 'var(--text-muted)', fontSize: '13px' }}>Keys are verified uniquely and stored securely in the database.</span>
           </div>
         </form>
       </div>
@@ -1193,6 +1235,12 @@ const Dashboard = ({ onLogout }) => {
   // New state to track in-progress publications and prevent infinite loops
   const [publishingIds, setPublishingIds] = useState(new Set());
   const [failedIds, setFailedIds] = useState(new Set());
+
+  // Theme state for synchronized UI toggles
+  const [theme, setTheme] = useState(localStorage.getItem('bf_theme') || 'dark');
+
+  // Dashboard logic simplified...
+
 
 
 
@@ -1373,36 +1421,46 @@ const Dashboard = ({ onLogout }) => {
 
   // ─── Theme toggle — re-register & sync when dashboard mounts ───
   useEffect(() => {
+    const handleStorageChange = (e) => {
+      if (e.key === 'bf_theme') setTheme(e.newValue || 'dark');
+    };
+    window.addEventListener('storage', handleStorageChange);
+
     // Apply saved theme
     const savedTheme = localStorage.getItem('bf_theme') || 'dark';
     document.documentElement.setAttribute('data-theme', savedTheme);
 
     const applyThemeUI = (theme) => {
-      document.querySelectorAll('.theme-toggle-icon').forEach(el => {
-        el.textContent = theme === 'dark' ? '🌙' : '☀️';
-      });
-      document.querySelectorAll('.theme-toggle-label').forEach(el => {
-        el.textContent = theme === 'dark' ? 'Dark Mode' : 'Light Mode';
-      });
-      document.querySelectorAll('.toggle-thumb').forEach(el => {
-        el.style.transform = theme === 'dark' ? '' : 'translateX(-17px)';
-      });
-      document.querySelectorAll('.toggle-track').forEach(el => {
-        el.style.background = theme === 'dark' ? '#7C3AED' : '#D1D5DB';
-      });
+      const isDark = theme === 'dark';
+      const navToggle = document.getElementById('theme-toggle');
+      const sidebarToggle = document.getElementById('sidebar-theme-toggle');
+      const sidebarIcon = document.getElementById('sidebar-theme-icon');
+      const sidebarLabel = document.getElementById('sidebar-theme-label');
+
+      if (navToggle) navToggle.textContent = isDark ? '🌙' : '☀️';
+      if (sidebarToggle) sidebarToggle.checked = !isDark;
+      if (sidebarIcon) sidebarIcon.textContent = isDark ? '🌙' : '☀️';
+      if (sidebarLabel) sidebarLabel.textContent = isDark ? 'Dark Mode' : 'Light Mode';
     };
 
-    // Always re-register so it's available when signed in
+    // Canonical toggle function
     window.toggleTheme = function () {
       const current = document.documentElement.getAttribute('data-theme') || 'dark';
       const next = current === 'dark' ? 'light' : 'dark';
       document.documentElement.setAttribute('data-theme', next);
       localStorage.setItem('bf_theme', next);
+      
+      // Update React state if component is mounted
+      setTheme(next);
+      
+      // Update legacy UI elements
       applyThemeUI(next);
     };
 
-    // Sync icons on mount (may have rendered after App's useEffect ran)
+    // Sync UI icons on mount
     applyThemeUI(savedTheme);
+
+    return () => window.removeEventListener('storage', handleStorageChange);
   }, []);
 
   useEffect(() => {
@@ -1434,8 +1492,8 @@ const Dashboard = ({ onLogout }) => {
 
       const usageBar = document.getElementById('plan-usage-bar');
       const usageCount = document.getElementById('plan-usage-count');
-      if (usageBar) usageBar.style.width = Math.min((blogs.length / 50) * 100, 100) + '%';
-      if (usageCount) usageCount.textContent = blogs.length + '/50 blogs';
+      if (usageBar) usageBar.style.width = Math.min((blogs.length / 30) * 100, 100) + '%';
+      if (usageCount) usageCount.textContent = blogs.length + '/30 blogs';
     };
 
     window.loadROIDashboard = function () {
@@ -1551,8 +1609,8 @@ Use clear headings and keep it actionable. Write in a professional consulting to
         const btn = e.currentTarget;
         const oldText = btn.textContent;
         btn.textContent = '✓ Copied!';
-        btn.style.color = '#10B981';
-        setTimeout(() => { btn.textContent = oldText; btn.style.color = '#94A3B8'; }, 2000);
+        btn.style.color = 'var(--color-success-500)';
+        setTimeout(() => { btn.textContent = oldText; btn.style.color = 'var(--text-muted)'; }, 2000);
       });
     };
 
@@ -1720,7 +1778,6 @@ Use clear headings and keep it actionable. Write in a professional consulting to
 
     { id: 'traffic', title: 'Traffic Tracker' },
     { id: 'brandvoice', title: 'Brand Voice' },
-    { id: 'team', title: 'Team' },
     { id: 'billing', title: 'Billing' },
   ];
 
@@ -1788,7 +1845,6 @@ Use clear headings and keep it actionable. Write in a professional consulting to
           <div className="nav-group">
             <h4 className="nav-label" id="nav-label-settings">Settings</h4>
             <a role="button" tabIndex={0} className="nav-item sidebar-link" data-section="brandvoice" onClick={() => window.showDashboardSection('brandvoice')} onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && window.showDashboardSection('brandvoice')} style={{ cursor: 'pointer' }}><Settings size={18} aria-hidden="true" /> Brand Voice</a>
-            <a role="button" tabIndex={0} className="nav-item sidebar-link" data-section="team" onClick={() => window.showDashboardSection('team')} onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && window.showDashboardSection('team')} style={{ cursor: 'pointer' }}><Users size={18} aria-hidden="true" /> Team</a>
             <a role="button" tabIndex={0} className="nav-item sidebar-link" data-section="billing" onClick={() => window.showDashboardSection('billing')} onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && window.showDashboardSection('billing')} style={{ cursor: 'pointer' }}><CreditCard size={18} aria-hidden="true" /> Billing</a>
           </div>
         </nav>
@@ -1802,32 +1858,34 @@ Use clear headings and keep it actionable. Write in a professional consulting to
             <div style={{ fontSize: '11px', color: 'var(--text-subtle)' }}>Gemini 2.5 Flash</div>
           </div>
 
-          <div style={{ background: '#141B2D', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '12px', padding: '14px', margin: '8px' }}>
+          <div style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-color)', borderRadius: '12px', padding: '14px', margin: '8px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
               <span style={{ fontSize: '12px', fontWeight: 600, color: '#A78BFA' }}>Growth Plan</span>
-              <span id="plan-usage-count" style={{ fontSize: '11px', color: '#64748B' }}>0/50 blogs</span>
+              <span id="plan-usage-count" style={{ fontSize: '11px', color: '#64748B' }}>0/30 blogs</span>
             </div>
-            <div style={{ background: '#0D1526', borderRadius: '999px', height: '5px', overflow: 'hidden', marginBottom: '10px' }}>
+            <div style={{ background: 'var(--bg-primary)', borderRadius: '999px', height: '5px', overflow: 'hidden', marginBottom: '10px' }}>
               <div id="plan-usage-bar" style={{ height: '100%', background: 'linear-gradient(90deg,#7C3AED,#06B6D4)', width: '0%', borderRadius: '999px', transition: 'width 0.5s ease' }}></div>
             </div>
             <button onClick={() => window.showDashboardSection && window.showDashboardSection('billing')} style={{ width: '100%', background: 'rgba(124,58,237,0.15)', border: '1px solid rgba(124,58,237,0.3)', color: '#A78BFA', borderRadius: '8px', padding: '7px', fontSize: '12px', fontWeight: 600, cursor: 'pointer' }}>
               Upgrade to Scale
             </button>
           </div>
-          {/* Theme toggle */}
-          <div style={{ padding: '0 8px', marginBottom: '6px' }}>
+          <div className="theme-toggle-container">
             <button
-              id="theme-toggle-sidebar"
-              onClick={() => window.toggleTheme && window.toggleTheme()}
-              title="Toggle light/dark mode"
-              className="theme-toggle-btn"
+              className="theme-toggle-pill"
+              onClick={window.toggleTheme}
+              aria-label="Toggle Theme"
             >
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <span className="theme-toggle-icon" style={{ fontSize: '16px' }}>🌙</span>
-                <span className="theme-toggle-label">Dark Mode</span>
+              <div className="left-content">
+                <div className="icon-box">
+                  {theme === 'dark' ? '🌙' : '☀️'}
+                </div>
+                <span className="label">
+                  {theme === 'dark' ? 'Dark Mode' : 'Light Mode'}
+                </span>
               </div>
-              <div className="toggle-track">
-                <div className="toggle-thumb"></div>
+              <div className="theme-toggle-switch">
+                <div className="theme-toggle-knob"></div>
               </div>
             </button>
           </div>
@@ -1846,13 +1904,13 @@ Use clear headings and keep it actionable. Write in a professional consulting to
       {/* Main Content */}
       <main className="main-content" style={{ overflowY: 'auto' }}>
         {/* Overview Section */}
-        <div id="dash-overview" className="dash-section" style={{ display: 'block', padding: '40px', color: '#fff' }}>
+        <div id="dash-overview" className="dash-section" style={{ display: 'block', padding: '40px', color: 'var(--text-primary)' }}>
           <header className="top-header">
             <div className="header-text">
-              <h1 className="dashboard-greeting">Good morning 👋</h1>
-              <p>Your blogs are running on autopilot.</p>
+              <h1 className="dashboard-greeting" style={{ color: 'var(--text-primary)' }}>Good morning 👋</h1>
+              <p style={{ color: 'var(--text-muted)' }}>Your blogs are running on autopilot.</p>
             </div>
-            <div className="header-actions">
+            <div className="header-actions" style={{ display: 'flex', gap: '12px' }}>
               <button
                 onClick={() => window.showDashboardSection('roi')}
                 style={{ background: 'transparent', color: 'var(--text-muted)', border: 'none', fontSize: '14px', fontWeight: 500, cursor: 'pointer', padding: '11px 22px', borderRadius: '999px', transition: 'all 0.2s' }}
@@ -1863,15 +1921,15 @@ Use clear headings and keep it actionable. Write in a professional consulting to
               </button>
               <button
                 onClick={() => window.showDashboardSection('serpgap')}
-                style={{ background: 'transparent', color: 'var(--text-primary)', border: '1px solid var(--border-subtle)', borderRadius: '999px', padding: '11px 22px', fontSize: '14px', fontWeight: 500, cursor: 'pointer', transition: 'all 0.2s' }}
+                style={{ background: 'transparent', color: 'var(--text-primary)', border: '1px solid var(--border-default)', borderRadius: '999px', padding: '11px 22px', fontSize: '14px', fontWeight: 500, cursor: 'pointer', transition: 'all 0.2s' }}
                 onMouseOver={(e) => { e.currentTarget.style.borderColor = 'var(--color-primary-500)'; e.currentTarget.style.color = 'var(--color-primary-400)'; }}
-                onMouseOut={(e) => { e.currentTarget.style.borderColor = 'var(--border-subtle)'; e.currentTarget.style.color = 'var(--text-primary)'; }}
+                onMouseOut={(e) => { e.currentTarget.style.borderColor = 'var(--border-default)'; e.currentTarget.style.color = 'var(--text-primary)'; }}
               >
                 🔍 Scan SERP Gaps
               </button>
               <button
                 onClick={() => window.showDashboardSection('newblog')}
-                style={{ background: 'linear-gradient(135deg,#7C3AED,#5B21B6)', color: 'white', border: 'none', borderRadius: '999px', padding: '11px 22px', fontSize: '14px', fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', transition: 'all 0.2s' }}
+                style={{ background: 'var(--color-accent-gradient)', color: 'white', border: 'none', borderRadius: '999px', padding: '11px 22px', fontSize: '14px', fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', transition: 'all 0.2s' }}
                 onMouseOver={(e) => e.currentTarget.style.transform = 'translateY(-1px)'}
                 onMouseOut={(e) => e.currentTarget.style.transform = 'translateY(0)'}
               >
@@ -1880,99 +1938,108 @@ Use clear headings and keep it actionable. Write in a professional consulting to
             </div>
           </header>
 
-          <div className="stats-row">
-            <div className="stat-dash-card">
-              <div className="stat-title">Blogs Published This Month</div>
-              <div className="stat-val" id="stat-published">15</div>
+          <div className="stats-row" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '20px', marginBottom: '32px' }}>
+            <div className="stat-dash-card" style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border-default)', borderRadius: '20px', padding: '24px' }}>
+              <div className="stat-title" style={{ color: 'var(--text-muted)', fontSize: '13px', fontWeight: 500, marginBottom: '12px' }}>Blogs Published This Month</div>
+              <div className="stat-val" id="stat-published" style={{ fontSize: '32px', fontWeight: 700, color: 'var(--text-primary)' }}>15</div>
             </div>
-            <div className="stat-dash-card">
-              <div className="stat-title">Avg SEO Score</div>
-              <div className="stat-val text-cyan"><span id="stat-avgseo">91</span><span className="text-sm text-muted">/100</span></div>
+            <div className="stat-dash-card" style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border-default)', borderRadius: '20px', padding: '24px' }}>
+              <div className="stat-title" style={{ color: 'var(--text-muted)', fontSize: '13px', fontWeight: 500, marginBottom: '12px' }}>Avg SEO Score</div>
+              <div className="stat-val text-cyan" style={{ fontSize: '32px', fontWeight: 700, color: '#06B6D4' }}><span id="stat-avgseo">91</span><span className="text-sm" style={{ fontSize: '14px', color: 'var(--text-muted)', marginLeft: '4px' }}>/100</span></div>
             </div>
-            <div className="stat-dash-card">
-              <div className="stat-title">Est. Monthly Traffic</div>
-              <div className="stat-val text-green"><span id="stat-traffic">+2,340</span> <span className="text-sm">visits</span></div>
+            <div className="stat-dash-card" style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border-default)', borderRadius: '20px', padding: '24px' }}>
+              <div className="stat-title" style={{ color: 'var(--text-muted)', fontSize: '13px', fontWeight: 500, marginBottom: '12px' }}>Est. Monthly Traffic</div>
+              <div className="stat-val text-green" style={{ fontSize: '32px', fontWeight: 700, color: '#10B981' }}><span id="stat-traffic">+2,340</span> <span className="text-sm" style={{ fontSize: '14px' }}>visits</span></div>
             </div>
-            <div className="stat-dash-card">
-              <div className="stat-title">Top Ranking Blog</div>
-              <div className="stat-val text-md" id="stat-topblog" style={{ fontSize: '1.2rem', marginTop: '0.5rem', lineHeight: 1.4 }}>AI Tools for Startups</div>
+            <div className="stat-dash-card" style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border-default)', borderRadius: '20px', padding: '24px' }}>
+              <div className="stat-title" style={{ color: 'var(--text-muted)', fontSize: '13px', fontWeight: 500, marginBottom: '12px' }}>Top Ranking Blog</div>
+              <div className="stat-val text-md" id="stat-topblog" style={{ fontSize: '1.1rem', marginTop: '0.5rem', lineHeight: 1.4, color: 'var(--text-primary)', fontWeight: 600 }}>AI Tools for Startups</div>
             </div>
           </div>
 
-          <div className="dashboard-grid">
-            {/* Content Table */}
-            <div className="content-table-panel">
-              <div className="panel-header">
-                <h3>Your Blogs</h3>
+          <div className="dashboard-grid" style={{ display: 'grid', gridTemplateColumns: '1.8fr 1fr', gap: '24px' }}>
+            {/* Content Table Panel */}
+            <div className="content-table-panel" style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border-default)', borderRadius: '16px', overflow: 'hidden' }}>
+              <div className="panel-header" style={{ padding: '20px', borderBottom: '1px solid var(--border-default)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 600, color: 'var(--text-primary)' }}>Your Blogs</h3>
                 <span
                   onClick={() => window.showDashboardSection('myblogs')}
-                  style={{ fontSize: '14px', color: '#7C3AED', cursor: 'pointer', fontWeight: 500 }}
+                  style={{ fontSize: '14px', color: 'var(--color-accent)', cursor: 'pointer', fontWeight: 500 }}
                   onMouseOver={(e) => e.currentTarget.style.color = '#A78BFA'}
-                  onMouseOut={(e) => e.currentTarget.style.color = '#7C3AED'}
+                  onMouseOut={(e) => e.currentTarget.style.color = 'var(--color-accent)'}
                 >
                   View all →
                 </span>
               </div>
-              <div className="table-responsive">
-                <table className="dash-table">
+              <div className="table-responsive" style={{ overflowX: 'auto' }}>
+                <table className="dash-table" style={{ width: '100%', borderCollapse: 'collapse' }}>
                   <thead>
                     <tr>
-                      <th>Title</th>
-                      <th>SEO Score</th>
-                      <th>Status</th>
-                      <th>Date</th>
-                      <th>Traffic</th>
-                      <th></th>
+                      <th style={{ padding: '12px 20px', textAlign: 'left', fontSize: '12px', color: 'var(--text-muted)', borderBottom: '1px solid var(--border-default)' }}>Title</th>
+                      <th style={{ padding: '12px 20px', textAlign: 'left', fontSize: '12px', color: 'var(--text-muted)', borderBottom: '1px solid var(--border-default)' }}>SEO Score</th>
+                      <th style={{ padding: '12px 20px', textAlign: 'left', fontSize: '12px', color: 'var(--text-muted)', borderBottom: '1px solid var(--border-default)' }}>Status</th>
+                      <th style={{ padding: '12px 20px', textAlign: 'left', fontSize: '12px', color: 'var(--text-muted)', borderBottom: '1px solid var(--border-default)' }}>Date</th>
+                      <th style={{ padding: '12px 20px', textAlign: 'left', fontSize: '12px', color: 'var(--text-muted)', borderBottom: '1px solid var(--border-default)' }}>Traffic</th>
+                      <th style={{ padding: '12px 20px', textAlign: 'left', fontSize: '12px', color: 'var(--text-muted)', borderBottom: '1px solid var(--border-default)' }}></th>
                     </tr>
                   </thead>
                   <tbody>
-                    {blogs.map((blog, idx) => (
-                      <tr key={blog.id} onMouseOver={(e) => e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.02)'} onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}>
-                        <td style={{ fontWeight: 600, color: 'white' }}>{blog.title}</td>
-                        <td>
-                          <div className="score-badge">
-                            <span className={`dot ${(blog.seoScore || blog.score) >= 90 ? 'green' : 'amber'}`}></span>
-                            {blog.seoScore || blog.score || 0}/100
-                          </div>
-                        </td>
-                        <td>
-                          {publishingIds.has(String(blog.id)) ? (
-                            <span className="status-badge amber" style={{ animation: 'pulse 1.5s infinite' }}>Publishing...</span>
-                          ) : (
-                            <span className={`status-badge ${blog.statusColor || (blog.status === 'published' ? 'green' : blog.status === 'scheduled' ? 'amber' : 'gray')}`}>{blog.status || 'draft'}</span>
-                          )}
-                        </td>
-                        <td className="text-muted" style={{ fontSize: '11px' }}>{blog.createdAt ? new Date(blog.createdAt).toLocaleString('en-IN', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '—'}</td>
-                        <td>{blog.traffic}</td>
-                        <td className="actions-cell">
-                          <div style={{ display: 'flex', gap: '8px' }}>
-                            <button onClick={() => window.viewBlog && window.viewBlog(blog.id)} style={{ background: 'rgba(124,58,237,0.15)', border: 'none', color: '#A78BFA', borderRadius: '6px', padding: '4px 10px', fontSize: '11px', cursor: 'pointer' }}>View</button>
-                            <button onClick={() => window.showPublishModal && window.showPublishModal(blog.id)} style={{ background: 'rgba(16,185,129,0.15)', border: 'none', color: '#10B981', borderRadius: '6px', padding: '4px 10px', fontSize: '11px', cursor: 'pointer' }}>Publish</button>
-                            <button onClick={() => window.confirmDeleteBlog && window.confirmDeleteBlog(blog.id, { target: {} })} style={{ background: 'rgba(239,68,68,0.1)', border: 'none', color: '#EF4444', borderRadius: '6px', padding: '4px 10px', fontSize: '11px', cursor: 'pointer' }}>Delete</button>
-                          </div>
-                        </td>
+                    {blogs.length === 0 ? (
+                      <tr>
+                        <td colSpan="6" style={{ padding: '40px', textAlign: 'center', color: 'var(--text-muted)', fontSize: '14px' }}>No blogs generated yet.</td>
                       </tr>
-                    ))}
+                    ) : (
+                      blogs.map((blog, idx) => (
+                        <tr key={blog.id} style={{ borderBottom: '1px solid var(--border-default)', transition: 'background 0.2s' }} onMouseOver={(e) => e.currentTarget.style.backgroundColor = 'var(--color-bg-hover)'} onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}>
+                          <td style={{ padding: '16px 20px', fontWeight: 600, color: 'var(--text-primary)', fontSize: '14px' }}>{blog.title}</td>
+                          <td style={{ padding: '16px 20px' }}>
+                            <div className="score-badge" style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', background: 'var(--bg-surface)', padding: '4px 10px', borderRadius: '999px', border: '1px solid var(--border-default)', fontSize: '12px', color: 'var(--text-primary)', fontWeight: 600 }}>
+                              <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: (blog.seoScore || blog.score) >= 90 ? '#10B981' : '#F59E0B' }}></span>
+                              {blog.seoScore || blog.score || 0}/100
+                            </div>
+                          </td>
+                          <td style={{ padding: '16px 20px' }}>
+                            {publishingIds.has(String(blog.id)) ? (
+                              <span className="status-badge amber" style={{ animation: 'pulse 1.5s infinite', background: 'rgba(245,158,11,0.1)', color: '#F59E0B', padding: '4px 10px', borderRadius: '6px', fontSize: '11px', fontWeight: 600 }}>Publishing...</span>
+                            ) : (
+                              <span className={`status-badge ${blog.status === 'published' ? 'green' : blog.status === 'scheduled' ? 'amber' : 'gray'}`} style={{
+                                background: blog.status === 'published' ? 'rgba(16,185,129,0.1)' : blog.status === 'scheduled' ? 'rgba(245,158,11,0.1)' : 'rgba(148,163,184,0.1)',
+                                color: blog.status === 'published' ? '#10B981' : blog.status === 'scheduled' ? '#F59E0B' : 'var(--text-muted)',
+                                padding: '4px 10px', borderRadius: '6px', fontSize: '11px', fontWeight: 600, textTransform: 'capitalize'
+                              }}>{blog.status || 'draft'}</span>
+                            )}
+                          </td>
+                          <td style={{ padding: '16px 20px', color: 'var(--text-muted)', fontSize: '11px' }}>{blog.createdAt ? new Date(blog.createdAt).toLocaleString('en-IN', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '—'}</td>
+                          <td style={{ padding: '16px 20px', color: '#10B981', fontWeight: 600, fontSize: '13px' }}>+{blog.traffic || 0}</td>
+                          <td className="actions-cell" style={{ padding: '16px 20px' }}>
+                            <div style={{ display: 'flex', gap: '8px' }}>
+                              <button onClick={() => window.viewBlog && window.viewBlog(blog.id)} style={{ background: 'rgba(124,58,237,0.15)', border: 'none', color: '#A78BFA', borderRadius: '6px', padding: '6px 14px', fontSize: '11px', cursor: 'pointer', fontWeight: 600 }}>View</button>
+                              <button onClick={() => window.showPublishModal && window.showPublishModal(blog.id)} style={{ background: 'var(--bg-surface)', border: '1px solid var(--color-success-border)', color: 'var(--color-success-500)', borderRadius: '6px', padding: '6px 14px', fontSize: '11px', cursor: 'pointer', fontWeight: 600 }}>Publish</button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))
+                    )}
                   </tbody>
                 </table>
               </div>
             </div>
 
-            {/* Right side panel mini calendar */}
-            <div className="calendar-panel">
-              <div className="panel-header">
-                <h3>Content Calendar</h3>
+            {/* Right Side Panel Mini Calendar */}
+            <div className="calendar-panel" style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border-default)', borderRadius: '16px', padding: '24px' }}>
+              <div className="panel-header" style={{ marginBottom: '20px' }}>
+                <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 600, color: 'var(--text-primary)' }}>Content Calendar</h3>
               </div>
               <div className="mini-calendar">
-                <div className="cal-header">
+                <div className="cal-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', color: 'var(--text-primary)', fontWeight: 600, fontSize: '14px' }}>
                   <span>{viewDate.toLocaleString('default', { month: 'long', year: 'numeric' })}</span>
-                  <div className="cal-nav">
-                    <button onClick={() => changeMonth(-1)}>&lt;</button>
-                    <button onClick={() => changeMonth(1)}>&gt;</button>
+                  <div className="cal-nav" style={{ display: 'flex', gap: '4px' }}>
+                    <button onClick={() => changeMonth(-1)} style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-default)', color: 'var(--text-primary)', width: '28px', height: '28px', borderRadius: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>&lt;</button>
+                    <button onClick={() => changeMonth(1)} style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-default)', color: 'var(--text-primary)', width: '28px', height: '28px', borderRadius: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>&gt;</button>
                   </div>
                 </div>
-                <div className="cal-grid">
-                  {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((d, i) => <div key={i} className="cal-day-name">{d}</div>)}
+                <div className="cal-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '4px', textAlign: 'center' }}>
+                  {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((d, i) => <div key={i} className="cal-day-name" style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: 600, paddingBottom: '8px' }}>{d}</div>)}
                   {(() => {
                     const year = viewDate.getFullYear();
                     const month = viewDate.getMonth();
@@ -1991,25 +2058,30 @@ Use clear headings and keep it actionable. Write in a professional consulting to
                       });
                       const hasPublished = dayBlogs.some(b => b.status === 'published');
                       const hasScheduled = dayBlogs.some(b => b.status === 'scheduled');
-                      const hasDraft = dayBlogs.some(b => b.status === 'draft' || !b.status);
 
-                      const bgColorClass = dayBlogs.length > 0 ? (hasPublished ? 'active-blue' : hasScheduled ? 'active-amber' : 'active-gray') : '';
-                      const dotColorClass = hasPublished ? 'green' : hasScheduled ? 'amber' : 'gray';
+                      let cellBg = 'var(--bg-surface)';
+                      let dotColor = null;
+
+                      if (dayBlogs.length > 0) {
+                        if (hasPublished) dotColor = 'var(--color-success-500)';
+                        else if (hasScheduled) dotColor = 'var(--color-warning-500)';
+                        else dotColor = 'var(--text-muted)';
+                      }
 
                       cells.push(
-                        <div key={d} className={`cal-cell ${bgColorClass}`}>
+                        <div key={d} className="cal-cell" style={{ background: cellBg, border: '1px solid var(--border-default)', height: '36px', borderRadius: '6px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', fontSize: '13px', color: 'var(--text-primary)', position: 'relative' }}>
                           {d}
-                          {dayBlogs.length > 0 && <div className={`cal-dot ${dotColorClass}`}></div>}
+                          {dotColor && <div className="cal-dot" style={{ width: '4px', height: '4px', background: dotColor, borderRadius: '50%', position: 'absolute', bottom: '4px' }}></div>}
                         </div>
                       );
                     }
                     return cells;
                   })()}
                 </div>
-                <div className="cal-legend">
-                  <div className="legend-item"><span className="dot green"></span> Published</div>
-                  <div className="legend-item"><span className="dot amber"></span> Scheduled</div>
-                  <div className="legend-item"><span className="dot gray" style={{ background: '#94A3B8' }}></span> Draft</div>
+                <div className="cal-legend" style={{ display: 'flex', gap: '12px', marginTop: '16px', fontSize: '11px', color: 'var(--text-muted)' }}>
+                  <div className="legend-item" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><span style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--color-success-500)' }}></span> Live</div>
+                  <div className="legend-item" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><span style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--color-warning-500)' }}></span> Sch</div>
+                  <div className="legend-item" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><span style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--text-muted)' }}></span> Draft</div>
                 </div>
               </div>
             </div>
@@ -2034,15 +2106,15 @@ Use clear headings and keep it actionable. Write in a professional consulting to
             const daysInMonth = new Date(year, month + 1, 0).getDate();
 
             content = (
-              <div style={{ background: '#141B2D', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '16px', padding: '24px' }}>
+              <div style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border-default)', borderRadius: '16px', padding: '24px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '20px' }}>
-                  <h3 style={{ margin: 0, color: 'white', fontSize: '16px' }}>{viewDate.toLocaleString('default', { month: 'long', year: 'numeric' })}</h3>
+                  <h3 style={{ margin: 0, color: 'var(--text-primary)', fontSize: '16px' }}>{viewDate.toLocaleString('default', { month: 'long', year: 'numeric' })}</h3>
                   <div style={{ display: 'flex', gap: '8px' }}>
-                    <button onClick={() => changeMonth(-1)} style={{ background: '#0D1526', color: 'white', border: '1px solid rgba(255,255,255,0.1)', padding: '6px 12px', borderRadius: '6px', cursor: 'pointer' }}>&lt; Prev</button>
-                    <button onClick={() => changeMonth(1)} style={{ background: '#0D1526', color: 'white', border: '1px solid rgba(255,255,255,0.1)', padding: '6px 12px', borderRadius: '6px', cursor: 'pointer' }}>Next &gt;</button>
+                    <button onClick={() => changeMonth(-1)} style={{ background: 'var(--bg-surface)', color: 'var(--text-primary)', border: '1px solid var(--border-default)', padding: '6px 12px', borderRadius: '6px', cursor: 'pointer' }}>&lt; Prev</button>
+                    <button onClick={() => changeMonth(1)} style={{ background: 'var(--bg-surface)', color: 'var(--text-primary)', border: '1px solid var(--border-default)', padding: '6px 12px', borderRadius: '6px', cursor: 'pointer' }}>Next &gt;</button>
                   </div>
                 </div>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '8px', textAlign: 'center', color: '#94A3B8', fontSize: '12px', marginBottom: '10px' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '8px', textAlign: 'center', color: 'var(--text-muted)', fontSize: '12px', marginBottom: '10px' }}>
                   {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(d => <div key={d}>{d}</div>)}
                 </div>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '8px' }}>
@@ -2059,12 +2131,12 @@ Use clear headings and keep it actionable. Write in a professional consulting to
                         return date.getDate() === d && date.getMonth() === month && date.getFullYear() === year;
                       });
                       cells.push(
-                        <div key={d} style={{ background: '#0D1526', border: '1px solid rgba(255,255,255,0.04)', minHeight: '80px', borderRadius: '8px', padding: '8px', display: 'flex', flexDirection: 'column', gap: '4px', overflowY: 'auto' }}>
-                          <span style={{ color: 'white', fontSize: '12px' }}>{d}</span>
+                        <div key={d} style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-default)', minHeight: '80px', borderRadius: '8px', padding: '8px', display: 'flex', flexDirection: 'column', gap: '4px', overflowY: 'auto' }}>
+                          <span style={{ color: 'var(--text-primary)', fontSize: '12px' }}>{d}</span>
                           {dayBlogs.map(b => (
                             <div key={b.id} style={{
                               background: b.status === 'published' ? 'rgba(16,185,129,0.1)' : b.status === 'scheduled' ? 'rgba(245,158,11,0.1)' : 'rgba(148,163,184,0.1)',
-                              color: b.status === 'published' ? '#10B981' : b.status === 'scheduled' ? '#F59E0B' : '#94A3B8',
+                              color: b.status === 'published' ? '#10B981' : b.status === 'scheduled' ? '#F59E0B' : 'var(--text-muted)',
                               fontSize: '10px', padding: '2px 4px', borderRadius: '4px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis'
                             }} title={b.title}>
                               {b.status === 'published' ? 'Live: ' : b.status === 'scheduled' ? 'Sch: ' : 'Draft: '}{b.title}
@@ -2080,42 +2152,42 @@ Use clear headings and keep it actionable. Write in a professional consulting to
             );
           } else if (sec.id === 'clustermap') {
             content = (
-              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', background: '#141B2D', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '16px', padding: '60px', position: 'relative' }}>
-                <div style={{ background: 'linear-gradient(135deg,#7C3AED,#5B21B6)', padding: '16px 32px', borderRadius: '12px', color: 'white', fontWeight: 'bold', fontSize: '18px', zIndex: 2 }}>Pillar: Artificial Intelligence</div>
-                <div style={{ height: '40px', width: '2px', background: 'rgba(255,255,255,0.1)' }}></div>
-                <div style={{ width: '600px', height: '2px', background: 'rgba(255,255,255,0.1)', display: 'flex', justifyContent: 'space-between' }}>
-                  <div style={{ width: '2px', height: '40px', background: 'rgba(255,255,255,0.1)' }}></div>
-                  <div style={{ width: '2px', height: '40px', background: 'rgba(255,255,255,0.1)' }}></div>
-                  <div style={{ width: '2px', height: '40px', background: 'rgba(255,255,255,0.1)' }}></div>
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', background: 'var(--bg-elevated)', border: '1px solid var(--border-default)', borderRadius: '16px', padding: '60px', position: 'relative' }}>
+                <div style={{ background: 'var(--color-accent-gradient)', padding: '16px 32px', borderRadius: '12px', color: 'white', fontWeight: 'bold', fontSize: '18px', zIndex: 2 }}>Pillar: Artificial Intelligence</div>
+                <div style={{ height: '40px', width: '2px', background: 'var(--border-default)' }}></div>
+                <div style={{ width: '600px', height: '2px', background: 'var(--border-default)', display: 'flex', justifyContent: 'space-between' }}>
+                  <div style={{ width: '2px', height: '40px', background: 'var(--border-default)' }}></div>
+                  <div style={{ width: '2px', height: '40px', background: 'var(--border-default)' }}></div>
+                  <div style={{ width: '2px', height: '40px', background: 'var(--border-default)' }}></div>
                 </div>
                 <div style={{ width: '640px', display: 'flex', justifyContent: 'space-between', marginTop: '40px' }}>
-                  <div style={{ background: '#0D1526', border: '1px solid rgba(16,185,129,0.3)', padding: '12px 16px', borderRadius: '8px', color: '#10B981', fontSize: '13px' }}>Generative AI Tools</div>
-                  <div style={{ background: '#0D1526', border: '1px solid rgba(245,158,11,0.3)', padding: '12px 16px', borderRadius: '8px', color: '#F59E0B', fontSize: '13px' }}>AI Content Detection</div>
-                  <div style={{ background: '#0D1526', border: '1px dashed rgba(255,255,255,0.2)', padding: '12px 16px', borderRadius: '8px', color: '#94A3B8', fontSize: '13px' }}>+ Add Cluster</div>
+                  <div style={{ background: 'var(--bg-surface)', border: '1px solid var(--color-success-border)', padding: '12px 16px', borderRadius: '8px', color: 'var(--color-success-500)', fontSize: '13px' }}>Generative AI Tools</div>
+                  <div style={{ background: 'var(--bg-surface)', border: '1px solid var(--color-warning-border)', padding: '12px 16px', borderRadius: '8px', color: 'var(--color-warning-500)', fontSize: '13px' }}>AI Content Detection</div>
+                  <div style={{ background: 'var(--bg-surface)', border: '1px dashed var(--border-default)', padding: '12px 16px', borderRadius: '8px', color: 'var(--text-muted)', fontSize: '13px' }}>+ Add Cluster</div>
                 </div>
               </div>
             );
           } else if (sec.id === 'keywords') {
             content = (
-              <div style={{ background: '#141B2D', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '16px', padding: '24px' }}>
+              <div style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border-default)', borderRadius: '16px', padding: '24px' }}>
                 <div style={{ display: 'flex', gap: '12px', marginBottom: '20px' }}>
-                  <input type="text" placeholder="Seed keyword..." style={{ flex: 1, background: '#0D1526', border: '1px solid rgba(255,255,255,0.1)', color: 'white', padding: '10px 16px', borderRadius: '8px', outline: 'none' }} />
-                  <button style={{ background: '#7C3AED', color: 'white', border: 'none', padding: '10px 20px', borderRadius: '8px', cursor: 'pointer' }}>Discover</button>
+                  <input type="text" placeholder="Seed keyword..." style={{ flex: 1, background: 'var(--bg-surface)', border: '1px solid var(--border-default)', color: 'var(--text-primary)', padding: '10px 16px', borderRadius: '8px', outline: 'none' }} />
+                  <button style={{ background: 'var(--color-primary-600)', color: 'white', border: 'none', padding: '10px 20px', borderRadius: '8px', cursor: 'pointer' }}>Discover</button>
                 </div>
                 <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
                   <thead>
-                    <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.1)', color: '#64748B', fontSize: '12px' }}>
+                    <tr style={{ borderBottom: '1px solid var(--border-default)', color: 'var(--text-muted)', fontSize: '12px' }}>
                       <th style={{ padding: '12px' }}>KEYWORD</th><th style={{ padding: '12px' }}>VOLUME</th><th style={{ padding: '12px' }}>KD</th><th style={{ padding: '12px' }}>INTENT</th><th style={{ padding: '12px' }}></th>
                     </tr>
                   </thead>
                   <tbody>
                     {['ai writing tools', 'best ai for seo', 'free ai copywriter', 'how to use chatgpt for blogging'].map((kw, i) => (
-                      <tr key={kw} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)', color: 'white', fontSize: '14px' }}>
+                      <tr key={kw} style={{ borderBottom: '1px solid var(--border-default)', color: 'var(--text-primary)', fontSize: '14px' }}>
                         <td style={{ padding: '16px 12px' }}>{kw}</td>
                         <td style={{ padding: '16px 12px' }}>{[12400, 8100, 5400, 3200][i]}</td>
-                        <td style={{ padding: '16px 12px' }}><span style={{ color: ['#EF4444', '#F59E0B', '#10B981', '#10B981'][i] }}>{[84, 62, 28, 14][i]}</span></td>
-                        <td style={{ padding: '16px 12px' }}><span style={{ background: 'rgba(255,255,255,0.05)', padding: '4px 8px', borderRadius: '4px', fontSize: '11px' }}>Commercial</span></td>
-                        <td style={{ padding: '16px 12px', textAlign: 'right' }}><button style={{ background: 'transparent', color: '#A78BFA', border: '1px solid rgba(167,139,250,0.3)', padding: '4px 12px', borderRadius: '6px' }}>+ Add</button></td>
+                        <td style={{ padding: '16px 12px' }}><span style={{ color: ['var(--color-error-500)', 'var(--color-warning-500)', 'var(--color-success-500)', 'var(--color-success-500)'][i] }}>{[84, 62, 28, 14][i]}</span></td>
+                        <td style={{ padding: '16px 12px' }}><span style={{ background: 'var(--bg-surface)', padding: '4px 8px', borderRadius: '4px', fontSize: '11px' }}>Commercial</span></td>
+                        <td style={{ padding: '16px 12px', textAlign: 'right' }}><button style={{ background: 'transparent', color: 'var(--color-accent)', border: '1px solid rgba(124,58,237,0.3)', padding: '4px 12px', borderRadius: '6px' }}>+ Add</button></td>
                       </tr>
                     ))}
                   </tbody>
@@ -2125,20 +2197,20 @@ Use clear headings and keep it actionable. Write in a professional consulting to
           } else if (sec.id === 'competitor') {
             content = (
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
-                <div style={{ background: '#141B2D', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '16px', padding: '24px' }}>
-                  <h3 style={{ marginTop: 0, color: 'white', fontSize: '16px' }}>Spy on Competitor</h3>
-                  <input type="text" placeholder="https://competitor.com" style={{ width: '100%', background: '#0D1526', border: '1px solid rgba(255,255,255,0.1)', color: 'white', padding: '12px 16px', borderRadius: '8px', outline: 'none', marginBottom: '16px', boxSizing: 'border-box' }} />
-                  <button style={{ width: '100%', background: '#06B6D4', color: 'white', border: 'none', padding: '12px', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer' }}>Analyze Domain</button>
+                <div style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border-default)', borderRadius: '16px', padding: '24px' }}>
+                  <h3 style={{ marginTop: 0, color: 'var(--text-primary)', fontSize: '16px' }}>Spy on Competitor</h3>
+                  <input type="text" placeholder="https://competitor.com" style={{ width: '100%', background: 'var(--bg-surface)', border: '1px solid var(--border-default)', color: 'var(--text-primary)', padding: '12px 16px', borderRadius: '8px', outline: 'none', marginBottom: '16px', boxSizing: 'border-box' }} />
+                  <button style={{ width: '100%', background: 'var(--color-secondary-600)', color: 'white', border: 'none', padding: '12px', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer' }}>Analyze Domain</button>
                 </div>
-                <div style={{ background: '#141B2D', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '16px', padding: '24px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '12px' }}>
-                    <span style={{ color: '#94A3B8', fontSize: '13px' }}>Domain Authority</span><span style={{ color: 'white', fontWeight: 'bold' }}>78</span>
+                <div style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border-default)', borderRadius: '16px', padding: '24px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--border-default)', paddingBottom: '12px' }}>
+                    <span style={{ color: 'var(--text-muted)', fontSize: '13px' }}>Domain Authority</span><span style={{ color: 'var(--text-primary)', fontWeight: 'bold' }}>78</span>
                   </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '12px' }}>
-                    <span style={{ color: '#94A3B8', fontSize: '13px' }}>Organic Traffic</span><span style={{ color: 'white', fontWeight: 'bold' }}>1.2M / mo</span>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--border-default)', paddingBottom: '12px' }}>
+                    <span style={{ color: 'var(--text-muted)', fontSize: '13px' }}>Organic Traffic</span><span style={{ color: 'var(--text-primary)', fontWeight: 'bold' }}>1.2M / mo</span>
                   </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '12px' }}>
-                    <span style={{ color: '#94A3B8', fontSize: '13px' }}>Top Keywords</span><span style={{ color: 'white', fontWeight: 'bold' }}>45,200</span>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--border-default)', paddingBottom: '12px' }}>
+                    <span style={{ color: 'var(--text-muted)', fontSize: '13px' }}>Top Keywords</span><span style={{ color: 'var(--text-primary)', fontWeight: 'bold' }}>45,200</span>
                   </div>
                 </div>
               </div>
@@ -2147,58 +2219,58 @@ Use clear headings and keep it actionable. Write in a professional consulting to
             content = <AutoPublisherSection />;
           } else if (sec.id === 'integrations') {
             content = (
-              <div style={{ background: '#141B2D', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '16px', padding: '24px' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '20px', marginBottom: '20px' }}>
+              <div style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border-default)', borderRadius: '16px', padding: '24px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border-default)', paddingBottom: '20px', marginBottom: '20px' }}>
                   <div>
-                    <h3 style={{ color: 'white', margin: '0 0 4px', fontSize: '16px' }}>Google Analytics 4</h3>
-                    <p style={{ color: '#64748B', margin: 0, fontSize: '13px' }}>Track real-time traffic and events from generated content.</p>
+                    <h3 style={{ color: 'var(--text-primary)', margin: '0 0 4px', fontSize: '16px' }}>Google Analytics 4</h3>
+                    <p style={{ color: 'var(--text-muted)', margin: 0, fontSize: '13px' }}>Track real-time traffic and events from generated content.</p>
                   </div>
-                  <button style={{ background: '#10B981', color: 'white', border: 'none', padding: '8px 20px', borderRadius: '8px', cursor: 'pointer' }}>Connected ✓</button>
+                  <button style={{ background: 'var(--color-success-500)', color: 'white', border: 'none', padding: '8px 20px', borderRadius: '8px', cursor: 'pointer' }}>Connected ✓</button>
                 </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '20px', marginBottom: '20px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border-default)', paddingBottom: '20px', marginBottom: '20px' }}>
                   <div>
-                    <h3 style={{ color: 'white', margin: '0 0 4px', fontSize: '16px' }}>Google Search Console</h3>
-                    <p style={{ color: '#64748B', margin: 0, fontSize: '13px' }}>Import keyword data and track index status automatically.</p>
+                    <h3 style={{ color: 'var(--text-primary)', margin: '0 0 4px', fontSize: '16px' }}>Google Search Console</h3>
+                    <p style={{ color: 'var(--text-muted)', margin: 0, fontSize: '13px' }}>Import keyword data and track index status automatically.</p>
                   </div>
-                  <button style={{ background: 'rgba(255,255,255,0.05)', color: 'white', border: '1px solid rgba(255,255,255,0.1)', padding: '8px 20px', borderRadius: '8px', cursor: 'pointer' }}>Connect</button>
+                  <button style={{ background: 'var(--bg-surface)', color: 'var(--text-primary)', border: '1px solid var(--border-default)', padding: '8px 20px', borderRadius: '8px', cursor: 'pointer' }}>Connect</button>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <div>
-                    <h3 style={{ color: 'white', margin: '0 0 4px', fontSize: '16px' }}>Zapier</h3>
-                    <p style={{ color: '#64748B', margin: 0, fontSize: '13px' }}>Connect BlogzzUP to 5,000+ apps.</p>
+                    <h3 style={{ color: 'var(--text-primary)', margin: '0 0 4px', fontSize: '16px' }}>Zapier</h3>
+                    <p style={{ color: 'var(--text-muted)', margin: 0, fontSize: '13px' }}>Connect BlogzzUP to 5,000+ apps.</p>
                   </div>
-                  <button style={{ background: 'rgba(255,255,255,0.05)', color: 'white', border: '1px solid rgba(255,255,255,0.1)', padding: '8px 20px', borderRadius: '8px', cursor: 'pointer' }}>Connect</button>
+                  <button style={{ background: 'var(--bg-surface)', color: 'var(--text-primary)', border: '1px solid var(--border-default)', padding: '8px 20px', borderRadius: '8px', cursor: 'pointer' }}>Connect</button>
                 </div>
               </div>
             );
           } else if (sec.id === 'schedule') {
             content = (
-              <div style={{ background: '#141B2D', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '16px', padding: '24px' }}>
+              <div style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border-default)', borderRadius: '16px', padding: '24px' }}>
                 {(typeof blogs !== 'undefined' ? blogs : []).filter(b => b.status === 'scheduled').length === 0 ? (
-                  <div style={{ textAlign: 'center', padding: '40px', color: '#64748B' }}>No upcoming scheduled blogs.</div>
+                  <div style={{ textAlign: 'center', padding: '40px', color: 'var(--text-muted)' }}>No upcoming scheduled blogs.</div>
                 ) : (
                   <>
                     {failedIds.size > 0 && (
-                      <div style={{ marginBottom: '20px', padding: '12px', background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.2)', borderRadius: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <span style={{ fontSize: '13px', color: '#EF4444', fontWeight: 500 }}>⚠️ {failedIds.size} blogs failed to publish.</span>
-                        <button onClick={() => setFailedIds(new Set())} style={{ background: '#EF4444', border: 'none', color: 'white', fontSize: '11px', fontWeight: 600, padding: '6px 12px', borderRadius: '8px', cursor: 'pointer' }}>Retry All</button>
+                      <div style={{ marginBottom: '20px', padding: '12px', background: 'var(--color-danger-100)', border: '1px solid var(--color-danger-border)', borderRadius: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <span style={{ fontSize: '13px', color: 'var(--color-danger-500)', fontWeight: 500 }}>⚠️ {failedIds.size} blogs failed to publish.</span>
+                        <button onClick={() => setFailedIds(new Set())} style={{ background: 'var(--color-danger-500)', border: 'none', color: 'white', fontSize: '11px', fontWeight: 600, padding: '6px 12px', borderRadius: '8px', cursor: 'pointer' }}>Retry All</button>
                       </div>
                     )}
                     {blogs.filter(b => b.status === 'scheduled').map(blog => {
                       const sDate = new Date(blog.scheduledAt || blog.createdAt);
                       return (
-                        <div key={blog.id} style={{ display: 'flex', alignItems: 'center', gap: '16px', padding: '16px', background: '#0D1526', borderRadius: '12px', marginBottom: '12px', border: '1px solid rgba(255,255,255,0.03)' }}>
-                          <div style={{ background: 'rgba(124,58,237,0.1)', color: '#A78BFA', padding: '10px', borderRadius: '8px', textAlign: 'center', minWidth: '50px' }}>
+                        <div key={blog.id} style={{ display: 'flex', alignItems: 'center', gap: '16px', padding: '16px', background: 'var(--bg-surface)', borderRadius: '12px', marginBottom: '12px', border: '1px solid var(--border-default)' }}>
+                          <div style={{ background: 'var(--bg-elevated)', color: 'var(--color-primary-600)', padding: '10px', borderRadius: '8px', textAlign: 'center', minWidth: '50px', border: '1px solid var(--border-default)' }}>
                             <div style={{ fontSize: '11px', textTransform: 'uppercase' }}>{sDate.toLocaleDateString('en-IN', { month: 'short' })}</div>
                             <div style={{ fontSize: '20px', fontWeight: 'bold' }}>{sDate.getDate()}</div>
                           </div>
                           <div style={{ flex: 1 }}>
-                            <h4 style={{ margin: '0 0 4px', color: 'white', fontSize: '15px' }}>{blog.title}</h4>
-                            <p style={{ margin: 0, color: '#64748B', fontSize: '13px' }}>
+                            <h4 style={{ margin: '0 0 4px', color: 'var(--text-primary)', fontSize: '15px' }}>{blog.title}</h4>
+                            <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: '13px' }}>
                               Scheduled for {sDate.toLocaleString('en-IN', { day: 'numeric', month: 'short', year: 'numeric', hour: 'numeric', minute: 'numeric', hour12: true })}
                             </p>
                           </div>
-                          <div style={{ fontSize: '12px', color: '#10B981', background: 'rgba(16,185,129,0.1)', padding: '4px 10px', borderRadius: '99px', textTransform: 'capitalize' }}>{blog.platform}</div>
+                          <div style={{ fontSize: '12px', color: 'var(--color-success-500)', background: 'var(--color-success-100)', padding: '4px 10px', borderRadius: '99px', textTransform: 'capitalize' }}>{blog.platform}</div>
                         </div>
                       );
                     })}
@@ -2210,78 +2282,79 @@ Use clear headings and keep it actionable. Write in a professional consulting to
             content = (
               <div>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '20px', marginBottom: '20px' }}>
-                  <div style={{ background: '#141B2D', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '16px', padding: '24px' }}>
-                    <div style={{ color: '#94A3B8', fontSize: '13px', marginBottom: '8px' }}>{sec.id === 'roi' ? 'Est. Traffic Value' : 'Total Sessions'}</div>
-                    <div style={{ color: 'white', fontSize: '28px', fontWeight: 'bold' }}>{sec.id === 'roi' ? '₹0' : '0'}</div>
-                    <div style={{ color: '#10B981', fontSize: '13px', marginTop: '8px' }}>+0% vs last month</div>
+                  <div style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border-default)', borderRadius: '16px', padding: '24px' }}>
+                    <div style={{ color: 'var(--text-muted)', fontSize: '13px', marginBottom: '8px' }}>{sec.id === 'roi' ? 'Est. Traffic Value' : 'Total Sessions'}</div>
+                    <div style={{ color: 'var(--text-primary)', fontSize: '28px', fontWeight: 'bold' }}>{sec.id === 'roi' ? '₹0' : '0'}</div>
+                    <div style={{ color: 'var(--color-success-500)', fontSize: '13px', marginTop: '8px' }}>+0% vs last month</div>
                   </div>
-                  <div style={{ background: '#141B2D', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '16px', padding: '24px' }}>
-                    <div style={{ color: '#94A3B8', fontSize: '13px', marginBottom: '8px' }}>{sec.id === 'roi' ? 'Content Cost Saved' : 'Avg. Duration'}</div>
-                    <div style={{ color: 'white', fontSize: '28px', fontWeight: 'bold' }}>{sec.id === 'roi' ? '₹0' : '0m 0s'}</div>
-                    <div style={{ color: '#10B981', fontSize: '13px', marginTop: '8px' }}>+0% vs last month</div>
+                  <div style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border-default)', borderRadius: '16px', padding: '24px' }}>
+                    <div style={{ color: 'var(--text-muted)', fontSize: '13px', marginBottom: '8px' }}>{sec.id === 'roi' ? 'Content Cost Saved' : 'Avg. Duration'}</div>
+                    <div style={{ color: 'var(--text-primary)', fontSize: '28px', fontWeight: 'bold' }}>{sec.id === 'roi' ? '₹0' : '0m 0s'}</div>
+                    <div style={{ color: 'var(--color-success-500)', fontSize: '13px', marginTop: '8px' }}>+0% vs last month</div>
                   </div>
-                  <div style={{ background: '#141B2D', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '16px', padding: '24px' }}>
-                    <div style={{ color: '#94A3B8', fontSize: '13px', marginBottom: '8px' }}>{sec.id === 'roi' ? 'Leads Generated' : 'Bounce Rate'}</div>
-                    <div style={{ color: 'white', fontSize: '28px', fontWeight: 'bold' }}>{sec.id === 'roi' ? '0' : '0%'}</div>
-                    <div style={{ color: '#10B981', fontSize: '13px', marginTop: '8px' }}>{sec.id === 'roi' ? '+0%' : '0%'} vs last month</div>
+                  <div style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border-default)', borderRadius: '16px', padding: '24px' }}>
+                    <div style={{ color: 'var(--text-muted)', fontSize: '13px', marginBottom: '8px' }}>{sec.id === 'roi' ? 'Leads Generated' : 'Bounce Rate'}</div>
+                    <div style={{ color: 'var(--text-primary)', fontSize: '28px', fontWeight: 'bold' }}>{sec.id === 'roi' ? '0' : '0%'}</div>
+                    <div style={{ color: 'var(--color-success-500)', fontSize: '13px', marginTop: '8px' }}>{sec.id === 'roi' ? '+0%' : '0%'} vs last month</div>
                   </div>
                 </div>
-                <div style={{ background: '#141B2D', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '16px', padding: '40px', textAlign: 'center', color: '#64748B' }}>
+                <div style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border-default)', borderRadius: '16px', padding: '40px', textAlign: 'center', color: 'var(--text-muted)' }}>
                   <div style={{ fontSize: '40px', marginBottom: '16px' }}>📈</div>
-                  <h3>Interactive Chart Data Loading...</h3>
+                  <h3 style={{ color: 'var(--text-primary)' }}>Interactive Chart Data Loading...</h3>
                   <p>Connect Google Analytics to visualize your daily metrics.</p>
                 </div>
               </div>
             );
           } else if (sec.id === 'brandvoice') {
             content = (
-              <div style={{ background: '#141B2D', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '16px', padding: '24px' }}>
+              <div style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border-default)', borderRadius: '16px', padding: '24px' }}>
                 <div style={{ marginBottom: '20px' }}>
-                  <label style={{ display: 'block', color: '#94A3B8', fontSize: '13px', marginBottom: '8px' }}>Tone of Voice</label>
-                  <select style={{ width: '100%', background: '#0D1526', border: '1px solid rgba(255,255,255,0.1)', color: 'white', padding: '12px', borderRadius: '8px', outline: 'none' }}>
+                  <label style={{ display: 'block', color: 'var(--text-muted)', fontSize: '13px', marginBottom: '8px' }}>Tone of Voice</label>
+                  <select style={{ width: '100%', background: 'var(--bg-surface)', border: '1px solid var(--border-default)', color: 'var(--text-primary)', padding: '12px', borderRadius: '8px', outline: 'none' }}>
                     <option>Professional & Authoritative</option>
                     <option>Conversational & Friendly</option>
                     <option>Humorous & Witty</option>
                     <option>Academic & Data-Driven</option>
+                    <option>GenZ Mode 🔥</option>
                   </select>
                 </div>
                 <div style={{ marginBottom: '20px' }}>
-                  <label style={{ display: 'block', color: '#94A3B8', fontSize: '13px', marginBottom: '8px' }}>Custom Core Directives (System Prompt Injections)</label>
-                  <textarea rows="4" placeholder="Always write in first-person plural ('we'). Never use exclamation marks. Keep sentences under 20 words where possible." style={{ width: '100%', background: '#0D1526', border: '1px solid rgba(255,255,255,0.1)', color: 'white', padding: '12px', borderRadius: '8px', outline: 'none', resize: 'vertical', boxSizing: 'border-box' }}></textarea>
+                  <label style={{ display: 'block', color: 'var(--text-muted)', fontSize: '13px', marginBottom: '8px' }}>Custom Core Directives (System Prompt Injections)</label>
+                  <textarea rows="4" placeholder="Always write in first-person plural ('we'). Never use exclamation marks. Keep sentences under 20 words where possible." style={{ width: '100%', background: 'var(--bg-surface)', border: '1px solid var(--border-default)', color: 'var(--text-primary)', padding: '12px', borderRadius: '8px', outline: 'none', resize: 'vertical', boxSizing: 'border-box' }}></textarea>
                 </div>
                 <div style={{ marginBottom: '20px' }}>
-                  <label style={{ display: 'block', color: '#94A3B8', fontSize: '13px', marginBottom: '8px' }}>Forbidden Words (Comma separated)</label>
-                  <input type="text" placeholder="e.g. cheap, guarantee, magic" style={{ width: '100%', background: '#0D1526', border: '1px solid rgba(255,255,255,0.1)', color: 'white', padding: '12px', borderRadius: '8px', outline: 'none', boxSizing: 'border-box' }} />
+                  <label style={{ display: 'block', color: 'var(--text-muted)', fontSize: '13px', marginBottom: '8px' }}>Forbidden Words (Comma separated)</label>
+                  <input type="text" placeholder="e.g. cheap, guarantee, magic" style={{ width: '100%', background: 'var(--bg-surface)', border: '1px solid var(--border-default)', color: 'var(--text-primary)', padding: '12px', borderRadius: '8px', outline: 'none', boxSizing: 'border-box' }} />
                 </div>
-                <button style={{ background: 'linear-gradient(135deg,#7C3AED,#5B21B6)', color: 'white', border: 'none', padding: '12px 24px', borderRadius: '8px', cursor: 'pointer', fontWeight: 'bold' }}>Save Brand Voice</button>
+                <button style={{ background: 'var(--color-accent-gradient)', color: 'white', border: 'none', padding: '12px 24px', borderRadius: '8px', cursor: 'pointer', fontWeight: 'bold' }}>Save Brand Voice</button>
               </div>
             );
           } else if (sec.id === 'team') {
             content = (
-              <div style={{ background: '#141B2D', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '16px', padding: '24px' }}>
+              <div style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border-default)', borderRadius: '16px', padding: '24px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
-                  <h3 style={{ color: 'white', margin: 0 }}>Workspace Members</h3>
-                  <button style={{ background: 'rgba(255,255,255,0.05)', color: 'white', border: '1px solid rgba(255,255,255,0.1)', padding: '8px 16px', borderRadius: '8px', cursor: 'pointer' }}>+ Invite Member</button>
+                  <h3 style={{ color: 'var(--text-primary)', margin: 0 }}>Workspace Members</h3>
+                  <button style={{ background: 'var(--bg-surface)', color: 'var(--text-primary)', border: '1px solid var(--border-default)', padding: '8px 16px', borderRadius: '8px', cursor: 'pointer' }}>+ Invite Member</button>
                 </div>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px', background: '#0D1526', borderRadius: '12px', marginBottom: '12px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px', background: 'var(--bg-surface)', borderRadius: '12px', marginBottom: '12px', border: '1px solid var(--border-default)' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                     <img src="https://i.pravatar.cc/100?img=11" style={{ width: '40px', height: '40px', borderRadius: '50%' }} />
                     <div>
-                      <div style={{ color: 'white', fontWeight: 'bold', fontSize: '14px' }}>Aryan (You)</div>
-                      <div style={{ color: '#64748B', fontSize: '12px' }}>aryan@example.com</div>
+                      <div style={{ color: 'var(--text-primary)', fontWeight: 'bold', fontSize: '14px' }}>Aryan (You)</div>
+                      <div style={{ color: 'var(--text-muted)', fontSize: '12px' }}>aryan@example.com</div>
                     </div>
                   </div>
-                  <span style={{ color: '#10B981', background: 'rgba(16,185,129,0.1)', padding: '4px 12px', borderRadius: '99px', fontSize: '12px', fontWeight: 'bold' }}>Owner</span>
+                  <span style={{ color: 'var(--color-success-500)', background: 'var(--bg-elevated)', border: '1px solid var(--color-success-border)', padding: '4px 12px', borderRadius: '99px', fontSize: '12px', fontWeight: 'bold' }}>Owner</span>
                 </div>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px', background: '#0D1526', borderRadius: '12px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px', background: 'var(--bg-surface)', borderRadius: '12px', border: '1px solid var(--border-default)' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                    <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: '#7C3AED', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold' }}>S</div>
+                    <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'var(--color-primary-500)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold' }}>S</div>
                     <div>
-                      <div style={{ color: 'white', fontWeight: 'bold', fontSize: '14px' }}>Sarah Jenkins</div>
-                      <div style={{ color: '#64748B', fontSize: '12px' }}>sarah@example.com</div>
+                      <div style={{ color: 'var(--text-primary)', fontWeight: 'bold', fontSize: '14px' }}>Sarah Jenkins</div>
+                      <div style={{ color: 'var(--text-muted)', fontSize: '12px' }}>sarah@example.com</div>
                     </div>
                   </div>
-                  <select style={{ background: 'transparent', border: '1px solid rgba(255,255,255,0.1)', color: 'white', padding: '6px 12px', borderRadius: '6px', outline: 'none' }}>
+                  <select style={{ background: 'transparent', border: '1px solid var(--border-default)', color: 'var(--text-primary)', padding: '6px 12px', borderRadius: '6px', outline: 'none' }}>
                     <option>Editor</option>
                     <option>Viewer</option>
                     <option>Admin</option>
@@ -2298,12 +2371,12 @@ Use clear headings and keep it actionable. Write in a professional consulting to
                     { name: 'Growth', price: '₹6,499', blogs: '50 blogs/mo', active: true },
                     { name: 'Scale', price: '₹16,500', blogs: '200 blogs/mo' }
                   ].map(plan => (
-                    <div key={plan.name} style={{ background: plan.active ? 'rgba(124,58,237,0.1)' : '#141B2D', border: plan.active ? '1px solid #7C3AED' : '1px solid rgba(255,255,255,0.06)', borderRadius: '16px', padding: '32px', textAlign: 'center', position: 'relative' }}>
-                      {plan.active && <div style={{ position: 'absolute', top: '-12px', left: '50%', transform: 'translateX(-50%)', background: '#7C3AED', color: 'white', fontSize: '11px', fontWeight: 'bold', padding: '4px 12px', borderRadius: '99px' }}>Current Plan</div>}
-                      <h3 style={{ color: 'white', fontSize: '20px', margin: '0 0 8px' }}>{plan.name}</h3>
-                      <div style={{ fontSize: '36px', color: 'white', fontWeight: 'bold', marginBottom: '16px' }}>{plan.price}<span style={{ fontSize: '14px', color: '#94A3B8' }}>/mo</span></div>
-                      <div style={{ color: '#A78BFA', fontWeight: 'bold', fontSize: '14px', marginBottom: '24px' }}>{plan.blogs}</div>
-                      <button style={{ width: '100%', background: plan.active ? 'transparent' : 'rgba(255,255,255,0.05)', color: plan.active ? '#A78BFA' : 'white', border: plan.active ? '1px solid #A78BFA' : 'none', padding: '12px', borderRadius: '8px', cursor: 'pointer', fontWeight: 'bold' }}>{plan.active ? 'Manage Plan' : 'Upgrade'}</button>
+                    <div key={plan.name} style={{ background: plan.active ? 'var(--bg-elevated)' : 'var(--bg-surface)', border: plan.active ? '2px solid var(--color-primary-500)' : '1px solid var(--border-default)', borderRadius: '16px', padding: '32px', textAlign: 'center', position: 'relative' }}>
+                      {plan.active && <div style={{ position: 'absolute', top: '-12px', left: '50%', transform: 'translateX(-50%)', background: 'var(--color-primary-500)', color: 'white', fontSize: '11px', fontWeight: 'bold', padding: '4px 12px', borderRadius: '99px' }}>Current Plan</div>}
+                      <h3 style={{ color: 'var(--text-primary)', fontSize: '20px', margin: '0 0 8px' }}>{plan.name}</h3>
+                      <div style={{ fontSize: '36px', color: 'var(--text-primary)', fontWeight: 'bold', marginBottom: '16px' }}>{plan.price}<span style={{ fontSize: '14px', color: 'var(--text-muted)' }}>/mo</span></div>
+                      <div style={{ color: 'var(--color-primary-400)', fontWeight: 'bold', fontSize: '14px', marginBottom: '24px' }}>{plan.blogs}</div>
+                      <button style={{ width: '100%', background: plan.active ? 'transparent' : 'var(--bg-surface)', color: plan.active ? 'var(--color-primary-400)' : 'var(--text-primary)', border: plan.active ? '1px solid var(--color-primary-400)' : '1px solid var(--border-default)', padding: '12px', borderRadius: '8px', cursor: 'pointer', fontWeight: 'bold' }}>{plan.active ? 'Manage Plan' : 'Upgrade'}</button>
                     </div>
                   ))}
                 </div>
@@ -2312,7 +2385,7 @@ Use clear headings and keep it actionable. Write in a professional consulting to
           }
 
           return (
-            <div key={sec.id} id={`dash-${sec.id}`} className="dash-section" style={{ display: 'none', padding: '40px', color: '#fff' }}>
+            <div key={sec.id} id={`dash-${sec.id}`} className="dash-section" style={{ display: 'none', padding: '40px', color: 'var(--text-primary)' }}>
               <header className="top-header" style={{ marginBottom: '32px' }}>
                 <div className="header-text">
                   <h1>{sec.title}</h1>
@@ -2320,9 +2393,9 @@ Use clear headings and keep it actionable. Write in a professional consulting to
                 </div>
               </header>
               {content || (
-                <div style={{ background: '#141B2D', border: '1px dashed rgba(255,255,255,0.2)', padding: '60px', textAlign: 'center', borderRadius: '16px' }}>
+                <div style={{ background: 'var(--bg-elevated)', border: '1px dashed var(--border-default)', padding: '60px', textAlign: 'center', borderRadius: '16px' }}>
                   <h2 style={{ fontSize: '24px', marginBottom: '16px' }}>{sec.title} Content</h2>
-                  <p style={{ color: '#94A3B8' }}>This section is currently under development. Soon you'll be able to access all {sec.title.toLowerCase()} features here.</p>
+                  <p style={{ color: 'var(--text-muted)' }}>This section is currently under development. Soon you'll be able to access all {sec.title.toLowerCase()} features here.</p>
                 </div>
               )}
             </div>
@@ -2331,46 +2404,67 @@ Use clear headings and keep it actionable. Write in a professional consulting to
       </main>
       {/* Global Publish Modal */}
       {publishModalBlog && (
-        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <div style={{ background: '#141B2D', border: '1px solid rgba(16,185,129,0.3)', borderRadius: '20px', padding: '32px', width: '400px', position: 'relative' }}>
-            <button onClick={() => setPublishModalBlog(null)} style={{ position: 'absolute', top: '16px', right: '16px', background: 'transparent', border: 'none', color: 'white', cursor: 'pointer', fontSize: '16px' }}>✕</button>
-            <h2 style={{ fontSize: '20px', fontWeight: 700, color: 'white', marginBottom: '8px' }}>Publish Blog</h2>
-            <p style={{ fontSize: '13px', color: '#94A3B8', marginBottom: '20px' }}>{publishModalBlog.title}</p>
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.8)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(4px)' }}>
+          <div style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border-default)', borderRadius: '20px', padding: '32px', width: '420px', position: 'relative', boxShadow: 'var(--shadow-modal)' }}>
+            <button onClick={() => setPublishModalBlog(null)} style={{ position: 'absolute', top: '20px', right: '20px', background: 'var(--bg-surface)', border: '1px solid var(--border-default)', color: 'var(--text-primary)', width: '32px', height: '32px', borderRadius: '50%', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>✕</button>
+            <h2 style={{ fontSize: '22px', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '8px' }}>Publish Blog</h2>
+            <p style={{ fontSize: '13px', color: 'var(--text-muted)', marginBottom: '24px', lineHeight: 1.5 }}>{publishModalBlog.title}</p>
 
-            <label style={{ color: 'white', fontSize: '14px', marginBottom: '8px', display: 'block' }}>Select Platform</label>
-            <select value={publishingPlatform} onChange={(e) => setPublishingPlatform(e.target.value)} style={{ width: '100%', background: '#0D1526', border: '1px solid rgba(255,255,255,0.1)', color: 'white', padding: '10px', borderRadius: '8px', marginBottom: '20px' }}>
-              <option value="wordpress">WordPress</option>
-              <option value="blogger">Blogger</option>
-              <option value="devto">Dev.to</option>
-              <option value="hashnode">Hashnode</option>
-              <option value="medium">Medium</option>
-            </select>
+            <div style={{ marginBottom: '20px' }}>
+              <label style={{ color: 'var(--text-secondary)', fontSize: '12px', fontWeight: 600, marginBottom: '8px', display: 'block', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Target Platform</label>
+              <select
+                value={publishingPlatform}
+                onChange={(e) => setPublishingPlatform(e.target.value)}
+                style={{ width: '100%', background: 'var(--bg-surface)', border: '1px solid var(--border-default)', color: 'var(--text-primary)', padding: '12px', borderRadius: '10px', fontSize: '14px', outline: 'none' }}
+              >
+                <option value="wordpress">WordPress</option>
+                <option value="blogger">Blogger</option>
+                <option value="devto">Dev.to</option>
+                <option value="hashnode">Hashnode</option>
+                <option value="medium">Medium</option>
+              </select>
+            </div>
 
             {/* Scheduling Options */}
-            <div style={{ marginTop: '0px', padding: '16px', background: 'rgba(255,255,255,0.03)', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)', marginBottom: '20px' }}>
+            <div style={{ marginTop: '0px', padding: '16px', background: 'var(--bg-surface)', borderRadius: '12px', border: '1px solid var(--border-default)', marginBottom: '24px' }}>
               <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', marginBottom: isScheduled ? '12px' : '0' }}>
                 <input type="checkbox" checked={isScheduled} onChange={e => setIsScheduled(e.target.checked)} style={{ width: '18px', height: '18px', accentColor: 'var(--color-primary-500)' }} />
-                <span style={{ fontSize: '14px', fontWeight: 500, color: 'white' }}>Schedule for later</span>
+                <span style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-primary)' }}>Schedule for later</span>
               </label>
 
               {isScheduled && (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                  <label style={{ fontSize: '12px', color: '#64748B' }}>Select Date & Time</label>
+                  <label style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Publishing Date & Time</label>
                   <input
                     type="datetime-local"
                     value={scheduledAt}
                     onChange={e => setScheduledAt(e.target.value)}
-                    style={{ background: '#0D1526', border: '1px solid rgba(255,255,255,0.1)', color: 'white', padding: '10px', borderRadius: '8px', outline: 'none', width: '100%', boxSizing: 'border-box' }}
+                    style={{ background: 'var(--bg-base)', border: '1px solid var(--border-default)', color: 'var(--text-primary)', padding: '10px', borderRadius: '8px', outline: 'none', width: '100%', boxSizing: 'border-box', fontSize: '13px' }}
                   />
                 </div>
               )}
             </div>
 
-            <button onClick={handleGlobalPublish} disabled={publishStatus === 'Publishing...' || publishStatus.includes('Scheduling')} style={{ width: '100%', background: '#10B981', color: 'white', border: 'none', padding: '12px', borderRadius: '8px', cursor: 'pointer', fontWeight: 'bold' }}>
+            <button
+              onClick={handleGlobalPublish}
+              disabled={publishStatus === 'Publishing...' || publishStatus.includes('Scheduling')}
+              style={{
+                width: '100%',
+                background: 'var(--color-accent-gradient)',
+                color: 'white',
+                border: 'none',
+                padding: '14px',
+                borderRadius: '12px',
+                cursor: 'pointer',
+                fontWeight: 700,
+                fontSize: '15px',
+                boxShadow: 'var(--shadow-glow-primary)'
+              }}
+            >
               {publishStatus === 'Publishing...' || publishStatus.includes('Scheduling') ? (isScheduled ? 'Scheduling...' : 'Publishing...') : (isScheduled ? 'Schedule Blog' : 'Publish Now')}
             </button>
             {publishStatus && publishStatus !== 'Publishing...' && (
-              <p style={{ marginTop: '16px', fontSize: '14px', color: publishStatus.startsWith('Error') ? '#EF4444' : '#10B981', textAlign: 'center' }}>{publishStatus}</p>
+              <p style={{ marginTop: '16px', fontSize: '13px', color: publishStatus.startsWith('Error') ? 'var(--color-danger-500)' : 'var(--color-success-500)', textAlign: 'center', fontWeight: 500 }}>{publishStatus}</p>
             )}
           </div>
         </div>

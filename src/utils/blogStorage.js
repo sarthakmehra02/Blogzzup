@@ -15,6 +15,8 @@ import {
   serverTimestamp,
   query,
   orderBy,
+  where,
+  limit,
 } from 'firebase/firestore';
 import { db } from '../firebase';
 
@@ -85,4 +87,34 @@ export async function fetchCredentials(uid) {
   const ref = doc(db, 'users', uid, 'settings', 'credentials');
   const snap = await getDoc(ref);
   return snap.exists() ? (snap.data().platforms || {}) : {};
+}
+
+/**
+ * Verify if a credential (token) is unique across the app.
+ * If it belongs to someone else, throws an Error.
+ * Otherwise, updates the claim in the `integration_tokens` collection.
+ */
+export async function verifyAndClaimCredential(uid, platform, token) {
+  if (!token) return; // Skip if empty
+
+  const tokensRef = collection(db, 'integration_tokens');
+  const q = query(tokensRef, where('token', '==', token), limit(1));
+  const snap = await getDocs(q);
+
+  if (!snap.empty) {
+    const existingClaim = snap.docs[0].data();
+    if (existingClaim.uid !== uid) {
+      throw new Error(`These credentials are already being used by another account.`);
+    }
+  }
+
+  // Claim it or update timestamp
+  const claimId = `${platform}_${uid}`; 
+  const claimRef = doc(db, 'integration_tokens', claimId);
+  await setDoc(claimRef, {
+    uid,
+    platform,
+    token,
+    updatedAt: serverTimestamp()
+  }, { merge: true });
 }

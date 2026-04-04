@@ -314,48 +314,50 @@
    Components using var(--token) adapt automatically — no ad-hoc overrides needed.
    ───────────────────────────────────────────── */
 [data-theme="light"] {
-  --color-bg-primary: #FAF7F0;
+  --color-bg-primary: #FDF7F2;
   --color-bg-secondary: #FFFFFF;
-  --color-bg-tertiary: #F5F0E8;
+  --color-bg-tertiary: #F8F3EF;
   --color-bg-card: #FFFFFF;
-  --color-bg-sidebar: #FFFFFF;
-  --color-bg-input: #F5F0E8;
-  --color-bg-hover: rgba(196, 151, 74, 0.08);
+  --color-bg-sidebar: #FDF7F2;
+  --color-bg-input: #FFFFFF;
+  --color-bg-hover: rgba(0, 0, 0, 0.03);
 
-  --color-border: rgba(180, 150, 110, 0.18);
-  --color-border-hover: rgba(196, 151, 74, 0.4);
+  --color-border: rgba(0, 0, 0, 0.08);
+  --color-border-hover: rgba(0, 0, 0, 0.15);
 
-  --color-text-primary: #2C1A0E;
-  --color-text-secondary: #5C4A3A;
-  --color-text-muted: #8B7355;
-  --color-text-hint: rgba(92, 74, 58, 0.45);
+  --color-text-primary: #1E293B;
+  --color-text-secondary: #475569;
+  --color-text-muted: #64748B;
+  --color-text-hint: rgba(30, 41, 59, 0.45);
 
-  --color-accent: #C4974A;
-  --color-accent-rgb: 196, 151, 74;
-  --color-accent-dark: #8B6914;
-  --color-accent-gradient: linear-gradient(135deg, #C4974A, #A67C3A);
-  --color-accent-secondary: #5C7A6E;
-  --color-accent-secondary-rgb: 92, 122, 110;
+  --color-accent: #7C3AED;
+  --color-accent-rgb: 124, 58, 237;
+  --color-accent-dark: #6D28D9;
+  --color-accent-gradient: linear-gradient(135deg, #7C3AED, #8B5CF6);
+  --color-accent-secondary: #0891B2;
+  --color-accent-secondary-rgb: 8, 145, 178;
 
-  --color-success: #4A7C59;
-  --color-success-rgb: 74, 124, 89;
-  --color-warning: #C4974A;
-  --color-warning-rgb: 196, 151, 74;
-  --color-danger: #DC2626;
-  --color-danger-rgb: 220, 38, 38;
+  --color-success: #10B981;
+  --color-success-rgb: 16, 185, 129;
+  --color-warning: #F59E0B;
+  --color-warning-rgb: 245, 158, 11;
+  --color-danger: #EF4444;
+  --color-danger-rgb: 239, 68, 68;
 
-  --shadow-card: 0 2px 16px rgba(0, 0, 0, 0.06);
-  --shadow-card-hover: 0 6px 28px rgba(0, 0, 0, 0.1);
-  --shadow-sidebar: 2px 0 12px rgba(0, 0, 0, 0.05);
+  --shadow-card: 0 4px 20px rgba(0, 0, 0, 0.04);
+  --shadow-card-hover: 0 10px 30px rgba(0, 0, 0, 0.08);
+  --shadow-sidebar: 1px 0 10px rgba(0, 0, 0, 0.03);
 
   /* Semantic Mappings for Light Mode */
   --bg-base: var(--color-bg-primary);
   --bg-surface: var(--color-bg-secondary);
   --bg-elevated: var(--color-bg-tertiary);
+  --bg-overlay: rgba(253, 247, 242, 0.8);
   --bg-input: var(--color-bg-input);
   --text-primary: var(--color-text-primary);
   --text-secondary: var(--color-text-secondary);
   --text-muted: var(--color-text-muted);
+  --text-subtle: #94A3B8;
   --border-default: var(--color-border);
   --border-strong: var(--color-border-hover);
 }
