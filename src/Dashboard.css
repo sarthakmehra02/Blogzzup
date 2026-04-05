@@ -1021,7 +1021,7 @@
 }
 
 [data-theme="light"] .logo-text {
-  color: #0F172A;
+  color: var(--bg-base);
 }
 
 [data-theme="light"] .nav-label {
@@ -1034,7 +1034,7 @@
 
 [data-theme="light"] .nav-item:hover {
   background: rgba(0, 0, 0, 0.04);
-  color: #0F172A;
+  color: var(--bg-base);
 }
 
 [data-theme="light"] .nav-item.active {
@@ -1043,7 +1043,7 @@
 }
 
 [data-theme="light"] .user-name {
-  color: #0F172A;
+  color: var(--bg-base);
 }
 
 [data-theme="light"] .sidebar-footer {
@@ -1056,7 +1056,7 @@
 
 [data-theme="light"] .logout-btn:hover {
   background: rgba(0, 0, 0, 0.04);
-  color: #0F172A;
+  color: var(--bg-base);
 }
 
 /* Panel & card backgrounds */
@@ -1084,7 +1084,7 @@
 
 [data-theme="light"] .dash-table td {
   border-bottom-color: rgba(0, 0, 0, 0.04);
-  color: #1E293B;
+  color: var(--bg-elevated);
 }
 
 [data-theme="light"] .dash-table tbody tr:hover {
@@ -1093,7 +1093,7 @@
 
 /* Inline-style overrides (Dashboard JSX uses hardcoded colours) */
 [data-theme="light"] .dash-section {
-  color: #0F172A;
+  color: var(--bg-base);
 }
 
 /* Action dropdown */
@@ -1104,7 +1104,7 @@
 }
 
 [data-theme="light"] .action-dropdown button {
-  color: #1E293B;
+  color: var(--bg-elevated);
 }
 
 [data-theme="light"] .action-dropdown button:hover {
@@ -1119,24 +1119,24 @@
 /* Toast */
 [data-theme="light"] .toast {
   background: #FFFFFF;
-  color: #0F172A;
+  color: var(--bg-base);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
 }
 
 /* Dashboard greeting & headers */
 [data-theme="light"] .dashboard-greeting {
-  color: #0F172A;
+  color: var(--bg-base);
 }
 
 [data-theme="light"] .top-header h1 {
-  color: #0F172A;
-  -webkit-text-fill-color: #0F172A;
+  color: var(--bg-base);
+  -webkit-text-fill-color: var(--bg-base);
   background: none;
 }
 
 [data-theme="light"] .header-text h1 {
-  color: #0F172A;
-  -webkit-text-fill-color: #0F172A;
+  color: var(--bg-base);
+  -webkit-text-fill-color: var(--bg-base);
   background: none;
 }
 

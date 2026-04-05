@@ -1242,6 +1242,7 @@ const Dashboard = ({ onLogout }) => {
   const [viewDate, setViewDate] = useState(new Date());
 
   const [userPlan, setUserPlan] = useState('Free');
+  const [billingCycle, setBillingCycle] = useState('monthly');
 
   useEffect(() => {
     const fetchUserPlan = async () => {
@@ -2439,29 +2440,106 @@ Use clear headings and keep it actionable. Write in a professional consulting to
           } else if (sec.id === 'billing') {
             content = (
               <div>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '20px' }}>
-                  {[
-                    { name: 'Starter', price: '₹1,999', blogs: '15 blogs/mo', action: () => handlePlanUpgrade('Starter', 1999) },
-                    { name: 'Growth', price: '₹4,999', blogs: '50 blogs/mo', action: () => handlePlanUpgrade('Growth', 4999) },
-                    { name: 'Scale', price: 'Custom', blogs: 'Unlimited blogs', action: () => window.open('mailto:hello@blogforge.ai?subject=Scale Plan Enquiry') }
-                  ].map(plan => {
-                    const isActive = userPlan === plan.name;
-                    const isDisabled = plan.name !== 'Scale' && isButtonDisabled(plan.name, loadingPlan, userPlan);
-                    const btnText = plan.name === 'Scale' ? 'Contact Sales →' : getButtonText(plan.name, loadingPlan, userPlan);
-                    return (
-                    <div key={plan.name} style={{ background: isActive ? 'var(--bg-elevated)' : 'var(--bg-surface)', border: isActive ? '2px solid var(--color-primary-500)' : '1px solid var(--border-default)', borderRadius: '16px', padding: '32px', textAlign: 'center', position: 'relative', opacity: (planHierarchy[userPlan] > planHierarchy[plan.name] && !isActive) ? 0.6 : 1 }}>
-                      {isActive && <div style={{ position: 'absolute', top: '-12px', left: '50%', transform: 'translateX(-50%)', background: 'var(--color-primary-500)', color: 'white', fontSize: '11px', fontWeight: 'bold', padding: '4px 12px', borderRadius: '99px' }}>Current Plan</div>}
-                      <h3 style={{ color: 'var(--text-primary)', fontSize: '20px', margin: '0 0 8px' }}>{plan.name}</h3>
-                      <div style={{ fontSize: '36px', color: 'var(--text-primary)', fontWeight: 'bold', marginBottom: '16px' }}>{plan.price}<span style={{ fontSize: '14px', color: 'var(--text-muted)' }}>/mo</span></div>
-                      <div style={{ color: 'var(--color-primary-400)', fontWeight: 'bold', fontSize: '14px', marginBottom: '24px' }}>{plan.blogs}</div>
-                      <button 
-                        onClick={plan.action}
-                        disabled={isDisabled}
-                        style={{ width: '100%', background: isActive ? 'transparent' : 'var(--bg-surface)', color: isDisabled && !isActive ? 'var(--text-muted)' : isActive ? 'var(--color-primary-400)' : 'var(--text-primary)', border: isActive ? '1px solid var(--color-primary-400)' : '1px solid var(--border-default)', padding: '12px', borderRadius: '8px', cursor: isDisabled ? 'not-allowed' : 'pointer', fontWeight: 'bold', opacity: loadingPlan === plan.name ? 0.7 : 1 }}>
-                        {btnText}
-                      </button>
+                <div style={{textAlign: 'center', marginBottom: '48px'}}>
+                  <h1 style={{fontSize: '48px', fontWeight: 800, color: 'var(--text-primary)', margin: 0}}>
+                    Simple Pricing. <span style={{background: 'linear-gradient(135deg,#7C3AED,#06B6D4)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent'}}>Serious Results.</span>
+                  </h1>
+                  <p style={{color: 'var(--text-muted)', marginTop: '12px', fontSize: '18px'}}>Start free. Upgrade when you're ready. Cancel anytime.</p>
+                </div>
+
+                <div className="pricing-toggle">
+                  <div className="pt-container">
+                    <button 
+                      onClick={() => setBillingCycle('monthly')}
+                      className={`pt-btn ${billingCycle === 'monthly' ? 'active' : 'inactive'}`}
+                    >Monthly</button>
+                    <button 
+                      onClick={() => setBillingCycle('yearly')}
+                      className={`pt-btn ${billingCycle === 'yearly' ? 'active' : 'inactive'}`}
+                    >Yearly (Save 30%)</button>
+                  </div>
+                </div>
+
+                <div className="pricing-grid-3">
+                  {/* Starter */}
+                  <div className="pc-card" style={{ opacity: (planHierarchy[userPlan] > planHierarchy['Starter'] && userPlan !== 'Starter') ? 0.6 : 1 }}>
+                    {userPlan === 'Starter' && <div style={{ position: 'absolute', top: '-12px', left: '50%', transform: 'translateX(-50%)', background: 'var(--color-primary-500)', color: 'white', fontSize: '11px', fontWeight: 'bold', padding: '4px 12px', borderRadius: '99px' }}>Current Plan</div>}
+                    <h3 className="pc-header">Starter</h3>
+                    <div className="pc-price-wrap">
+                      <span className="pc-price">{billingCycle === 'yearly' ? '₹16,790' : '₹1,999'}</span>
+                      <span className="pc-per">{billingCycle === 'yearly' ? '/year' : '/month'}</span>
                     </div>
-                  )})}
+                    <div style={{fontSize: '12px', color: '#10B981', marginTop: '4px'}}>(First month free)</div>
+                    <p className="pc-desc">For early-stage startups building organic presence</p>
+                    <div className="pc-divider"></div>
+                    <ul className="pc-feat-list">
+                      <li className="pc-feat"><span className="pc-feat-check">✓</span> 15 SEO blogs / month</li>
+                      <li className="pc-feat"><span className="pc-feat-check">✓</span> Real-time SEO Scorer</li>
+                      <li className="pc-feat"><span className="pc-feat-check">✓</span> Auto-publish to 1 website</li>
+                      <li className="pc-feat"><span className="pc-feat-check">✓</span> SERP Gap Scanner (5/month)</li>
+                      <li className="pc-feat"><span className="pc-feat-check">✓</span> Content Calendar</li>
+                      <li className="pc-feat"><span className="pc-feat-check">✓</span> Email support</li>
+                    </ul>
+                    <button
+                      className={userPlan === 'Starter' ? 'pc-btn-solid' : 'pc-btn-outline'}
+                      onClick={() => handlePlanUpgrade('Starter', billingCycle === 'yearly' ? 16790 : 1999)}
+                      disabled={userPlan === 'Starter' || isButtonDisabled('Starter', loadingPlan, userPlan)}
+                      style={{ opacity: loadingPlan === 'Starter' ? 0.7 : 1, cursor: (userPlan === 'Starter' || isButtonDisabled('Starter', loadingPlan, userPlan)) ? 'not-allowed' : 'pointer' }}
+                    >{getButtonText('Starter', loadingPlan, userPlan)}</button>
+                  </div>
+
+                  {/* Growth */}
+                  <div className="pc-card popular" style={{ opacity: (planHierarchy[userPlan] > planHierarchy['Growth'] && userPlan !== 'Growth') ? 0.6 : 1 }}>
+                    {userPlan === 'Growth' ? <div style={{ position: 'absolute', top: '-12px', left: '50%', transform: 'translateX(-50%)', background: 'var(--color-primary-500)', color: 'white', fontSize: '11px', fontWeight: 'bold', padding: '4px 12px', borderRadius: '99px' }}>Current Plan</div> : <div className="pc-most-pop">Most Popular</div>}
+                    <h3 className="pc-header">Growth</h3>
+                    <div className="pc-price-wrap">
+                      <span className="pc-price">{billingCycle === 'yearly' ? '₹41,990' : '₹4,999'}</span>
+                      <span className="pc-per">{billingCycle === 'yearly' ? '/year' : '/month'}</span>
+                    </div>
+                    <p className="pc-desc" style={{margin: '32px 0 24px'}}>For startups replacing their marketing team</p>
+                    <div className="pc-divider"></div>
+                    <ul className="pc-feat-list">
+                      <div style={{fontSize: '14px', color: 'var(--text-primary)', fontWeight: 600, padding: '6px 0'}}>✓ Everything in Starter</div>
+                      <li className="pc-feat"><span className="pc-feat-check">✓</span> 50 SEO blogs / month</li>
+                      <li className="pc-feat"><span className="pc-feat-check">✓</span> GEO Optimization Engine</li>
+                      <li className="pc-feat"><span className="pc-feat-check">✓</span> Content Cluster Map (unlimited)</li>
+                      <li className="pc-feat"><span className="pc-feat-check">✓</span> Social Repurpose Engine</li>
+                      <li className="pc-feat"><span className="pc-feat-check">✓</span> Voice-to-Blog (10/month)</li>
+                      <li className="pc-feat"><span className="pc-feat-check">✓</span> ROI & Traffic Tracker</li>
+                      <li className="pc-feat"><span className="pc-feat-check">✓</span> Priority support</li>
+                    </ul>
+                    <button
+                      className="pc-btn-solid"
+                      onClick={() => handlePlanUpgrade('Growth', billingCycle === 'yearly' ? 41990 : 4999)}
+                      disabled={userPlan === 'Growth' || isButtonDisabled('Growth', loadingPlan, userPlan)}
+                      style={{ opacity: loadingPlan === 'Growth' ? 0.7 : 1, cursor: (userPlan === 'Growth' || isButtonDisabled('Growth', loadingPlan, userPlan)) ? 'not-allowed' : 'pointer' }}
+                    >{getButtonText('Growth', loadingPlan, userPlan)}</button>
+                  </div>
+
+                  {/* Scale */}
+                  <div className="pc-card">
+                    {userPlan === 'Scale' && <div style={{ position: 'absolute', top: '-12px', left: '50%', transform: 'translateX(-50%)', background: 'var(--color-primary-500)', color: 'white', fontSize: '11px', fontWeight: 'bold', padding: '4px 12px', borderRadius: '99px' }}>Current Plan</div>}
+                    <h3 className="pc-header">Scale</h3>
+                    <div className="pc-price-wrap">
+                      <span className="pc-price">Custom</span>
+                    </div>
+                    <p className="pc-desc" style={{margin: '48px 0 24px'}}>For agencies and high-growth teams</p>
+                    <div className="pc-divider"></div>
+                    <ul className="pc-feat-list">
+                       <li className="pc-feat"><span className="pc-feat-check">✓</span> Unlimited blogs</li>
+                       <li className="pc-feat"><span className="pc-feat-check">✓</span> Multi-website support</li>
+                       <li className="pc-feat"><span className="pc-feat-check">✓</span> Custom brand voice training</li>
+                       <li className="pc-feat"><span className="pc-feat-check">✓</span> Full API access</li>
+                       <li className="pc-feat"><span className="pc-feat-check">✓</span> White-label option</li>
+                       <li className="pc-feat"><span className="pc-feat-check">✓</span> Dedicated onboarding</li>
+                       <li className="pc-feat"><span className="pc-feat-check">✓</span> SLA + Priority support</li>
+                       <li className="pc-feat"><span className="pc-feat-check">✓</span> Advanced analytics</li>
+                    </ul>
+                    <button
+                      className="pc-btn-outline-cyan"
+                      onClick={() => window.open('mailto:hello@blogforge.ai?subject=Scale Plan Enquiry')}
+                    >{userPlan === 'Scale' ? 'Current Plan' : 'Contact Sales →'}</button>
+                  </div>
                 </div>
               </div>
             );

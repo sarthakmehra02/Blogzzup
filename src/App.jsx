@@ -238,7 +238,7 @@ const TabSeo = () => (
           <div className="mock-ring">
             <div className="mock-ring-inner">94</div>
           </div>
-          <div style={{fontSize: '11px', color: '#94A3B8', display: 'flex', flexDirection: 'column', gap: '6px', alignItems: 'center'}}>
+          <div style={{fontSize: '11px', color: 'var(--text-muted)', display: 'flex', flexDirection: 'column', gap: '6px', alignItems: 'center'}}>
             <div><span style={{color:'#10B981'}}>✓</span> Density 1.8%</div>
             <div><span style={{color:'#10B981'}}>✓</span> AI Detection 3%</div>
             <div><span style={{color:'#10B981'}}>✓</span> Snippet Ready</div>
@@ -365,17 +365,17 @@ const TabAnalytics = () => (
         <div style={{width: '100%', display: 'flex', flexDirection: 'column'}}>
           <div className="mock-competitor-row">
             <span style={{fontWeight: 'bold'}}>seoblues.com</span>
-            <span style={{color: '#94A3B8'}}>2d ago</span>
+            <span style={{color: 'var(--text-muted)'}}>2d ago</span>
             <button className="mock-comp-btn" onClick={() => window.showPage('auth')}>Beat This</button>
           </div>
           <div className="mock-competitor-row">
             <span style={{fontWeight: 'bold'}}>contentai.io</span>
-            <span style={{color: '#94A3B8'}}>5d ago</span>
+            <span style={{color: 'var(--text-muted)'}}>5d ago</span>
             <button className="mock-comp-btn" onClick={() => window.showPage('auth')}>Beat This</button>
           </div>
           <div className="mock-competitor-row" style={{border: 'none'}}>
             <span style={{fontWeight: 'bold'}}>rankmaker.in</span>
-            <span style={{color: '#94A3B8'}}>1w ago</span>
+            <span style={{color: 'var(--text-muted)'}}>1w ago</span>
             <button className="mock-comp-btn" onClick={() => window.showPage('auth')}>Beat This</button>
           </div>
         </div>
@@ -397,11 +397,11 @@ const FeaturesPage = () => {
   return (
     <div className="container" style={{paddingTop: '8rem', paddingBottom: '8rem'}}>
       <div className="features-header" style={{textAlign: 'center', marginBottom: '48px'}}>
-        <h1 style={{fontSize: '48px', fontWeight: 800, color: '#fff', lineHeight: 1.1}}>
+        <h1 style={{fontSize: '48px', fontWeight: 800, color: 'var(--text-primary)', lineHeight: 1.1}}>
           Every Tool You Need.<br />
           <span style={{background: 'linear-gradient(135deg, #7C3AED, #06B6D4)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent'}}>Nothing You Don't.</span>
         </h1>
-        <p style={{color: '#94A3B8', marginTop: '12px', fontSize: '18px'}}>Nine specialized AI tools working together as one platform</p>
+        <p style={{color: 'var(--text-muted)', marginTop: '12px', fontSize: '18px'}}>Nine specialized AI tools working together as one platform</p>
       </div>
 
       <div className="feature-tabs" style={{display: 'flex', gap: '8px', justifyContent: 'center', marginBottom: '48px'}}>
@@ -424,16 +424,16 @@ const FeaturesPage = () => {
       </div>
 
       <div className="comparison-table-section" style={{marginTop: '80px'}}>
-        <h2 style={{textAlign: 'center', fontSize: '28px', color: '#fff', marginBottom: '32px'}}>How We Stack Up</h2>
+        <h2 style={{textAlign: 'center', fontSize: '28px', color: 'var(--text-primary)', marginBottom: '32px'}}>How We Stack Up</h2>
         <div style={{borderRadius: '16px', overflow: 'hidden', border: '1px solid rgba(255,255,255,0.06)'}}>
           <table className="comp-table" style={{width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '15px'}}>
             <thead>
-              <tr style={{background: '#141B2D', borderBottom: '1px solid rgba(255,255,255,0.06)'}}>
-                <th style={{padding: '16px 20px', color: '#fff'}}>Feature</th>
+              <tr style={{background: 'var(--bg-elevated)', borderBottom: '1px solid rgba(255,255,255,0.06)'}}>
+                <th style={{padding: '16px 20px', color: 'var(--text-primary)'}}>Feature</th>
                 <th style={{padding: '16px 20px', color: '#7C3AED', fontWeight: 700}}>BlogzzUP</th>
-                <th style={{padding: '16px 20px', color: '#fff'}}>Blogy</th>
-                <th style={{padding: '16px 20px', color: '#fff'}}>Jasper</th>
-                <th style={{padding: '16px 20px', color: '#fff'}}>Manual</th>
+                <th style={{padding: '16px 20px', color: 'var(--text-primary)'}}>Blogy</th>
+                <th style={{padding: '16px 20px', color: 'var(--text-primary)'}}>Jasper</th>
+                <th style={{padding: '16px 20px', color: 'var(--text-primary)'}}>Manual</th>
               </tr>
             </thead>
             <tbody>
@@ -549,7 +549,7 @@ window.sendDemoMessage = async function() {
   
   if (!keyword) {
     input.style.borderColor = '#EF4444';
-    setTimeout(() => { input.style.borderColor = 'rgba(255,255,255,0.08)'; }, 2000);
+    setTimeout(() => { input.style.borderColor = 'var(--border-strong)'; }, 2000);
     return;
   }
 
@@ -608,7 +608,7 @@ window.generateSampleBlog = async function() {
     inputEl.style.borderColor = '#EF4444';
     inputEl.placeholder = 'Please enter a keyword first!';
     setTimeout(() => {
-      inputEl.style.borderColor = 'rgba(255,255,255,0.1)';
+      inputEl.style.borderColor = 'var(--border-strong)';
       inputEl.placeholder = 'Enter any keyword, e.g. data science, SaaS tools...';
     }, 2000);
     return;
@@ -730,31 +730,31 @@ const DemoPage = () => {
   return (
     <div className="container" style={{paddingTop: '8rem', paddingBottom: '8rem'}}>
       <div style={{textAlign: 'center', marginBottom: '48px'}}>
-        <h1 style={{fontSize: '48px', fontWeight: 800, color: '#fff', margin: 0}}>Try BlogzzUP Live</h1>
-        <p style={{color: '#94A3B8', marginTop: '12px', fontSize: '18px'}}>No signup required. See the engine work in real time.</p>
+        <h1 style={{fontSize: '48px', fontWeight: 800, color: 'var(--text-primary)', margin: 0}}>Try BlogzzUP Live</h1>
+        <p style={{color: 'var(--text-muted)', marginTop: '12px', fontSize: '18px'}}>No signup required. See the engine work in real time.</p>
       </div>
 
-      <div style={{maxWidth: '900px', margin: '0 auto', background: '#0D1526', border: '1px solid rgba(124,58,237,0.3)', borderRadius: '20px', overflow: 'hidden', display: 'flex', flexDirection: 'column'}}>
+      <div style={{maxWidth: '900px', margin: '0 auto', background: 'var(--bg-surface)', border: '1px solid rgba(124,58,237,0.3)', borderRadius: '20px', overflow: 'hidden', display: 'flex', flexDirection: 'column'}}>
         <div style={{width: '100%', display: 'flex', flexWrap: 'wrap'}}>
           <div style={{flex: '1 1 60%', display: 'flex', flexDirection: 'column', minWidth: '300px'}}>
-            <div style={{padding: '14px 20px', background: '#080E1C', borderBottom: '1px solid rgba(255,255,255,0.06)', display: 'flex', alignItems: 'center', gap: '8px'}}>
+            <div style={{padding: '14px 20px', background: 'var(--bg-base)', borderBottom: '1px solid rgba(255,255,255,0.06)', display: 'flex', alignItems: 'center', gap: '8px'}}>
               <div style={{display: 'flex', gap: '6px'}}>
                 <div style={{width: '12px', height: '12px', borderRadius: '50%', background: '#EF4444'}}></div>
                 <div style={{width: '12px', height: '12px', borderRadius: '50%', background: '#F59E0B'}}></div>
                 <div style={{width: '12px', height: '12px', borderRadius: '50%', background: '#10B981'}}></div>
               </div>
-              <div style={{fontSize: '12px', color: '#64748B', marginLeft: '8px'}}>BlogzzUP — Content Engine</div>
+              <div style={{fontSize: '12px', color: 'var(--text-subtle)', marginLeft: '8px'}}>BlogzzUP — Content Engine</div>
             </div>
             
             <div style={{display: 'flex', height: '480px'}}>
-              <div style={{width: '160px', background: '#080E1C', borderRight: '1px solid rgba(255,255,255,0.06)', padding: '16px', flexShrink: 0, display: 'flex', flexDirection: 'column'}}>
-                <div style={{fontSize: '13px', color: '#fff', fontWeight: 600, marginBottom: '20px'}}>⚡ BlogzzUP</div>
+              <div style={{width: '160px', background: 'var(--bg-base)', borderRight: '1px solid rgba(255,255,255,0.06)', padding: '16px', flexShrink: 0, display: 'flex', flexDirection: 'column'}}>
+                <div style={{fontSize: '13px', color: 'var(--text-primary)', fontWeight: 600, marginBottom: '20px'}}>⚡ BlogzzUP</div>
                 <div style={{display: 'flex', flexDirection: 'column', gap: '4px'}}>
-                  <div style={{padding: '8px 12px', borderRadius: '6px', fontSize: '12px', color: '#64748B', cursor: 'pointer'}}>+ New Project</div>
-                  <div style={{padding: '8px 12px', borderRadius: '6px', fontSize: '12px', color: '#64748B', cursor: 'pointer'}}>📄 My Documents</div>
-                  <div style={{padding: '8px 12px', borderRadius: '6px', fontSize: '12px', color: '#64748B', cursor: 'pointer'}}>🗺️ Cluster Map</div>
-                  <div style={{padding: '8px 12px', borderRadius: '6px', fontSize: '12px', color: '#64748B', cursor: 'pointer'}}>📅 Content Calendar</div>
-                  <div style={{padding: '8px 12px', borderRadius: '6px', fontSize: '12px', color: '#64748B', cursor: 'pointer'}}>⚙️ Settings</div>
+                  <div style={{padding: '8px 12px', borderRadius: '6px', fontSize: '12px', color: 'var(--text-subtle)', cursor: 'pointer'}}>+ New Project</div>
+                  <div style={{padding: '8px 12px', borderRadius: '6px', fontSize: '12px', color: 'var(--text-subtle)', cursor: 'pointer'}}>📄 My Documents</div>
+                  <div style={{padding: '8px 12px', borderRadius: '6px', fontSize: '12px', color: 'var(--text-subtle)', cursor: 'pointer'}}>🗺️ Cluster Map</div>
+                  <div style={{padding: '8px 12px', borderRadius: '6px', fontSize: '12px', color: 'var(--text-subtle)', cursor: 'pointer'}}>📅 Content Calendar</div>
+                  <div style={{padding: '8px 12px', borderRadius: '6px', fontSize: '12px', color: 'var(--text-subtle)', cursor: 'pointer'}}>⚙️ Settings</div>
                 </div>
                 <div style={{marginTop: 'auto'}}>
                   <span style={{background: 'rgba(16,185,129,0.1)', color: '#10B981', borderRadius: '999px', padding: '4px 10px', fontSize: '11px', marginBottom: '6px', display: 'block'}}>● SEO Optimizer</span>
@@ -762,26 +762,26 @@ const DemoPage = () => {
                 </div>
               </div>
 
-              <div style={{flex: 1, display: 'flex', flexDirection: 'column', background: '#0D1526'}}>
+              <div style={{flex: 1, display: 'flex', flexDirection: 'column', background: 'var(--bg-surface)'}}>
                 <div id="demo-chat-messages" style={{flex: 1, padding: '20px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '12px'}}>
                   {/* messages will be injected here */}
                 </div>
                 
                 <div style={{marginTop: 'auto'}}>
-                  <div style={{padding: '12px 16px', background: '#080E1C', borderTop: '1px solid rgba(255,255,255,0.06)', display: 'flex', alignItems: 'center', gap: '12px'}}>
+                  <div style={{padding: '12px 16px', background: 'var(--bg-base)', borderTop: '1px solid rgba(255,255,255,0.06)', display: 'flex', alignItems: 'center', gap: '12px'}}>
                     <input 
                       id="demo-chat-input"
                       type="text" 
                       placeholder="Enter your keyword or topic..."
                       onKeyDown={(e) => { if(e.key === 'Enter') window.sendDemoMessage(); }}
-                      style={{flex: 1, background: '#141B2D', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '10px', padding: '10px 14px', color: 'white', fontSize: '13px', outline: 'none'}}
+                      style={{flex: 1, background: 'var(--bg-elevated)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '10px', padding: '10px 14px', color: 'var(--text-primary)', fontSize: '13px', outline: 'none'}}
                       onFocus={(e) => e.target.style.borderColor='#7C3AED'}
-                      onBlur={(e) => e.target.style.borderColor='rgba(255,255,255,0.08)'}
+                      onBlur={(e) => e.target.style.borderColor='var(--border-strong)'}
                     />
                     <button 
                       onClick={() => window.sendDemoMessage()}
                       id="demo-send-btn"
-                      style={{background: '#7C3AED', width: '38px', height: '38px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: 'white', fontSize: '16px', border: 'none', flexShrink: 0, transition: 'all 0.2s'}}
+                      style={{background: '#7C3AED', width: '38px', height: '38px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: 'var(--text-primary)', fontSize: '16px', border: 'none', flexShrink: 0, transition: 'all 0.2s'}}
                       onMouseEnter={(e) => e.target.style.background='#6D28D9'}
                       onMouseLeave={(e) => e.target.style.background='#7C3AED'}
                     >
@@ -793,13 +793,13 @@ const DemoPage = () => {
             </div>
           </div>
           
-          <div style={{flex: '1 1 40%', background: '#080E1C', borderLeft: '1px solid rgba(124,58,237,0.15)', padding: '28px', display: 'flex', flexDirection: 'column', minWidth: '250px'}}>
-            <div style={{fontSize: '14px', fontWeight: 600, color: '#fff', marginBottom: '20px'}}>Live SEO Score</div>
+          <div style={{flex: '1 1 40%', background: 'var(--bg-base)', borderLeft: '1px solid rgba(124,58,237,0.15)', padding: '28px', display: 'flex', flexDirection: 'column', minWidth: '250px'}}>
+            <div style={{fontSize: '14px', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '20px'}}>Live SEO Score</div>
             
-            <div style={{margin: '0 auto 24px', width: '100px', height: '100px', position: 'relative', borderRadius: '50%', background: 'conic-gradient(#7C3AED 0% 94%, #1E293B 94% 100%)'}}>
-              <div style={{position: 'absolute', top: '8px', left: '8px', width: '84px', height: '84px', background: '#080E1C', borderRadius: '50%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center'}}>
-                <div style={{fontSize: '28px', fontWeight: 700, color: '#fff', lineHeight: 1}}>94</div>
-                <div style={{fontSize: '12px', color: '#64748B'}}>/100</div>
+            <div style={{margin: '0 auto 24px', width: '100px', height: '100px', position: 'relative', borderRadius: '50%', background: 'conic-gradient(#7C3AED 0% 94%, var(--bg-elevated) 94% 100%)'}}>
+              <div style={{position: 'absolute', top: '8px', left: '8px', width: '84px', height: '84px', background: 'var(--bg-base)', borderRadius: '50%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center'}}>
+                <div style={{fontSize: '28px', fontWeight: 700, color: 'var(--text-primary)', lineHeight: 1}}>94</div>
+                <div style={{fontSize: '12px', color: 'var(--text-subtle)'}}>/100</div>
               </div>
             </div>
             <div style={{fontSize: '12px', color: '#10B981', textAlign: 'center', marginTop: '-16px', marginBottom: '24px'}}>Excellent</div>
@@ -813,7 +813,7 @@ const DemoPage = () => {
                 ["Featured Snippet", "Eligible ✓"]
               ].map((metric, i) => (
                 <div key={i} style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 0', borderBottom: '1px solid rgba(255,255,255,0.05)', fontSize: '13px'}}>
-                  <span style={{color: '#94A3B8'}}>{metric[0]}</span>
+                  <span style={{color: 'var(--text-muted)'}}>{metric[0]}</span>
                   <span style={{color: '#10B981', fontWeight: 500}}>{metric[1]}</span>
                 </div>
               ))}
@@ -821,7 +821,7 @@ const DemoPage = () => {
 
             <button 
               onClick={() => { if(window.showDashboard) window.showDashboard(); }}
-              style={{marginTop: '24px', width: '100%', background: 'linear-gradient(135deg,#7C3AED,#6D28D9)', color: 'white', border: 'none', borderRadius: '10px', padding: '13px', fontWeight: 600, fontSize: '14px', cursor: 'pointer', transition: 'all 0.2s'}}
+              style={{marginTop: '24px', width: '100%', background: 'linear-gradient(135deg,#7C3AED,#6D28D9)', color: 'var(--text-primary)', border: 'none', borderRadius: '10px', padding: '13px', fontWeight: 600, fontSize: '14px', cursor: 'pointer', transition: 'all 0.2s'}}
               onMouseEnter={(e) => e.target.style.filter='brightness(1.1)'}
               onMouseLeave={(e) => e.target.style.filter='brightness(1)'}
             >
@@ -832,8 +832,8 @@ const DemoPage = () => {
       </div>
 
       <div style={{marginTop: '64px'}}>
-        <h2 style={{fontSize: '32px', color: '#fff', textAlign: 'center', margin: 0, fontWeight: 700}}>Try It Yourself</h2>
-        <p style={{color: '#94A3B8', textAlign: 'center', marginBottom: '32px', marginTop: '12px'}}>Enter any topic and get an AI-generated blog post instantly</p>
+        <h2 style={{fontSize: '32px', color: 'var(--text-primary)', textAlign: 'center', margin: 0, fontWeight: 700}}>Try It Yourself</h2>
+        <p style={{color: 'var(--text-muted)', textAlign: 'center', marginBottom: '32px', marginTop: '12px'}}>Enter any topic and get an AI-generated blog post instantly</p>
         
         <div style={{maxWidth: '600px', margin: '0 auto', display: 'flex', gap: '12px'}}>
           <input 
@@ -841,14 +841,14 @@ const DemoPage = () => {
             type="text" 
             placeholder="Enter any topic, e.g. data science, SaaS tools, fitness apps..."
             onKeyDown={(e) => { if (e.key === 'Enter') window.generateSampleBlog(); }}
-            style={{flex: 1, background: '#141B2D', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px', padding: '14px 20px', color: 'white', fontSize: '15px', outline: 'none'}}
+            style={{flex: 1, background: 'var(--bg-elevated)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px', padding: '14px 20px', color: 'var(--text-primary)', fontSize: '15px', outline: 'none'}}
             onFocus={(e) => e.target.style.borderColor='#7C3AED'}
-            onBlur={(e) => e.target.style.borderColor='rgba(255,255,255,0.1)'}
+            onBlur={(e) => e.target.style.borderColor='var(--border-strong)'}
           />
           <button 
             onClick={() => window.generateSampleBlog()}
             id="tiy-generate-btn"
-            style={{background: 'linear-gradient(135deg,#7C3AED,#06B6D4)', color: 'white', border: 'none', borderRadius: '12px', padding: '14px 28px', fontSize: '15px', fontWeight: 600, cursor: 'pointer', whiteSpace: 'nowrap', transition: 'all 0.2s'}}
+            style={{background: 'linear-gradient(135deg,#7C3AED,#06B6D4)', color: 'var(--text-primary)', border: 'none', borderRadius: '12px', padding: '14px 28px', fontSize: '15px', fontWeight: 600, cursor: 'pointer', whiteSpace: 'nowrap', transition: 'all 0.2s'}}
             onMouseEnter={(e) => e.target.style.opacity='0.9'}
             onMouseLeave={(e) => e.target.style.opacity='1'}
           >
@@ -856,12 +856,12 @@ const DemoPage = () => {
           </button>
         </div>
 
-        <div id="tiy-results" style={{display: 'none', background: '#141B2D', border: '1px solid rgba(124,58,237,0.3)', borderRadius: '16px', padding: '28px', marginTop: '20px', maxWidth: '700px', marginLeft: 'auto', marginRight: 'auto'}}></div>
+        <div id="tiy-results" style={{display: 'none', background: 'var(--bg-elevated)', border: '1px solid rgba(124,58,237,0.3)', borderRadius: '16px', padding: '28px', marginTop: '20px', maxWidth: '700px', marginLeft: 'auto', marginRight: 'auto'}}></div>
       </div>
 
       <div style={{marginTop: '64px', textAlign: 'center'}}>
-        <p style={{fontSize: '18px', color: '#94A3B8'}}>Ready for the real thing?</p>
-        <button onClick={() => window.showPage('auth')} style={{background: 'linear-gradient(135deg,#7C3AED,#9333EA)', color: '#fff', borderRadius: '999px', padding: '14px 32px', fontSize: '16px', fontWeight: '600', border: 'none', cursor: 'pointer', marginTop: '16px'}}>
+        <p style={{fontSize: '18px', color: 'var(--text-muted)'}}>Ready for the real thing?</p>
+        <button onClick={() => window.showPage('auth')} style={{background: 'linear-gradient(135deg,#7C3AED,#9333EA)', color: 'var(--text-primary)', borderRadius: '999px', padding: '14px 32px', fontSize: '16px', fontWeight: '600', border: 'none', cursor: 'pointer', marginTop: '16px'}}>
           Start Free — First Month on Us →
         </button>
       </div>
@@ -890,10 +890,10 @@ const PricingPage = ({ onSignIn }) => {
   return (
     <div className="container" style={{paddingTop: '8rem', paddingBottom: '8rem'}}>
       <div style={{textAlign: 'center', marginBottom: '48px'}}>
-        <h1 style={{fontSize: '48px', fontWeight: 800, color: '#fff', margin: 0}}>
+        <h1 style={{fontSize: '48px', fontWeight: 800, color: 'var(--text-primary)', margin: 0}}>
           Simple Pricing. <span style={{background: 'linear-gradient(135deg,#7C3AED,#06B6D4)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent'}}>Serious Results.</span>
         </h1>
-        <p style={{color: '#94A3B8', marginTop: '12px', fontSize: '18px'}}>Start free. Upgrade when you're ready. Cancel anytime.</p>
+        <p style={{color: 'var(--text-muted)', marginTop: '12px', fontSize: '18px'}}>Start free. Upgrade when you're ready. Cancel anytime.</p>
       </div>
 
       <div className="pricing-toggle">
@@ -945,7 +945,7 @@ const PricingPage = ({ onSignIn }) => {
           <p className="pc-desc" style={{margin: '32px 0 24px'}}>For startups replacing their marketing team</p>
           <div className="pc-divider"></div>
           <ul className="pc-feat-list">
-            <div style={{fontSize: '14px', color: '#fff', fontWeight: 600, padding: '6px 0'}}>✓ Everything in Starter</div>
+            <div style={{fontSize: '14px', color: 'var(--text-primary)', fontWeight: 600, padding: '6px 0'}}>✓ Everything in Starter</div>
             <li className="pc-feat"><span className="pc-feat-check">✓</span> 50 SEO blogs / month</li>
             <li className="pc-feat"><span className="pc-feat-check">✓</span> GEO Optimization Engine</li>
             <li className="pc-feat"><span className="pc-feat-check">✓</span> Content Cluster Map (unlimited)</li>
@@ -985,16 +985,16 @@ const PricingPage = ({ onSignIn }) => {
         </div>
       </div>
 
-      <p style={{ textAlign: 'center', color: '#94A3B8', fontSize: '13px', marginTop: '8px' }}>
+      <p style={{ textAlign: 'center', color: 'var(--text-muted)', fontSize: '13px', marginTop: '8px' }}>
         Sign in to activate your plan
       </p>
 
-      <div style={{marginTop: '32px', textAlign: 'center', fontSize: '13px', color: '#64748B'}}>
+      <div style={{marginTop: '32px', textAlign: 'center', fontSize: '13px', color: 'var(--text-subtle)'}}>
         🔒 No credit card required · Cancel anytime · SOC2 Compliant · Used by 500+ Indian startups
       </div>
 
       <div className="faq-accordion" style={{marginTop: '80px', maxWidth: '800px', margin: '80px auto 0'}}>
-        <h2 style={{fontSize: '32px', color: '#fff', textAlign: 'center', marginBottom: '32px', fontWeight: 700}}>Frequently Asked Questions</h2>
+        <h2 style={{fontSize: '32px', color: 'var(--text-primary)', textAlign: 'center', marginBottom: '32px', fontWeight: 700}}>Frequently Asked Questions</h2>
         {faqs.map((faq, i) => (
            <div 
              key={i} 
@@ -1159,8 +1159,8 @@ const BlogPage = () => {
   return (
     <div className="container" style={{paddingTop: '8rem', paddingBottom: '8rem'}}>
       <div style={{textAlign: 'center', marginBottom: '48px'}}>
-        <h1 style={{fontSize: '48px', color: '#fff', margin: 0, fontWeight: 800}}>Latest from BlogzzUP</h1>
-        <p style={{color: '#94A3B8', marginTop: '12px', fontSize: '18px'}}>Insights, strategies, and playbooks on AI content and SEO</p>
+        <h1 style={{fontSize: '48px', color: 'var(--text-primary)', margin: 0, fontWeight: 800}}>Latest from BlogzzUP</h1>
+        <p style={{color: 'var(--text-muted)', marginTop: '12px', fontSize: '18px'}}>Insights, strategies, and playbooks on AI content and SEO</p>
       </div>
 
       <div className="blog-grid">
@@ -1203,105 +1203,105 @@ const HomeFeaturesSection = () => {
     switch(id) {
       case 'generator':
         return (
-          <div style={{display:'flex', gap:'12px', width:'100%', height:'100%', padding:'16px', boxSizing:'border-box', background:'#111827', borderRadius:'0 0 16px 16px'}}>
+          <div style={{display:'flex', gap:'12px', width:'100%', height:'100%', padding:'16px', boxSizing:'border-box', background:'var(--bg-surface)', borderRadius:'0 0 16px 16px'}}>
              <div style={{flex: 1, display:'flex', flexDirection:'column', gap:'12px'}}>
                <div>
-                 <div style={{fontSize:'11px', color:'#94A3B8', marginBottom:'4px'}}>Target Keyword</div>
-                 <div style={{background:'#1E293B', padding:'8px 12px', borderRadius:'6px', color:'white', fontSize:'12px', border:'1px solid rgba(255,255,255,0.05)'}}>SaaS Marketing Strategies</div>
+                 <div style={{fontSize:'11px', color:'var(--text-muted)', marginBottom:'4px'}}>Target Keyword</div>
+                 <div style={{background:'var(--bg-elevated)', padding:'8px 12px', borderRadius:'6px', color:'var(--text-primary)', fontSize:'12px', border:'1px solid rgba(255,255,255,0.05)'}}>SaaS Marketing Strategies</div>
                </div>
                <div>
-                 <div style={{fontSize:'11px', color:'#94A3B8', marginBottom:'4px'}}>Tone of Voice</div>
-                 <div style={{background:'#1E293B', padding:'8px 12px', borderRadius:'6px', color:'white', fontSize:'12px', border:'1px solid rgba(255,255,255,0.05)'}}>Authoritative & Actionable</div>
+                 <div style={{fontSize:'11px', color:'var(--text-muted)', marginBottom:'4px'}}>Tone of Voice</div>
+                 <div style={{background:'var(--bg-elevated)', padding:'8px 12px', borderRadius:'6px', color:'var(--text-primary)', fontSize:'12px', border:'1px solid rgba(255,255,255,0.05)'}}>Authoritative & Actionable</div>
                </div>
-               <button onClick={() => window.showDashboard && window.showDashboard()} style={{marginTop:'auto', background:'linear-gradient(135deg, #7C3AED, #5B21B6)', color:'white', border:'none', padding:'10px', borderRadius:'6px', fontSize:'12px', cursor:'pointer', fontWeight:'bold'}}>Generate Blog →</button>
+               <button onClick={() => window.showDashboard && window.showDashboard()} style={{marginTop:'auto', background:'linear-gradient(135deg, #7C3AED, #5B21B6)', color:'var(--text-primary)', border:'none', padding:'10px', borderRadius:'6px', fontSize:'12px', cursor:'pointer', fontWeight:'bold'}}>Generate Blog →</button>
              </div>
-             <div style={{flex: 1.5, background:'#0F172A', border:'1px solid rgba(255,255,255,0.05)', borderRadius:'8px', padding:'12px', position:'relative', overflow:'hidden'}}>
-               <div style={{width:'70%', height:'14px', background:'#334155', borderRadius:'4px', marginBottom:'12px'}}></div>
-               <div style={{width:'100%', height:'8px', background:'#1E293B', borderRadius:'4px', marginBottom:'8px'}}></div>
-               <div style={{width:'90%', height:'8px', background:'#1E293B', borderRadius:'4px', marginBottom:'8px'}}></div>
-               <div style={{width:'95%', height:'8px', background:'#1E293B', borderRadius:'4px', marginBottom:'16px'}}></div>
-               <div style={{position:'absolute', bottom:0, left:0, right:0, height:'40px', background:'linear-gradient(to top, #0F172A, transparent)'}}></div>
+             <div style={{flex: 1.5, background:'var(--bg-base)', border:'1px solid rgba(255,255,255,0.05)', borderRadius:'8px', padding:'12px', position:'relative', overflow:'hidden'}}>
+               <div style={{width:'70%', height:'14px', background:'var(--border-strong)', borderRadius:'4px', marginBottom:'12px'}}></div>
+               <div style={{width:'100%', height:'8px', background:'var(--bg-elevated)', borderRadius:'4px', marginBottom:'8px'}}></div>
+               <div style={{width:'90%', height:'8px', background:'var(--bg-elevated)', borderRadius:'4px', marginBottom:'8px'}}></div>
+               <div style={{width:'95%', height:'8px', background:'var(--bg-elevated)', borderRadius:'4px', marginBottom:'16px'}}></div>
+               <div style={{position:'absolute', bottom:0, left:0, right:0, height:'40px', background:'linear-gradient(to top, var(--bg-base), transparent)'}}></div>
                <div style={{position:'absolute', top:'50%', left:'50%', transform:'translate(-50%, -50%)', background:'rgba(16,185,129,0.2)', color:'#10B981', padding:'4px 12px', borderRadius:'12px', fontSize:'10px', fontWeight:'bold', border:'1px solid rgba(16,185,129,0.3)'}}>Processing AI Generation...</div>
              </div>
           </div>
         );
       case 'cluster':
         return (
-          <div style={{display:'flex', alignItems:'center', justifyContent:'center', width:'100%', height:'100%', background:'#111827', position:'relative', borderRadius:'0 0 16px 16px', flex:1}}>
-             <div style={{position:'absolute', width:'100px', height:'2px', background:'#334155', zIndex:1}}></div>
-             <div style={{position:'absolute', width:'2px', height:'80px', background:'#334155', zIndex:1, left:'65%'}}></div>
-             <div style={{zIndex:2, background:'#5B21B6', padding:'10px 16px', borderRadius:'8px', color:'white', fontSize:'12px', fontWeight:'bold', marginRight:'120px', boxShadow:'0 0 15px rgba(124,58,237,0.4)'}}>Pillar: SEO Strategy</div>
+          <div style={{display:'flex', alignItems:'center', justifyContent:'center', width:'100%', height:'100%', background:'var(--bg-surface)', position:'relative', borderRadius:'0 0 16px 16px', flex:1}}>
+             <div style={{position:'absolute', width:'100px', height:'2px', background:'var(--border-strong)', zIndex:1}}></div>
+             <div style={{position:'absolute', width:'2px', height:'80px', background:'var(--border-strong)', zIndex:1, left:'65%'}}></div>
+             <div style={{zIndex:2, background:'#5B21B6', padding:'10px 16px', borderRadius:'8px', color:'var(--text-primary)', fontSize:'12px', fontWeight:'bold', marginRight:'120px', boxShadow:'0 0 15px rgba(124,58,237,0.4)'}}>Pillar: SEO Strategy</div>
              <div style={{display:'flex', flexDirection:'column', gap:'16px', zIndex:2}}>
-                <div style={{background:'#1E293B', border:'1px solid #334155', padding:'8px 12px', borderRadius:'6px', color:'#E2E8F0', fontSize:'11px'}}>Technical SEO Tips</div>
-                <div style={{background:'#1E293B', border:'1px solid #334155', padding:'8px 12px', borderRadius:'6px', color:'#E2E8F0', fontSize:'11px'}}>Backlink Outreach</div>
+                <div style={{background:'var(--bg-elevated)', border:'1px solid #334155', padding:'8px 12px', borderRadius:'6px', color:'var(--text-secondary)', fontSize:'11px'}}>Technical SEO Tips</div>
+                <div style={{background:'var(--bg-elevated)', border:'1px solid #334155', padding:'8px 12px', borderRadius:'6px', color:'var(--text-secondary)', fontSize:'11px'}}>Backlink Outreach</div>
              </div>
           </div>
         );
       case 'serp':
         return (
-          <div style={{width:'100%', height:'100%', background:'#111827', padding:'16px', boxSizing:'border-box', borderRadius:'0 0 16px 16px', flex:1}}>
-            <div style={{display:'grid', gridTemplateColumns:'1fr 2fr 1fr', gap:'8px', color:'#94A3B8', fontSize:'10px', borderBottom:'1px solid #334155', paddingBottom:'8px', marginBottom:'8px'}}>
+          <div style={{width:'100%', height:'100%', background:'var(--bg-surface)', padding:'16px', boxSizing:'border-box', borderRadius:'0 0 16px 16px', flex:1}}>
+            <div style={{display:'grid', gridTemplateColumns:'1fr 2fr 1fr', gap:'8px', color:'var(--text-muted)', fontSize:'10px', borderBottom:'1px solid #334155', paddingBottom:'8px', marginBottom:'8px'}}>
                <div>COMPETITOR</div><div>IDENTIFIED GAP</div><div>OPPORTUNITY</div>
             </div>
             {[
               {domain:'hubspot.com', gap:'Programmatic SEO execution', opp:'High'},
               {domain:'ahrefs.com', gap:'AI content safeguards', opp:'Medium'},
             ].map(row => (
-              <div key={row.domain} style={{display:'grid', gridTemplateColumns:'1fr 2fr 1fr', gap:'8px', color:'white', fontSize:'11px', padding:'8px 0', borderBottom:'1px solid rgba(255,255,255,0.05)'}}>
+              <div key={row.domain} style={{display:'grid', gridTemplateColumns:'1fr 2fr 1fr', gap:'8px', color:'var(--text-primary)', fontSize:'11px', padding:'8px 0', borderBottom:'1px solid rgba(255,255,255,0.05)'}}>
                  <div style={{color:'#A78BFA'}}>{row.domain}</div>
                  <div>{row.gap}</div>
                  <div><span style={{background:'rgba(16,185,129,0.1)', color:'#10B981', padding:'2px 6px', borderRadius:'4px'}}>{row.opp}</span></div>
               </div>
             ))}
-            <button onClick={() => window.showDashboard && window.showDashboard()} style={{width:'100%', marginTop:'12px', background:'#1E293B', border:'1px dashed #334155', padding:'8px', color:'#A78BFA', fontSize:'11px', borderRadius:'6px', cursor:'pointer'}}>Scan New Seed Keyword</button>
+            <button onClick={() => window.showDashboard && window.showDashboard()} style={{width:'100%', marginTop:'12px', background:'var(--bg-elevated)', border:'1px dashed #334155', padding:'8px', color:'#A78BFA', fontSize:'11px', borderRadius:'6px', cursor:'pointer'}}>Scan New Seed Keyword</button>
           </div>
         );
       case 'seo':
         return (
-          <div style={{display:'flex', alignItems:'center', justifyContent:'center', gap:'32px', width:'100%', height:'100%', background:'#111827', padding:'20px', boxSizing:'border-box', borderRadius:'0 0 16px 16px', flex:1}}>
-             <div style={{position:'relative', width:'100px', height:'100px', borderRadius:'50%', background:'conic-gradient(#10B981 92%, #1E293B 0)', display:'flex', alignItems:'center', justifyContent:'center'}}>
-               <div style={{position:'absolute', inset:'8px', background:'#111827', borderRadius:'50%', display:'flex', alignItems:'center', justifyContent:'center', flexDirection:'column'}}>
-                 <span style={{fontSize:'24px', fontWeight:'bold', color:'white'}}>92</span>
-                 <span style={{fontSize:'9px', color:'#94A3B8'}}>SCORE</span>
+          <div style={{display:'flex', alignItems:'center', justifyContent:'center', gap:'32px', width:'100%', height:'100%', background:'var(--bg-surface)', padding:'20px', boxSizing:'border-box', borderRadius:'0 0 16px 16px', flex:1}}>
+             <div style={{position:'relative', width:'100px', height:'100px', borderRadius:'50%', background:'conic-gradient(#10B981 92%, var(--bg-elevated) 0)', display:'flex', alignItems:'center', justifyContent:'center'}}>
+               <div style={{position:'absolute', inset:'8px', background:'var(--bg-surface)', borderRadius:'50%', display:'flex', alignItems:'center', justifyContent:'center', flexDirection:'column'}}>
+                 <span style={{fontSize:'24px', fontWeight:'bold', color:'var(--text-primary)'}}>92</span>
+                 <span style={{fontSize:'9px', color:'var(--text-muted)'}}>SCORE</span>
                </div>
              </div>
              <div style={{display:'flex', flexDirection:'column', gap:'12px', flex:1}}>
                <div>
-                 <div style={{display:'flex', justifyContent:'space-between', fontSize:'10px', color:'#94A3B8', marginBottom:'4px'}}><span>Readability</span><span>Great</span></div>
-                 <div style={{height:'6px', background:'#1E293B', borderRadius:'3px'}}><div style={{width:'85%', height:'100%', background:'#10B981', borderRadius:'3px'}}></div></div>
+                 <div style={{display:'flex', justifyContent:'space-between', fontSize:'10px', color:'var(--text-muted)', marginBottom:'4px'}}><span>Readability</span><span>Great</span></div>
+                 <div style={{height:'6px', background:'var(--bg-elevated)', borderRadius:'3px'}}><div style={{width:'85%', height:'100%', background:'#10B981', borderRadius:'3px'}}></div></div>
                </div>
                <div>
-                 <div style={{display:'flex', justifyContent:'space-between', fontSize:'10px', color:'#94A3B8', marginBottom:'4px'}}><span>Keyword Density</span><span>1.2%</span></div>
-                 <div style={{height:'6px', background:'#1E293B', borderRadius:'3px'}}><div style={{width:'100%', height:'100%', background:'#10B981', borderRadius:'3px'}}></div></div>
+                 <div style={{display:'flex', justifyContent:'space-between', fontSize:'10px', color:'var(--text-muted)', marginBottom:'4px'}}><span>Keyword Density</span><span>1.2%</span></div>
+                 <div style={{height:'6px', background:'var(--bg-elevated)', borderRadius:'3px'}}><div style={{width:'100%', height:'100%', background:'#10B981', borderRadius:'3px'}}></div></div>
                </div>
                <div>
-                 <div style={{display:'flex', justifyContent:'space-between', fontSize:'10px', color:'#94A3B8', marginBottom:'4px'}}><span>Target Snippets</span><span>Missing</span></div>
-                 <div style={{height:'6px', background:'#1E293B', borderRadius:'3px'}}><div style={{width:'40%', height:'100%', background:'#F59E0B', borderRadius:'3px'}}></div></div>
+                 <div style={{display:'flex', justifyContent:'space-between', fontSize:'10px', color:'var(--text-muted)', marginBottom:'4px'}}><span>Target Snippets</span><span>Missing</span></div>
+                 <div style={{height:'6px', background:'var(--bg-elevated)', borderRadius:'3px'}}><div style={{width:'40%', height:'100%', background:'#F59E0B', borderRadius:'3px'}}></div></div>
                </div>
              </div>
           </div>
         );
       case 'publish':
         return (
-          <div style={{display:'flex', alignItems:'center', justifyContent:'center', gap:'16px', width:'100%', height:'100%', background:'#111827', borderRadius:'0 0 16px 16px', flex:1}}>
-             <div style={{width:'50px', height:'50px', background:'#5B21B6', borderRadius:'12px', display:'flex', alignItems:'center', justifyContent:'center', color:'white'}}><Sparkles size={24}/></div>
+          <div style={{display:'flex', alignItems:'center', justifyContent:'center', gap:'16px', width:'100%', height:'100%', background:'var(--bg-surface)', borderRadius:'0 0 16px 16px', flex:1}}>
+             <div style={{width:'50px', height:'50px', background:'#5B21B6', borderRadius:'12px', display:'flex', alignItems:'center', justifyContent:'center', color:'var(--text-primary)'}}><Sparkles size={24}/></div>
              <div style={{display:'flex', gap:'4px'}}>
-               <div style={{width:'6px', height:'6px', background:'#334155', borderRadius:'50%'}}></div>
-               <div style={{width:'6px', height:'6px', background:'#334155', borderRadius:'50%'}}></div>
-               <div style={{width:'6px', height:'6px', background:'#334155', borderRadius:'50%'}}></div>
+               <div style={{width:'6px', height:'6px', background:'var(--border-strong)', borderRadius:'50%'}}></div>
+               <div style={{width:'6px', height:'6px', background:'var(--border-strong)', borderRadius:'50%'}}></div>
+               <div style={{width:'6px', height:'6px', background:'var(--border-strong)', borderRadius:'50%'}}></div>
              </div>
-             <div style={{background:'#1E293B', border:'1px solid rgba(16,185,129,0.3)', width:'60px', height:'60px', borderRadius:'12px', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'30px', position:'relative'}}>
-                <img src="https://cdn.simpleicons.org/wordpress/white" width="30" />
-                <div style={{position:'absolute', top:'-6px', right:'-6px', background:'#10B981', color:'white', fontSize:'8px', padding:'2px 4px', borderRadius:'4px', fontWeight:'bold'}}>Synced</div>
+             <div style={{background:'var(--bg-elevated)', border:'1px solid rgba(16,185,129,0.3)', width:'60px', height:'60px', borderRadius:'12px', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'30px', position:'relative'}}>
+                <span style={{fontWeight:800, fontSize:'13px', color:'var(--color-primary-400)'}}>WP</span>
+                <div style={{position:'absolute', top:'-6px', right:'-6px', background:'#10B981', color:'var(--text-primary)', fontSize:'8px', padding:'2px 4px', borderRadius:'4px', fontWeight:'bold'}}>Synced</div>
              </div>
           </div>
         );
       case 'voice':
         return (
-          <div style={{display:'flex', flexDirection:'column', gap:'12px', width:'100%', height:'100%', background:'#111827', padding:'20px', boxSizing:'border-box', borderRadius:'0 0 16px 16px', flex:1}}>
-            <textarea readOnly style={{width:'100%', flex:1, background:'#0F172A', border:'1px solid #334155', borderRadius:'8px', color:'#A78BFA', padding:'12px', fontSize:'11px', resize:'none', outline:'none', fontFamily:'monospace'}} value="CORE_DIRECTIVE: Always maintain a professional yet engaging tone. Avoid jargon where possible. Refer to the reader as 'you'." />
+          <div style={{display:'flex', flexDirection:'column', gap:'12px', width:'100%', height:'100%', background:'var(--bg-surface)', padding:'20px', boxSizing:'border-box', borderRadius:'0 0 16px 16px', flex:1}}>
+            <textarea readOnly style={{width:'100%', flex:1, background:'var(--bg-base)', border:'1px solid #334155', borderRadius:'8px', color:'#A78BFA', padding:'12px', fontSize:'11px', resize:'none', outline:'none', fontFamily:'monospace'}} value="CORE_DIRECTIVE: Always maintain a professional yet engaging tone. Avoid jargon where possible. Refer to the reader as 'you'." />
             <div style={{display:'flex', justifyContent:'space-between', alignItems:'center'}}>
-              <div style={{fontSize:'11px', color:'#94A3B8'}}>Creativity Temperature: <span style={{color:'white'}}>1.0</span></div>
+              <div style={{fontSize:'11px', color:'var(--text-muted)'}}>Creativity Temperature: <span style={{color:'var(--text-primary)'}}>1.0</span></div>
               <div style={{background:'rgba(124,58,237,0.1)', color:'#A78BFA', padding:'4px 8px', borderRadius:'4px', fontSize:'10px', border:'1px solid rgba(124,58,237,0.3)'}}>Active Profile</div>
             </div>
           </div>
@@ -1314,11 +1314,11 @@ const HomeFeaturesSection = () => {
   return (
     <div className="container" style={{padding: '8rem 0'}}>
       <div style={{textAlign: 'center', marginBottom: '4rem'}}>
-        <h2 style={{fontSize: '2.5rem', fontWeight: 800, color: 'white', marginBottom: '1rem'}}>Everything you need to <span className="title-accent-violet">dominate search.</span></h2>
-        <p style={{color: '#94A3B8', fontSize: '1.2rem', maxWidth: '600px', margin: '0 auto'}}>Navigate through all our core modules natively right here.</p>
+        <h2 style={{fontSize: '2.5rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '1rem'}}>Everything you need to <span className="title-accent-violet">dominate search.</span></h2>
+        <p style={{color: 'var(--text-muted)', fontSize: '1.2rem', maxWidth: '600px', margin: '0 auto'}}>Navigate through all our core modules natively right here.</p>
       </div>
       
-      <div style={{display: 'flex', flexDirection: window.innerWidth <= 768 ? 'column' : 'row', gap: '2rem', background: '#0D1526', border: '1px solid rgba(255,255,255,0.05)', borderRadius: '24px', padding: '2rem'}}>
+      <div style={{display: 'flex', flexDirection: window.innerWidth <= 768 ? 'column' : 'row', gap: '2rem', background: 'var(--bg-surface)', border: '1px solid rgba(255,255,255,0.05)', borderRadius: '24px', padding: '2rem'}}>
         {/* Sidebar Toolbar */}
         <div style={{display: 'flex', flexDirection: 'column', gap: '8px', borderRight: window.innerWidth <= 768 ? 'none' : '1px solid rgba(255,255,255,0.05)', borderBottom: window.innerWidth <= 768 ? '1px solid rgba(255,255,255,0.05)' : 'none', paddingRight: window.innerWidth <= 768 ? '0' : '2rem', paddingBottom: window.innerWidth <= 768 ? '2rem' : '0', minWidth: '280px'}}>
           {features.map(f => (
@@ -1326,10 +1326,10 @@ const HomeFeaturesSection = () => {
               display: 'flex', alignItems: 'center', gap: '12px', padding: '16px', borderRadius: '12px',
               background: active === f.id ? 'rgba(124,58,237,0.1)' : 'transparent',
               border: active === f.id ? '1px solid rgba(124,58,237,0.3)' : '1px solid transparent',
-              color: active === f.id ? 'white' : '#94A3B8',
+              color: active === f.id ? 'var(--text-primary)' : 'var(--text-muted)',
               cursor: 'pointer', textAlign: 'left', transition: 'all 0.2s', width: '100%'
             }}>
-              <div style={{color: active === f.id ? '#A78BFA' : '#64748B', display: 'flex'}}>{f.icon}</div>
+              <div style={{color: active === f.id ? '#A78BFA' : 'var(--text-subtle)', display: 'flex'}}>{f.icon}</div>
               <span style={{fontWeight: 600, fontSize: '15px'}}>{f.title}</span>   
             </button>
           ))}
@@ -1339,15 +1339,15 @@ const HomeFeaturesSection = () => {
         <div style={{flex: 1, padding: window.innerWidth <= 768 ? '0' : '1rem 2rem', display: 'flex', flexDirection: 'column', justifyContent: 'center', minHeight: '350px'}}>
            {features.map(f => (
              <div key={f.id} style={{display: active === f.id ? 'flex' : 'none', animation: 'fadeIn 0.4s ease forwards', height: '100%', flexDirection: 'column'}}>
-               <h3 style={{fontSize: '2rem', color: 'white', marginBottom: '1rem'}}>{f.title}</h3>
-               <p style={{color: '#94A3B8', fontSize: '1.1rem', lineHeight: 1.6, marginBottom: '2rem'}}>{f.desc}</p>
+               <h3 style={{fontSize: '2rem', color: 'var(--text-primary)', marginBottom: '1rem'}}>{f.title}</h3>
+               <p style={{color: 'var(--text-muted)', fontSize: '1.1rem', lineHeight: 1.6, marginBottom: '2rem'}}>{f.desc}</p>
                
-               <div style={{background: '#141B2D', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '16px', flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden', position: 'relative', minHeight: '260px'}}>
+               <div style={{background: 'var(--bg-elevated)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '16px', flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden', position: 'relative', minHeight: '260px'}}>
                   <div style={{height: '40px', background: 'rgba(255,255,255,0.02)', borderBottom: '1px solid rgba(255,255,255,0.05)', display: 'flex', alignItems: 'center', padding: '0 16px', gap: '6px', width: '100%', boxSizing: 'border-box'}}>
                     <div style={{width: 10, height: 10, borderRadius: '50%', background: '#EF4444'}}></div>
                     <div style={{width: 10, height: 10, borderRadius: '50%', background: '#F59E0B'}}></div>
                     <div style={{width: 10, height: 10, borderRadius: '50%', background: '#10B981'}}></div>
-                    <div style={{marginLeft: 'auto', fontSize: '10px', color: '#64748B', fontFamily: 'monospace'}}>BlogzzUP.ai/dash/{f.id}</div>
+                    <div style={{marginLeft: 'auto', fontSize: '10px', color: 'var(--text-subtle)', fontFamily: 'monospace'}}>BlogzzUP.ai/dash/{f.id}</div>
                   </div>
                   {renderMockup(f.id)}
                </div>
@@ -1562,7 +1562,7 @@ function App() {
               onClick={() => window.toggleTheme && window.toggleTheme()} 
               title="Toggle light/dark mode"
               style={{
-                background: 'rgba(255,255,255,0.06)',
+                background: 'var(--border-default)',
                 border: '1px solid rgba(255,255,255,0.1)',
                 borderRadius: '999px',
                 width: '40px',
@@ -1576,7 +1576,7 @@ function App() {
                 flexShrink: 0
               }}
               onMouseOver={(e) => { e.currentTarget.style.background='rgba(124,58,237,0.15)'; e.currentTarget.style.borderColor='rgba(124,58,237,0.4)'; }}
-              onMouseOut={(e) => { e.currentTarget.style.background='rgba(255,255,255,0.06)'; e.currentTarget.style.borderColor='rgba(255,255,255,0.1)'; }}
+              onMouseOut={(e) => { e.currentTarget.style.background='var(--border-default)'; e.currentTarget.style.borderColor='var(--border-strong)'; }}
             >
               🌙
             </button>
@@ -1657,9 +1657,9 @@ function App() {
               <button className="btn btn-primary btn-lg" onClick={() => window.showDashboard()}>Start Free Trial →</button>
               <button 
                 onClick={() => window.showPage('demo')} 
-                style={{background:'transparent', border:'1px solid rgba(255,255,255,0.2)', color:'white', padding:'14px 28px', borderRadius:'999px', fontSize:'16px', fontWeight:500, cursor:'pointer', display:'flex', alignItems:'center', gap:'10px', transition:'all 0.2s'}}
+                style={{background:'transparent', border:'1px solid rgba(255,255,255,0.2)', color:'var(--text-primary)', padding:'14px 28px', borderRadius:'999px', fontSize:'16px', fontWeight:500, cursor:'pointer', display:'flex', alignItems:'center', gap:'10px', transition:'all 0.2s'}}
                 onMouseEnter={(e) => { e.currentTarget.style.borderColor='#7C3AED'; e.currentTarget.style.color='#A78BFA'; }}
-                onMouseLeave={(e) => { e.currentTarget.style.borderColor='rgba(255,255,255,0.2)'; e.currentTarget.style.color='white'; }}
+                onMouseLeave={(e) => { e.currentTarget.style.borderColor='rgba(255,255,255,0.2)'; e.currentTarget.style.color='var(--text-primary)'; }}
               >
                 <span style={{fontSize:'18px'}}>▷</span> Watch Demo
               </button>
@@ -1774,20 +1774,20 @@ function App() {
              {/* Node 1 – Discovery */}
              <div className="glass-card" style={{padding: '24px', textAlign: 'center', width: '220px', flexShrink: 0, zIndex: 2}}>
                <div style={{background: 'rgba(255,255,255,0.05)', width: '64px', height: '64px', borderRadius: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px', color: 'var(--text-muted)'}}><Search size={32}/></div>
-               <h3 style={{color: 'white', fontSize: '18px', margin: '0 0 8px', fontWeight: 700}}>1. Discovery</h3>
+               <h3 style={{color: 'var(--text-primary)', fontSize: '18px', margin: '0 0 8px', fontWeight: 700}}>1. Discovery</h3>
                <p style={{color: 'var(--text-subtle)', fontSize: '13px', margin: 0, lineHeight: 1.5}}>Keyword & SERP analysis automatically extracts missing competitor topics.</p>
              </div>
              {/* Node 2 – AI Engine (centre, glowing) */}
-             <div style={{background: 'linear-gradient(135deg, #1A1333, #0D1526)', border: '1px solid rgba(124,58,237,0.4)', borderRadius: '24px', padding: '32px', textAlign: 'center', width: '240px', flexShrink: 0, zIndex: 2, boxShadow: '0 0 40px rgba(124,58,237,0.25)', position: 'relative'}}>
+             <div style={{background: 'var(--bg-elevated)', border: '1px solid rgba(124,58,237,0.4)', borderRadius: '24px', padding: '32px', textAlign: 'center', width: '240px', flexShrink: 0, zIndex: 2, boxShadow: '0 0 40px rgba(124,58,237,0.25)', position: 'relative'}}>
                <div style={{position: 'absolute', inset: 0, borderRadius: '24px', boxShadow: '0 0 0 0 rgba(124,58,237,0.4)', animation: 'pulseBorderGlow 2s infinite', pointerEvents: 'none'}}></div>
-               <div style={{background: 'linear-gradient(135deg, #7C3AED, #5B21B6)', width: '80px', height: '80px', borderRadius: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px', color: 'white', boxShadow: '0 10px 20px rgba(124,58,237,0.4)'}}><Brain size={40}/></div>
-               <h3 style={{color: 'white', fontSize: '22px', margin: '0 0 6px', fontWeight: 800}}>AI Engine</h3>
+               <div style={{background: 'linear-gradient(135deg, #7C3AED, #5B21B6)', width: '80px', height: '80px', borderRadius: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px', color: 'var(--text-primary)', boxShadow: '0 10px 20px rgba(124,58,237,0.4)'}}><Brain size={40}/></div>
+               <h3 style={{color: 'var(--text-primary)', fontSize: '22px', margin: '0 0 6px', fontWeight: 800}}>AI Engine</h3>
                <p style={{color: '#A78BFA', fontSize: '13px', margin: 0}}>Generates, scores & optimises NLP content in real time.</p>
              </div>
              {/* Node 3 – Publishing */}
              <div className="glass-card" style={{padding: '24px', textAlign: 'center', width: '220px', flexShrink: 0, zIndex: 2}}>
                <div style={{background: 'rgba(6,182,212,0.1)', width: '64px', height: '64px', borderRadius: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px', color: '#06B6D4'}}><Globe2 size={32}/></div>
-               <h3 style={{color: 'white', fontSize: '18px', margin: '0 0 8px', fontWeight: 700}}>3. Publishing</h3>
+               <h3 style={{color: 'var(--text-primary)', fontSize: '18px', margin: '0 0 8px', fontWeight: 700}}>3. Publishing</h3>
                <p style={{color: 'var(--text-subtle)', fontSize: '13px', margin: 0, lineHeight: 1.5}}>One-click sync to major CMS platforms like WordPress or Ghost.</p>
              </div>
              <style dangerouslySetInnerHTML={{__html: `
@@ -1826,9 +1826,9 @@ function App() {
               <div className="demo-visual-card">
                 <div className="cms-connection-demo">
                   <div className="cms-icons">
-                    <div className="cms-icon"><img src="https://cdn.simpleicons.org/wordpress/white" alt="WP" style={{width: 20}}/></div>
-                    <div className="cms-icon"><img src="https://cdn.simpleicons.org/webflow/white" alt="WF" style={{width: 20}}/></div>
-                    <div className="cms-icon"><img src="https://cdn.simpleicons.org/shopify/white" alt="SH" style={{width: 20}}/></div>
+                    <div className="cms-icon" style={{fontWeight: 700, fontSize: '11px', color: 'var(--color-primary-400)'}}>WP</div>
+                    <div className="cms-icon" style={{fontWeight: 700, fontSize: '11px', color: 'var(--color-secondary-500)'}}>WF</div>
+                    <div className="cms-icon" style={{fontWeight: 700, fontSize: '11px', color: '#10B981'}}>SH</div>
                   </div>
                   <div className="connection-path">
                     <div className="data-packet"></div>
@@ -2111,10 +2111,10 @@ function App() {
               © 2026 BlogzzUP. Built in India 🇮🇳. All rights reserved.
             </span>
             <div className="footer-socials" style={{display: 'flex', alignItems: 'center', gap: '10px'}}>
-              <a href="#" className="social-icon" style={{display: 'flex', alignItems: 'center', justifyContent: 'center', width: '36px', height: '36px', borderRadius: '8px', background: '#000', color: 'white', textDecoration: 'none', fontSize: '15px', fontWeight: 900, fontFamily: 'sans-serif'}}>𝕏</a>
-              <a href="#" className="social-icon" style={{display: 'flex', alignItems: 'center', justifyContent: 'center', width: '36px', height: '36px', borderRadius: '8px', background: '#0A66C2', color: 'white', textDecoration: 'none', fontSize: '14px', fontWeight: 700, fontFamily: 'sans-serif', lineHeight: 1, flexShrink: 0}}>in</a>
-              <a href="#" className="social-icon" style={{display: 'flex', alignItems: 'center', justifyContent: 'center', width: '36px', height: '36px', borderRadius: '50%', background: 'linear-gradient(135deg,#F58529,#DD2A7B,#8134AF)', color: 'white', textDecoration: 'none', fontSize: '16px'}}>◎</a>
-              <a href="#" className="social-icon" style={{display: 'flex', alignItems: 'center', justifyContent: 'center', width: '36px', height: '36px', borderRadius: '8px', background: '#24292E', color: 'white', textDecoration: 'none', fontSize: '18px'}}>⌥</a>
+              <a href="#" className="social-icon" style={{display: 'flex', alignItems: 'center', justifyContent: 'center', width: '36px', height: '36px', borderRadius: '8px', background: '#000', color: 'var(--text-primary)', textDecoration: 'none', fontSize: '15px', fontWeight: 900, fontFamily: 'sans-serif'}}>𝕏</a>
+              <a href="#" className="social-icon" style={{display: 'flex', alignItems: 'center', justifyContent: 'center', width: '36px', height: '36px', borderRadius: '8px', background: '#0A66C2', color: 'var(--text-primary)', textDecoration: 'none', fontSize: '14px', fontWeight: 700, fontFamily: 'sans-serif', lineHeight: 1, flexShrink: 0}}>in</a>
+              <a href="#" className="social-icon" style={{display: 'flex', alignItems: 'center', justifyContent: 'center', width: '36px', height: '36px', borderRadius: '50%', background: 'linear-gradient(135deg,#F58529,#DD2A7B,#8134AF)', color: 'var(--text-primary)', textDecoration: 'none', fontSize: '16px'}}>◎</a>
+              <a href="#" className="social-icon" style={{display: 'flex', alignItems: 'center', justifyContent: 'center', width: '36px', height: '36px', borderRadius: '8px', background: '#24292E', color: 'var(--text-primary)', textDecoration: 'none', fontSize: '18px'}}>⌥</a>
             </div>
           </div>
         </div>

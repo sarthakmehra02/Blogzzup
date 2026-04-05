@@ -253,7 +253,7 @@
 }
 
 .pa-card-header {
-  background: rgba(0,0,0,0.2);
+  background: var(--bg-surface);
   padding: var(--space-3) var(--space-5);
   border-bottom: 1px solid var(--glass-border);
   display: flex;
@@ -269,7 +269,7 @@
   min-height: 250px;
 }
 
-.console-body { background: #050810; }
+.console-body { background: var(--bg-input); }
 
 .pa-card-body pre {
   margin: 0;
