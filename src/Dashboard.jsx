@@ -11,6 +11,8 @@ import { fetchUserBlogs, createBlog, updateBlog, deleteBlog, saveCredentials, fe
 import BlogEditor from './BlogEditor';
 import { useAuth } from './AuthContext';
 import { callGemini } from './utils/gemini';
+import { db } from './firebase';
+import { doc, getDoc } from 'firebase/firestore';
 
 const MyBlogsSection = () => {
   const [blogs, setBlogs] = useState([]);
@@ -1226,6 +1228,24 @@ const Dashboard = ({ onLogout }) => {
   const [blogsLoading, setBlogsLoading] = useState(false);
   const [viewDate, setViewDate] = useState(new Date());
 
+  const [userPlan, setUserPlan] = useState('Free');
+
+  useEffect(() => {
+    const fetchUserPlan = async () => {
+      if (currentUser) {
+        try {
+          const userDoc = await getDoc(doc(db, 'users', currentUser.uid));
+          if (userDoc.exists() && userDoc.data().plan) {
+            setUserPlan(userDoc.data().plan);
+          }
+        } catch (error) {
+          console.error('Error fetching plan:', error);
+        }
+      }
+    };
+    fetchUserPlan();
+  }, [currentUser]);
+
   // Global Publish Modal State
   const [publishModalBlog, setPublishModalBlog] = useState(null);
   const [publishingPlatform, setPublishingPlatform] = useState('wordpress');
@@ -1803,7 +1823,7 @@ Use clear headings and keep it actionable. Write in a professional consulting to
           }
           <div className="user-info">
             <span className="user-name">{firstName}'s Workspace</span>
-            <span className="user-plan">Growth Plan</span>
+            <span className="user-plan">{userPlan} Plan</span>
           </div>
         </div>
 

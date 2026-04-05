@@ -1,4 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
+import { initializeRazorpayPayment } from './utils/razorpay';
+import { db } from './firebase';
+import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { 
   Sparkles, 
   ArrowRight, 
@@ -871,7 +874,60 @@ const DemoPage = () => {
 
 
 const PricingPage = () => {
-  const [annualBilling, setAnnualBilling] = React.useState(false);
+  const { currentUser } = useAuth();
+  const [billingCycle, setBillingCycle] = useState('monthly');
+  const [loadingPlan, setLoadingPlan] = useState(null);
+
+  const handlePayment = (planName, monthlyAmount) => {
+    if (!currentUser) {
+      alert('Please sign in first to subscribe to a plan.');
+      return;
+    }
+
+    const amount = billingCycle === 'yearly'
+      ? Math.round(monthlyAmount * 12 * 0.7) // 30% discount
+      : monthlyAmount;
+
+    setLoadingPlan(planName);
+
+    initializeRazorpayPayment({
+      planName,
+      amount,
+      billingCycle,
+      userEmail: currentUser.email,
+      userName: currentUser.displayName,
+      onSuccess: async (response) => {
+        setLoadingPlan(null);
+        
+        try {
+          // Save plan to Firestore under users collection
+          await setDoc(doc(db, 'users', currentUser.uid), {
+            plan: planName,
+            billingCycle: billingCycle,
+            amount: amount,
+            razorpayPaymentId: response.razorpay_payment_id,
+            planActivatedAt: serverTimestamp(),
+            planExpiresAt: billingCycle === 'yearly' 
+              ? new Date(Date.now() + 365 * 24 * 60 * 60 * 1000)
+              : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+            email: currentUser.email,
+            displayName: currentUser.displayName,
+          }, { merge: true });
+
+          // Show success toast/alert
+          alert(`🎉 Payment successful! Welcome to ${planName} plan.\nPayment ID: ${response.razorpay_payment_id}`);
+
+        } catch (error) {
+          console.error('Error saving plan:', error);
+          alert('Payment successful but profile update failed. Contact support.');
+        }
+      },
+      onFailure: (reason) => {
+        setLoadingPlan(null);
+        alert(`Payment failed: ${reason}`);
+      }
+    });
+  };
 
   const [activeFaq, setActiveFaq] = React.useState(null);
   const faqs = [
@@ -899,12 +955,12 @@ const PricingPage = () => {
       <div className="pricing-toggle">
         <div className="pt-container">
           <button 
-            onClick={() => setAnnualBilling(false)}
-            className={`pt-btn ${!annualBilling ? 'active' : 'inactive'}`}
+            onClick={() => setBillingCycle('monthly')}
+            className={`pt-btn ${billingCycle === 'monthly' ? 'active' : 'inactive'}`}
           >Monthly</button>
           <button 
-            onClick={() => setAnnualBilling(true)}
-            className={`pt-btn ${annualBilling ? 'active' : 'inactive'}`}
+            onClick={() => setBillingCycle('yearly')}
+            className={`pt-btn ${billingCycle === 'yearly' ? 'active' : 'inactive'}`}
           >Yearly (Save 30%)</button>
         </div>
       </div>
@@ -914,8 +970,8 @@ const PricingPage = () => {
         <div className="pc-card">
           <h3 className="pc-header">Starter</h3>
           <div className="pc-price-wrap">
-            <span className="pc-price">{annualBilling ? '₹16,790' : '₹1,999'}</span>
-            <span className="pc-per">{annualBilling ? '/year' : '/month'}</span>
+            <span className="pc-price">{billingCycle === 'yearly' ? '₹16,790' : '₹1,999'}</span>
+            <span className="pc-per">{billingCycle === 'yearly' ? '/year' : '/month'}</span>
           </div>
           <div style={{fontSize: '12px', color: '#10B981', marginTop: '4px'}}>(First month free)</div>
           <p className="pc-desc">For early-stage startups building organic presence</p>
@@ -928,7 +984,11 @@ const PricingPage = () => {
             <li className="pc-feat"><span className="pc-feat-check">✓</span> Content Calendar</li>
             <li className="pc-feat"><span className="pc-feat-check">✓</span> Email support</li>
           </ul>
-          <button className="pc-btn-outline" onClick={() => window.showPage('auth')}>Start Free →</button>
+          <button
+            className="pc-btn-outline"
+            onClick={() => handlePayment('Starter', 1999)}
+            disabled={loadingPlan === 'Starter'}
+          >{loadingPlan === 'Starter' ? 'Processing...' : 'Start Free →'}</button>
         </div>
 
         {/* Growth */}
@@ -936,8 +996,8 @@ const PricingPage = () => {
           <div className="pc-most-pop">Most Popular</div>
           <h3 className="pc-header">Growth</h3>
           <div className="pc-price-wrap">
-            <span className="pc-price">{annualBilling ? '₹41,990' : '₹4,999'}</span>
-            <span className="pc-per">{annualBilling ? '/year' : '/month'}</span>
+            <span className="pc-price">{billingCycle === 'yearly' ? '₹41,990' : '₹4,999'}</span>
+            <span className="pc-per">{billingCycle === 'yearly' ? '/year' : '/month'}</span>
           </div>
           <p className="pc-desc" style={{margin: '32px 0 24px'}}>For startups replacing their marketing team</p>
           <div className="pc-divider"></div>
@@ -951,7 +1011,11 @@ const PricingPage = () => {
             <li className="pc-feat"><span className="pc-feat-check">✓</span> ROI & Traffic Tracker</li>
             <li className="pc-feat"><span className="pc-feat-check">✓</span> Priority support</li>
           </ul>
-          <button className="pc-btn-solid" onClick={() => window.showPage('auth')}>Get Started →</button>
+          <button
+            className="pc-btn-solid"
+            onClick={() => handlePayment('Growth', 4999)}
+            disabled={loadingPlan === 'Growth'}
+          >{loadingPlan === 'Growth' ? 'Processing...' : 'Get Started →'}</button>
         </div>
 
         {/* Scale */}
@@ -972,7 +1036,10 @@ const PricingPage = () => {
              <li className="pc-feat"><span className="pc-feat-check">✓</span> SLA + Priority support</li>
              <li className="pc-feat"><span className="pc-feat-check">✓</span> Advanced analytics</li>
           </ul>
-          <button className="pc-btn-outline-cyan" onClick={() => window.showPage('auth')}>Contact Sales →</button>
+          <button
+            className="pc-btn-outline-cyan"
+            onClick={() => window.open('mailto:hello@blogforge.ai?subject=Scale Plan Enquiry')}
+          >Contact Sales →</button>
         </div>
       </div>
 
