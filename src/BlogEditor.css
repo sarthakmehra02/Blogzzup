@@ -1260,4 +1260,48 @@
   background: #fff;
   border-style: solid;
   border-color: var(--color-border);
-}
+}
+
+/* =====================================================================
+   LIGHT MODE — Blog Editor text visibility fixes
+   Ensure all editor inputs/textareas have dark, readable text.
+   ===================================================================== */
+[data-theme="light"] .be-root .form-input,
+[data-theme="light"] .be-root .form-textarea,
+[data-theme="light"] .be-root .be-title-input,
+[data-theme="light"] .be-root .be-body-textarea,
+[data-theme="light"] .be-root input,
+[data-theme="light"] .be-root textarea {
+  color: #1E293B !important;
+  background-color: #FFFFFF !important;
+  -webkit-text-fill-color: #1E293B !important;
+}
+
+[data-theme="light"] .be-root .form-input::placeholder,
+[data-theme="light"] .be-root .form-textarea::placeholder,
+[data-theme="light"] .be-root input::placeholder,
+[data-theme="light"] .be-root textarea::placeholder {
+  color: rgba(30, 41, 59, 0.4) !important;
+  -webkit-text-fill-color: rgba(30, 41, 59, 0.4) !important;
+}
+
+[data-theme="light"] .be-root .form-label,
+[data-theme="light"] .be-root .be-metric-label,
+[data-theme="light"] .be-root .be-section-label {
+  color: #475569 !important;
+}
+
+[data-theme="light"] .be-root .be-metric-val {
+  -webkit-text-fill-color: unset !important;
+}
+
+[data-theme="light"] .be-metrics-row {
+  background: #F8F3EF !important;
+  border-color: rgba(0, 0, 0, 0.08) !important;
+}
+
+[data-theme="light"] .be-preview-body {
+  color: #1E293B !important;
+  background: #FFFFFF !important;
+}
+

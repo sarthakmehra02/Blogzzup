@@ -325,7 +325,7 @@
   --color-border: rgba(0, 0, 0, 0.08);
   --color-border-hover: rgba(0, 0, 0, 0.15);
 
-  --color-text-primary: var(--bg-elevated);
+  --color-text-primary: #1E293B;
   --color-text-secondary: #475569;
   --color-text-muted: #64748B;
   --color-text-hint: rgba(30, 41, 59, 0.45);
