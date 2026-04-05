@@ -1345,14 +1345,17 @@ const Dashboard = ({ onLogout }) => {
       alert("Select a platform first");
       return;
     }
-    const credsStr = localStorage.getItem('bf_credentials');
-    if (!credsStr) {
-      setPublishStatus('Error: Credentials not found. Please setup in Auto-Publisher.');
+    setPublishStatus('Loading credentials...');
+    let allCreds = {};
+    try {
+      allCreds = await fetchCredentials(uid);
+    } catch (e) {
+      setPublishStatus('Error: Could not load credentials. Check your connection.');
       return;
     }
-    const creds = JSON.parse(credsStr)[publishingPlatform];
-    if (!creds || Object.keys(creds).length === 0 || !Object.values(creds).some(val => val.length > 0)) {
-      setPublishStatus('Error: Invalid API keys for ' + publishingPlatform + '. Please configure them in the Auto-Publisher settings.');
+    const creds = allCreds[publishingPlatform];
+    if (!creds || Object.keys(creds).length === 0 || !Object.values(creds).some(val => String(val).length > 0)) {
+      setPublishStatus('Error: Credentials not found for ' + publishingPlatform + '. Please configure them in the Auto-Publisher settings.');
       return;
     }
 
@@ -1431,6 +1434,14 @@ const Dashboard = ({ onLogout }) => {
       const now = new Date();
       const checkBlogs = async () => {
         let hasChanges = false;
+        // Fetch credentials once per interval tick from Firestore
+        let allScheduledCreds = {};
+        try {
+          allScheduledCreds = await fetchCredentials(uid);
+        } catch (e) {
+          console.warn('Auto-publisher: could not fetch credentials', e);
+          return;
+        }
         for (const b of blogs) {
           const stringId = String(b.id);
           // Skip if already being published, failed previously, or status is not scheduled
@@ -1438,9 +1449,8 @@ const Dashboard = ({ onLogout }) => {
             const scheduledTime = new Date(b.scheduledAt);
             if (scheduledTime <= now) {
               console.log("Auto-publishing scheduled blog:", b.title);
-              const credsStr = localStorage.getItem('bf_credentials');
-              if (!credsStr) continue;
-              const creds = JSON.parse(credsStr)[b.platform];
+              const creds = allScheduledCreds[b.platform];
+              if (!creds) continue;
 
               if (creds && Object.keys(creds).length > 0) {
                 // Add to publishing set to avoid duplicate triggers

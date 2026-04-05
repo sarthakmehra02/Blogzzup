@@ -15,7 +15,7 @@
  */
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { createBlog, updateBlog } from './utils/blogStorage';
+import { createBlog, updateBlog, fetchCredentials } from './utils/blogStorage';
 
 // ─── Icons (inline SVG to avoid extra deps) ────────────────────────────────
 const Icon = ({ d, size = 16 }) => (
@@ -500,14 +500,17 @@ STRICT RULES for the body field:
   const executePublish = async () => {
     if (!pubPlatform || !preparedBlog) return;
 
-    const credsStr = localStorage.getItem('bf_credentials');
-    if (!credsStr) {
-      setPubStatus('Error: Credentials not found. Setup in Settings.');
+    setPubStatus('Loading credentials...');
+    let allCreds = {};
+    try {
+      allCreds = await fetchCredentials(uid);
+    } catch (e) {
+      setPubStatus('Error: Could not load credentials. Check your connection.');
       return;
     }
-    const creds = JSON.parse(credsStr)[pubPlatform];
-    if (!creds || Object.keys(creds).length === 0 || !Object.values(creds).some(val => val.length > 0)) {
-      setPubStatus('Error: Invalid API keys for ' + pubPlatform);
+    const creds = allCreds[pubPlatform];
+    if (!creds || Object.keys(creds).length === 0 || !Object.values(creds).some(val => String(val).length > 0)) {
+      setPubStatus('Error: Credentials not found for ' + pubPlatform + '. Please setup in Auto-Publisher.');
       return;
     }
 
