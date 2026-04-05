@@ -1,7 +1,4 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { initializeRazorpayPayment } from './utils/razorpay';
-import { db } from './firebase';
-import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { 
   Sparkles, 
   ArrowRight, 
@@ -873,61 +870,8 @@ const DemoPage = () => {
 };
 
 
-const PricingPage = () => {
-  const { currentUser } = useAuth();
+const PricingPage = ({ onSignIn }) => {
   const [billingCycle, setBillingCycle] = useState('monthly');
-  const [loadingPlan, setLoadingPlan] = useState(null);
-
-  const handlePayment = (planName, monthlyAmount) => {
-    if (!currentUser) {
-      alert('Please sign in first to subscribe to a plan.');
-      return;
-    }
-
-    const amount = billingCycle === 'yearly'
-      ? Math.round(monthlyAmount * 12 * 0.7) // 30% discount
-      : monthlyAmount;
-
-    setLoadingPlan(planName);
-
-    initializeRazorpayPayment({
-      planName,
-      amount,
-      billingCycle,
-      userEmail: currentUser.email,
-      userName: currentUser.displayName,
-      onSuccess: async (response) => {
-        setLoadingPlan(null);
-        
-        try {
-          // Save plan to Firestore under users collection
-          await setDoc(doc(db, 'users', currentUser.uid), {
-            plan: planName,
-            billingCycle: billingCycle,
-            amount: amount,
-            razorpayPaymentId: response.razorpay_payment_id,
-            planActivatedAt: serverTimestamp(),
-            planExpiresAt: billingCycle === 'yearly' 
-              ? new Date(Date.now() + 365 * 24 * 60 * 60 * 1000)
-              : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
-            email: currentUser.email,
-            displayName: currentUser.displayName,
-          }, { merge: true });
-
-          // Show success toast/alert
-          alert(`🎉 Payment successful! Welcome to ${planName} plan.\nPayment ID: ${response.razorpay_payment_id}`);
-
-        } catch (error) {
-          console.error('Error saving plan:', error);
-          alert('Payment successful but profile update failed. Contact support.');
-        }
-      },
-      onFailure: (reason) => {
-        setLoadingPlan(null);
-        alert(`Payment failed: ${reason}`);
-      }
-    });
-  };
 
   const [activeFaq, setActiveFaq] = React.useState(null);
   const faqs = [
@@ -986,9 +930,8 @@ const PricingPage = () => {
           </ul>
           <button
             className="pc-btn-outline"
-            onClick={() => handlePayment('Starter', 1999)}
-            disabled={loadingPlan === 'Starter'}
-          >{loadingPlan === 'Starter' ? 'Processing...' : 'Start Free →'}</button>
+            onClick={() => onSignIn && onSignIn()}
+          >Start Free →</button>
         </div>
 
         {/* Growth */}
@@ -1013,9 +956,8 @@ const PricingPage = () => {
           </ul>
           <button
             className="pc-btn-solid"
-            onClick={() => handlePayment('Growth', 4999)}
-            disabled={loadingPlan === 'Growth'}
-          >{loadingPlan === 'Growth' ? 'Processing...' : 'Get Started →'}</button>
+            onClick={() => onSignIn && onSignIn()}
+          >Get Started →</button>
         </div>
 
         {/* Scale */}
@@ -1042,6 +984,10 @@ const PricingPage = () => {
           >Contact Sales →</button>
         </div>
       </div>
+
+      <p style={{ textAlign: 'center', color: '#94A3B8', fontSize: '13px', marginTop: '8px' }}>
+        Sign in to activate your plan
+      </p>
 
       <div style={{marginTop: '32px', textAlign: 'center', fontSize: '13px', color: '#64748B'}}>
         🔒 No credit card required · Cancel anytime · SOC2 Compliant · Used by 500+ Indian startups
@@ -1960,7 +1906,7 @@ function App() {
       </div>
 
       <div className="page-section" id="page-pricing" style={{ display: 'none' }}>
-        <PricingPage />
+        <PricingPage onSignIn={() => window.showPage('auth')} />
       </div>
 
       <div className="page-section" id="page-blog" style={{ display: 'none' }}>

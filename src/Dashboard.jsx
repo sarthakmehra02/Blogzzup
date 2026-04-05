@@ -12,7 +12,8 @@ import BlogEditor from './BlogEditor';
 import { useAuth } from './AuthContext';
 import { callGemini } from './utils/gemini';
 import { db } from './firebase';
-import { doc, getDoc } from 'firebase/firestore';
+import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
+import { initializeRazorpayPayment } from './utils/razorpay';
 
 const MyBlogsSection = () => {
   const [blogs, setBlogs] = useState([]);
@@ -1216,6 +1217,18 @@ const AutoPublisherSection = () => {
     </div>
   );
 };
+const planHierarchy = { 'Free': 0, 'Starter': 1, 'Growth': 2, 'Scale': 3 };
+
+const getButtonText = (planName, loadingPlan, userPlan) => {
+  if (loadingPlan === planName) return 'Processing...';
+  if (userPlan === planName) return 'Current Plan';
+  if (planHierarchy[userPlan] > planHierarchy[planName]) return 'Downgrade';
+  return 'Upgrade';
+};
+
+const isButtonDisabled = (planName, loadingPlan, userPlan) => {
+  return loadingPlan === planName || userPlan === planName || planHierarchy[userPlan] > planHierarchy[planName];
+};
 
 
 const Dashboard = ({ onLogout }) => {
@@ -1252,6 +1265,47 @@ const Dashboard = ({ onLogout }) => {
   const [publishStatus, setPublishStatus] = useState('');
   const [isScheduled, setIsScheduled] = useState(false);
   const [scheduledAt, setScheduledAt] = useState('');
+
+  const [loadingPlan, setLoadingPlan] = useState(null);
+
+  const handlePlanUpgrade = (planName, amount) => {
+    if (!currentUser) return;
+    
+    setLoadingPlan(planName);
+    
+    initializeRazorpayPayment({
+      planName,
+      amount,
+      billingCycle: 'monthly',
+      userEmail: currentUser.email,
+      userName: currentUser.displayName,
+      onSuccess: async (response) => {
+        setLoadingPlan(null);
+        try {
+          await setDoc(doc(db, 'users', currentUser.uid), {
+            plan: planName,
+            amount: amount,
+            razorpayPaymentId: response.razorpay_payment_id,
+            planActivatedAt: serverTimestamp(),
+            planExpiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+            email: currentUser.email,
+            displayName: currentUser.displayName,
+          }, { merge: true });
+          setUserPlan(planName);
+          alert(`🎉 Successfully upgraded to ${planName} plan!`);
+        } catch (error) {
+          console.error('Error saving plan:', error);
+        }
+      },
+      onFailure: (reason) => {
+        setLoadingPlan(null);
+        if (reason !== 'Payment cancelled') {
+          alert(`Payment failed: ${reason}`);
+        }
+      }
+    });
+  };
+
   // New state to track in-progress publications and prevent infinite loops
   const [publishingIds, setPublishingIds] = useState(new Set());
   const [failedIds, setFailedIds] = useState(new Set());
@@ -2387,18 +2441,27 @@ Use clear headings and keep it actionable. Write in a professional consulting to
               <div>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '20px' }}>
                   {[
-                    { name: 'Starter', price: '₹2,499', blogs: '10 blogs/mo' },
-                    { name: 'Growth', price: '₹6,499', blogs: '50 blogs/mo', active: true },
-                    { name: 'Scale', price: '₹16,500', blogs: '200 blogs/mo' }
-                  ].map(plan => (
-                    <div key={plan.name} style={{ background: plan.active ? 'var(--bg-elevated)' : 'var(--bg-surface)', border: plan.active ? '2px solid var(--color-primary-500)' : '1px solid var(--border-default)', borderRadius: '16px', padding: '32px', textAlign: 'center', position: 'relative' }}>
-                      {plan.active && <div style={{ position: 'absolute', top: '-12px', left: '50%', transform: 'translateX(-50%)', background: 'var(--color-primary-500)', color: 'white', fontSize: '11px', fontWeight: 'bold', padding: '4px 12px', borderRadius: '99px' }}>Current Plan</div>}
+                    { name: 'Starter', price: '₹1,999', blogs: '15 blogs/mo', action: () => handlePlanUpgrade('Starter', 1999) },
+                    { name: 'Growth', price: '₹4,999', blogs: '50 blogs/mo', action: () => handlePlanUpgrade('Growth', 4999) },
+                    { name: 'Scale', price: 'Custom', blogs: 'Unlimited blogs', action: () => window.open('mailto:hello@blogforge.ai?subject=Scale Plan Enquiry') }
+                  ].map(plan => {
+                    const isActive = userPlan === plan.name;
+                    const isDisabled = plan.name !== 'Scale' && isButtonDisabled(plan.name, loadingPlan, userPlan);
+                    const btnText = plan.name === 'Scale' ? 'Contact Sales →' : getButtonText(plan.name, loadingPlan, userPlan);
+                    return (
+                    <div key={plan.name} style={{ background: isActive ? 'var(--bg-elevated)' : 'var(--bg-surface)', border: isActive ? '2px solid var(--color-primary-500)' : '1px solid var(--border-default)', borderRadius: '16px', padding: '32px', textAlign: 'center', position: 'relative', opacity: (planHierarchy[userPlan] > planHierarchy[plan.name] && !isActive) ? 0.6 : 1 }}>
+                      {isActive && <div style={{ position: 'absolute', top: '-12px', left: '50%', transform: 'translateX(-50%)', background: 'var(--color-primary-500)', color: 'white', fontSize: '11px', fontWeight: 'bold', padding: '4px 12px', borderRadius: '99px' }}>Current Plan</div>}
                       <h3 style={{ color: 'var(--text-primary)', fontSize: '20px', margin: '0 0 8px' }}>{plan.name}</h3>
                       <div style={{ fontSize: '36px', color: 'var(--text-primary)', fontWeight: 'bold', marginBottom: '16px' }}>{plan.price}<span style={{ fontSize: '14px', color: 'var(--text-muted)' }}>/mo</span></div>
                       <div style={{ color: 'var(--color-primary-400)', fontWeight: 'bold', fontSize: '14px', marginBottom: '24px' }}>{plan.blogs}</div>
-                      <button style={{ width: '100%', background: plan.active ? 'transparent' : 'var(--bg-surface)', color: plan.active ? 'var(--color-primary-400)' : 'var(--text-primary)', border: plan.active ? '1px solid var(--color-primary-400)' : '1px solid var(--border-default)', padding: '12px', borderRadius: '8px', cursor: 'pointer', fontWeight: 'bold' }}>{plan.active ? 'Manage Plan' : 'Upgrade'}</button>
+                      <button 
+                        onClick={plan.action}
+                        disabled={isDisabled}
+                        style={{ width: '100%', background: isActive ? 'transparent' : 'var(--bg-surface)', color: isDisabled && !isActive ? 'var(--text-muted)' : isActive ? 'var(--color-primary-400)' : 'var(--text-primary)', border: isActive ? '1px solid var(--color-primary-400)' : '1px solid var(--border-default)', padding: '12px', borderRadius: '8px', cursor: isDisabled ? 'not-allowed' : 'pointer', fontWeight: 'bold', opacity: loadingPlan === plan.name ? 0.7 : 1 }}>
+                        {btnText}
+                      </button>
                     </div>
-                  ))}
+                  )})}
                 </div>
               </div>
             );
