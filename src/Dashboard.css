@@ -596,6 +596,13 @@
   border-radius: var(--radius-sm);
   font-size: 11px;
   font-weight: var(--font-bold);
+  color: var(--text-secondary);
+}
+
+[data-theme="light"] .score-badge {
+  color: #1E293B !important;
+  background: rgba(0,0,0,0.04) !important;
+  border-color: rgba(0,0,0,0.10) !important;
 }
 
 /* Status badge system (token-based) */
@@ -1093,7 +1100,7 @@
 
 /* Inline-style overrides (Dashboard JSX uses hardcoded colours) */
 [data-theme="light"] .dash-section {
-  color: var(--bg-base);
+  color: #1E293B;
 }
 
 /* Action dropdown */
@@ -1104,7 +1111,7 @@
 }
 
 [data-theme="light"] .action-dropdown button {
-  color: var(--bg-elevated);
+  color: #1E293B;
 }
 
 [data-theme="light"] .action-dropdown button:hover {
@@ -1119,27 +1126,63 @@
 /* Toast */
 [data-theme="light"] .toast {
   background: #FFFFFF;
-  color: var(--bg-base);
+  color: #1E293B;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
 }
 
 /* Dashboard greeting & headers */
 [data-theme="light"] .dashboard-greeting {
-  color: var(--bg-base);
+  color: #1E293B;
 }
 
 [data-theme="light"] .top-header h1 {
-  color: var(--bg-base);
-  -webkit-text-fill-color: var(--bg-base);
+  color: #1E293B;
+  -webkit-text-fill-color: #1E293B;
   background: none;
 }
 
 [data-theme="light"] .header-text h1 {
-  color: var(--bg-base);
-  -webkit-text-fill-color: var(--bg-base);
+  color: #1E293B;
+  -webkit-text-fill-color: #1E293B;
   background: none;
 }
 
 [data-theme="light"] .header-text p {
   color: #475569;
 }
+
+/* Calendar — ensure digits are visible */
+[data-theme="light"] .cal-cell {
+  color: #1E293B !important;
+}
+
+[data-theme="light"] .cal-day-name {
+  color: #64748B !important;
+}
+
+[data-theme="light"] .cal-header {
+  color: #1E293B !important;
+}
+
+[data-theme="light"] .cal-cell.today {
+  background: rgba(124, 58, 237, 0.10) !important;
+  color: #6D28D9 !important;
+}
+
+/* Dashboard table — ensure text is dark */
+[data-theme="light"] .dash-table td {
+  color: #334155 !important;
+}
+
+[data-theme="light"] .dash-table th {
+  color: #64748B !important;
+}
+
+/* Panel header */
+[data-theme="light"] .panel-header {
+  background: rgba(0, 0, 0, 0.03) !important;
+}
+
+[data-theme="light"] .panel-header h3 {
+  color: #1E293B !important;
+}

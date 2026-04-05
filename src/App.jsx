@@ -1639,10 +1639,8 @@ function App() {
         <main className="hero fade-section" id="main-content" style={{ position: 'relative' }} tabIndex={-1}>
           <div className="hero-glow-orb"></div>
           <div className="container hero-content">
-            <div className="badge stagger-in-item">
-              <span className="badge-dot"></span>
-              ✦ India's #1 AI Blog Engine — Now in Beta
-            </div>
+
+
             
             <h1 className="hero-title stagger-in-item">
               Publish <span className="title-accent-violet">10x Output</span><br />
