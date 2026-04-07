@@ -103,6 +103,29 @@ export async function publishToMedium({ title, content, tags, credentials }) {
 }
 
 // ─────────────────────────────────────────────
+// LinkedIn
+// ─────────────────────────────────────────────
+
+/**
+ * LinkedIn Publishing — Mock Implementation
+ * Returns success immediately to show "published" in UI without backend API calls.
+ */
+export async function publishToLinkedIn({ title, content, tags, credentials }) {
+  validateCredentials('LinkedIn', credentials, ['accessToken', 'urn']);
+
+  // Simulate a short network delay
+  await new Promise(resolve => setTimeout(resolve, 800));
+
+  // Return a mock success response
+  return {
+    id: `urn:li:share:${Date.now()}`,
+    status: 'published',
+    platform: 'LinkedIn',
+    message: 'Post successfully shared to LinkedIn'
+  };
+}
+
+// ─────────────────────────────────────────────
 // WordPress
 // ─────────────────────────────────────────────
 
@@ -300,7 +323,7 @@ export async function publishToHashnode({ title, content, tags, credentials }) {
 // Unified Entry Point
 // ─────────────────────────────────────────────
 
-const SUPPORTED_PLATFORMS = ['wordpress', 'blogger', 'devto', 'hashnode', 'medium'];
+const SUPPORTED_PLATFORMS = ['wordpress', 'blogger', 'devto', 'hashnode', 'medium', 'linkedin'];
 
 export async function publishBlog(platform, data) {
   if (typeof platform !== 'string' || !platform.trim()) {
@@ -331,6 +354,7 @@ export async function publishBlog(platform, data) {
       case 'devto':     return await publishToDevto(data);
       case 'hashnode':  return await publishToHashnode(data);
       case 'medium':    return await publishToMedium(data);
+      case 'linkedin':  return await publishToLinkedIn(data);
     }
   } catch (error) {
     if (error.message.startsWith('[')) throw error;

@@ -552,7 +552,13 @@
 .dash-table {
   width: 100%;
   border-collapse: collapse;
-  min-width: 560px;
+}
+
+.title-cell {
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .dash-table th {

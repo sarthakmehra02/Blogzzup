@@ -356,7 +356,7 @@ STRICT RULES for the body field:
     try {
       const cleaned = await callGemini(prompt, 8192);
       clearInterval(interval);
-      setProgress({ pct: 100, text: 'Complete! ✓' });
+      setProgress({ pct: 100, text: 'Complete!' });
 
       let blogData;
       try {
@@ -548,7 +548,7 @@ STRICT RULES for the body field:
       if (bIdx !== -1) blogs[bIdx] = entry; else blogs.unshift(entry);
       localStorage.setItem('bf_blogs', JSON.stringify(blogs));
 
-      setPubStatus('✓ Blog scheduled!');
+      setPubStatus('Blog scheduled!');
       if (window.loadDashboardBlogs) await window.loadDashboardBlogs();
       if (window.loadMyBlogs) window.loadMyBlogs();
       if (window.updateOverviewStats) window.updateOverviewStats();
@@ -568,7 +568,7 @@ STRICT RULES for the body field:
         tags: preparedBlog.tags,
         credentials: creds
       });
-      setPubStatus('✓ Published successfully!');
+      setPubStatus('Published successfully!');
 
       const blogs = JSON.parse(localStorage.getItem('bf_blogs') || '[]');
       const bIdx = blogs.findIndex(b => b.id === output.id);
@@ -734,7 +734,7 @@ Return ONLY a valid JSON object:
             </div>
 
             <div className="be-tone-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '12px' }}>
-              {['wordpress', 'blogger', 'devto', 'hashnode', 'medium'].map(p => (
+              {['wordpress', 'blogger', 'devto', 'hashnode', 'medium', 'linkedin'].map(p => (
                 <label key={p} className={`be-tone-card${pubPlatform === p ? ' selected' : ''}`} style={{ padding: '16px', textAlign: 'center' }}>
                   <input type="radio" className="sr-only" name="pubPlatform" value={p} onChange={() => setPubPlatform(p)} />
                   <div style={{ fontSize: '24px', marginBottom: '8px' }}>
@@ -743,6 +743,7 @@ Return ONLY a valid JSON object:
                     {p === 'devto' && '📑'}
                     {p === 'hashnode' && '⚡'}
                     {p === 'medium' && 'Ⓜ️'}
+                    {p === 'linkedin' && '💼'}
                   </div>
                   <span style={{ textTransform: 'capitalize', fontWeight: 600 }}>{p}</span>
                 </label>
@@ -815,7 +816,7 @@ Return ONLY a valid JSON object:
             <>
               {autoSaveStatus && (
                 <span className={`be-autosave${autoSaveStatus === 'saved' ? ' saved' : ''}`}>
-                  {autoSaveStatus === 'saving' ? '⟳ Saving…' : '✓ Autosaved'}
+                  {autoSaveStatus === 'saving' ? '⟳ Saving…' : 'Autosaved'}
                 </span>
               )}
               <button className="btn btn-ghost btn-sm" onClick={() => setHistoryOpen(true)} title="Version history">
@@ -1151,6 +1152,10 @@ Return ONLY a valid JSON object:
                 <div className="be-metric">
                   <span className="be-metric-label">Keyword</span>
                   <span className="be-metric-val" style={{ color: 'var(--text-muted)', fontSize: 'var(--text-xs)' }}>{output.keyword}</span>
+                </div>
+                <div className="be-metric-sep" />
+                <div className="be-metric" style={{ background: 'var(--color-success-border)', padding: '2px 8px', borderRadius: '4px', border: '1px solid var(--color-success-400)' }}>
+                  <span className="be-metric-val" style={{ color: 'var(--color-success-400)', fontSize: '11px', fontWeight: 700, letterSpacing: '0.02em' }}>📍 GEO OPTIMIZED</span>
                 </div>
               </div>
 

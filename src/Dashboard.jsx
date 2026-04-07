@@ -110,7 +110,7 @@ const MyBlogsSection = () => {
                     <td style={{ padding: '14px 20px', fontSize: '13px', color: 'var(--text-muted)' }}>{date}</td>
                     <td style={{ padding: '14px 20px' }}>
                       <div style={{ display: 'flex', gap: '8px' }}>
-                        <button onClick={() => window.viewBlog && window.viewBlog(blog.id)} style={{ background: 'var(--bg-surface)', border: '1px solid var(--color-accent-border)', color: 'var(--color-accent)', borderRadius: '6px', padding: '5px 12px', fontSize: '12px', cursor: 'pointer' }}>View</button>
+                        <button onClick={() => setModalBlog(blog)} style={{ background: 'var(--bg-surface)', border: '1px solid var(--color-accent-border)', color: 'var(--color-accent)', borderRadius: '6px', padding: '5px 12px', fontSize: '12px', cursor: 'pointer' }}>View</button>
                         <button onClick={() => window.showPublishModal && window.showPublishModal(blog.id)} style={{ background: 'var(--bg-surface)', border: '1px solid var(--color-success-border)', color: 'var(--color-success-500)', borderRadius: '6px', padding: '5px 12px', fontSize: '12px', cursor: 'pointer' }}>Publish</button>
                         <button onClick={() => window.confirmDeleteBlog && window.confirmDeleteBlog(blog.id)} style={{ background: 'var(--bg-surface)', border: '1px solid var(--color-danger-border)', color: 'var(--color-danger-500)', borderRadius: '6px', padding: '5px 12px', fontSize: '12px', cursor: 'pointer' }}>Delete</button>
                       </div>
@@ -345,7 +345,7 @@ JSON schema (all numbers 0-100, recommendations max 60 chars each):
       try { await createBlog(uid, blogData); } catch (e) { console.error(e); }
     }
     setSavedBlogId(blogData.id);
-    setSaveStatus('✓ Saved as draft!');
+    setSaveStatus('Saved as draft!');
     if (window.loadMyBlogs) window.loadMyBlogs();
     if (window.updateOverviewStats) window.updateOverviewStats();
     setTimeout(() => setSaveStatus(''), 3000);
@@ -1119,7 +1119,8 @@ const AutoPublisherSection = () => {
     { id: 'blogger', name: 'Blogger', icon: '🅱️' },
     { id: 'devto', name: 'Dev.to', icon: '👩‍💻' },
     { id: 'hashnode', name: 'Hashnode', icon: '🔗' },
-    { id: 'medium', name: 'Medium', icon: 'Ⓜ️' }
+    { id: 'medium', name: 'Medium', icon: 'Ⓜ️' },
+    { id: 'linkedin', name: 'LinkedIn', icon: '💼' }
   ];
 
   const inputStyle = {
@@ -1134,7 +1135,7 @@ const AutoPublisherSection = () => {
   };
 
   return (
-    <div style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border-default)', borderRadius: '16px', padding: '32px', maxWidth: '800px' }}>
+    <div style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border-default)', borderRadius: '16px', padding: '32px', maxWidth: '1000px' }}>
       <h3 style={{ color: 'var(--text-primary)', fontSize: '22px', marginBottom: '8px', fontWeight: 700 }}>Platform Connections</h3>
       <p style={{ color: 'var(--text-muted)', fontSize: '14px', marginBottom: '28px' }}>Configure your external blogging platforms to enable one-click publishing.</p>
 
@@ -1147,8 +1148,8 @@ const AutoPublisherSection = () => {
               background: activeTab === p.id ? 'var(--color-accent-gradient)' : 'var(--bg-surface)',
               color: activeTab === p.id ? 'white' : 'var(--text-muted)',
               border: '1px solid ' + (activeTab === p.id ? 'transparent' : 'var(--border-default)'),
-              padding: '12px 20px', borderRadius: '10px', cursor: 'pointer', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '8px',
-              transition: 'all 0.2s', whiteSpace: 'nowrap'
+              padding: '12px 20px', borderRadius: '10px', cursor: 'pointer', fontWeight: 600, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
+              transition: 'all 0.2s', whiteSpace: 'nowrap', minWidth: '130px'
             }}
           >
             <span>{p.icon}</span> {p.name}
@@ -1200,6 +1201,15 @@ const AutoPublisherSection = () => {
               <input value={(credentials.medium?.integrationToken) || ''} onChange={e => updateCred('medium', 'integrationToken', e.target.value)} type="password" placeholder="Get from Medium Settings > Security and apps" style={inputStyle} required />
             </div>
           )}
+          {activeTab === 'linkedin' && (
+            <div className="animation-fade-in">
+              <label style={labelStyle}>LinkedIn Access Token</label>
+              <input value={(credentials.linkedin?.accessToken) || ''} onChange={e => updateCred('linkedin', 'accessToken', e.target.value)} type="password" placeholder="Your LinkedIn OAuth Token" style={inputStyle} required />
+
+              <label style={labelStyle}>Person / Organization URN</label>
+              <input value={(credentials.linkedin?.urn) || ''} onChange={e => updateCred('linkedin', 'urn', e.target.value)} placeholder="urn:li:person:xxxx" style={inputStyle} required />
+            </div>
+          )}
 
           {saveError && (
             <div style={{ padding: '12px', background: 'var(--color-danger-100)', color: 'var(--color-danger-500)', borderRadius: '8px', fontSize: '14px', marginBottom: '16px', fontWeight: '500' }}>
@@ -1222,12 +1232,16 @@ const planHierarchy = { 'Free': 0, 'Starter': 1, 'Growth': 2, 'Scale': 3 };
 const getButtonText = (planName, loadingPlan, userPlan) => {
   if (loadingPlan === planName) return 'Processing...';
   if (userPlan === planName) return 'Current Plan';
+  if (planName === 'Starter' || planName === 'Growth') return 'Buy Now';
   if (planHierarchy[userPlan] > planHierarchy[planName]) return 'Downgrade';
   return 'Upgrade';
 };
 
 const isButtonDisabled = (planName, loadingPlan, userPlan) => {
-  return loadingPlan === planName || userPlan === planName || planHierarchy[userPlan] > planHierarchy[planName];
+  if (loadingPlan === planName || userPlan === planName) return true;
+  // Allow switching between Starter and Growth (Buy Now)
+  if (planName === 'Starter' || planName === 'Growth') return false;
+  return planHierarchy[userPlan] > planHierarchy[planName];
 };
 
 
@@ -1269,42 +1283,54 @@ const Dashboard = ({ onLogout }) => {
 
   const [loadingPlan, setLoadingPlan] = useState(null);
 
-  const handlePlanUpgrade = (planName, amount) => {
+  const handlePlanUpgrade = async (planName, amount) => {
     if (!currentUser) return;
     
     setLoadingPlan(planName);
     
-    initializeRazorpayPayment({
-      planName,
-      amount,
-      billingCycle: 'monthly',
-      userEmail: currentUser.email,
-      userName: currentUser.displayName,
-      onSuccess: async (response) => {
-        setLoadingPlan(null);
-        try {
-          await setDoc(doc(db, 'users', currentUser.uid), {
-            plan: planName,
-            amount: amount,
-            razorpayPaymentId: response.razorpay_payment_id,
-            planActivatedAt: serverTimestamp(),
-            planExpiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
-            email: currentUser.email,
-            displayName: currentUser.displayName,
-          }, { merge: true });
-          setUserPlan(planName);
-          alert(`🎉 Successfully upgraded to ${planName} plan!`);
-        } catch (error) {
-          console.error('Error saving plan:', error);
+    try {
+      initializeRazorpayPayment({
+        planName,
+        amount,
+        billingCycle: billingCycle,
+        userEmail: currentUser.email,
+        userName: currentUser.displayName,
+        onSuccess: async (response) => {
+          setLoadingPlan(null);
+          try {
+            // Calculate expiry: 30 days for monthly, 365 for yearly
+            const days = billingCycle === 'yearly' ? 365 : 30;
+            const expiresAt = new Date(Date.now() + days * 24 * 60 * 60 * 1000);
+
+            await setDoc(doc(db, 'users', currentUser.uid), {
+              plan: planName,
+              amount: amount,
+              razorpayPaymentId: response.razorpay_payment_id,
+              planActivatedAt: serverTimestamp(),
+              planExpiresAt: expiresAt,
+              email: currentUser.email,
+              displayName: currentUser.displayName,
+            }, { merge: true });
+            
+            setUserPlan(planName);
+            alert(`🎉 Successfully upgraded to ${planName} plan!`);
+          } catch (error) {
+            console.error('Error saving plan to Firestore:', error);
+            alert('Payment successful, but failed to update your plan in our system. Please contact support.');
+          }
+        },
+        onFailure: (reason) => {
+          setLoadingPlan(null);
+          if (reason !== 'Payment cancelled') {
+            alert(`Payment failed: ${reason}`);
+          }
         }
-      },
-      onFailure: (reason) => {
-        setLoadingPlan(null);
-        if (reason !== 'Payment cancelled') {
-          alert(`Payment failed: ${reason}`);
-        }
-      }
-    });
+      });
+    } catch (err) {
+      console.error('Razorpay initialization error:', err);
+      setLoadingPlan(null);
+      alert('Could not initialize payment system. Please refresh and try again.');
+    }
   };
 
   // New state to track in-progress publications and prevent infinite loops
@@ -1388,7 +1414,7 @@ const Dashboard = ({ onLogout }) => {
         }
       }
 
-      setPublishStatus('✓ Blog scheduled!');
+      setPublishStatus('Blog scheduled!');
       setTimeout(() => setPublishModalBlog(null), 1500);
       return;
     }
@@ -1498,9 +1524,20 @@ const Dashboard = ({ onLogout }) => {
         setScheduledAt('');
       }
     };
+    window.confirmDeleteBlog = async (id) => {
+      if (!window.confirm('Delete this blog permanently?')) return;
+      try {
+        await deleteBlog(uid, id);
+        if (window.loadDashboardBlogs) await window.loadDashboardBlogs();
+        if (window.updateOverviewStats) window.updateOverviewStats();
+      } catch (err) {
+        console.error('Delete failed:', err);
+      }
+    };
     return () => {
       delete window.loadDashboardBlogs;
       delete window.showPublishModal;
+      delete window.confirmDeleteBlog;
     };
   }, [uid]);
 
@@ -2023,7 +2060,7 @@ Use clear headings and keep it actionable. Write in a professional consulting to
             </div>
           </header>
 
-          <div className="stats-row" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '20px', marginBottom: '32px' }}>
+          <div className="stats-row" style={{ gap: '20px', marginBottom: '32px' }}>
             <div className="stat-dash-card" style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border-default)', borderRadius: '20px', padding: '24px' }}>
               <div className="stat-title" style={{ color: 'var(--text-muted)', fontSize: '13px', fontWeight: 500, marginBottom: '12px' }}>Blogs Published This Month</div>
               <div className="stat-val" id="stat-published" style={{ fontSize: '32px', fontWeight: 700, color: 'var(--text-primary)' }}>15</div>
@@ -2042,7 +2079,7 @@ Use clear headings and keep it actionable. Write in a professional consulting to
             </div>
           </div>
 
-          <div className="dashboard-grid" style={{ display: 'grid', gridTemplateColumns: '1.8fr 1fr', gap: '24px' }}>
+          <div className="dashboard-grid" style={{ gap: '24px' }}>
             {/* Content Table Panel */}
             <div className="content-table-panel" style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border-default)', borderRadius: '16px', overflow: 'hidden' }}>
               <div className="panel-header" style={{ padding: '20px', borderBottom: '1px solid var(--border-default)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -2064,19 +2101,18 @@ Use clear headings and keep it actionable. Write in a professional consulting to
                       <th style={{ padding: '12px 20px', textAlign: 'left', fontSize: '12px', color: 'var(--text-muted)', borderBottom: '1px solid var(--border-default)' }}>SEO Score</th>
                       <th style={{ padding: '12px 20px', textAlign: 'left', fontSize: '12px', color: 'var(--text-muted)', borderBottom: '1px solid var(--border-default)' }}>Status</th>
                       <th style={{ padding: '12px 20px', textAlign: 'left', fontSize: '12px', color: 'var(--text-muted)', borderBottom: '1px solid var(--border-default)' }}>Date</th>
-                      <th style={{ padding: '12px 20px', textAlign: 'left', fontSize: '12px', color: 'var(--text-muted)', borderBottom: '1px solid var(--border-default)' }}>Traffic</th>
                       <th style={{ padding: '12px 20px', textAlign: 'left', fontSize: '12px', color: 'var(--text-muted)', borderBottom: '1px solid var(--border-default)' }}></th>
                     </tr>
                   </thead>
                   <tbody>
                     {blogs.length === 0 ? (
                       <tr>
-                        <td colSpan="6" style={{ padding: '40px', textAlign: 'center', color: 'var(--text-muted)', fontSize: '14px' }}>No blogs generated yet.</td>
+                        <td colSpan="5" style={{ padding: '40px', textAlign: 'center', color: 'var(--text-muted)', fontSize: '14px' }}>No blogs generated yet.</td>
                       </tr>
                     ) : (
                       blogs.map((blog, idx) => (
                         <tr key={blog.id} style={{ borderBottom: '1px solid var(--border-default)', transition: 'background 0.2s' }} onMouseOver={(e) => e.currentTarget.style.backgroundColor = 'var(--color-bg-hover)'} onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}>
-                          <td style={{ padding: '16px 20px', fontWeight: 600, color: 'var(--text-primary)', fontSize: '14px' }}>{blog.title}</td>
+                          <td className="title-cell" style={{ padding: '16px 20px', fontWeight: 600, color: 'var(--text-primary)', fontSize: '14px' }}>{blog.title}</td>
                           <td style={{ padding: '16px 20px' }}>
                             <div className="score-badge" style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', background: 'var(--bg-surface)', padding: '4px 10px', borderRadius: '999px', border: '1px solid var(--border-default)', fontSize: '12px', color: 'var(--text-primary)', fontWeight: 600 }}>
                               <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: (blog.seoScore || blog.score) >= 90 ? '#10B981' : '#F59E0B' }}></span>
@@ -2094,8 +2130,7 @@ Use clear headings and keep it actionable. Write in a professional consulting to
                               }}>{blog.status || 'draft'}</span>
                             )}
                           </td>
-                          <td style={{ padding: '16px 20px', color: 'var(--text-muted)', fontSize: '11px' }}>{blog.createdAt ? new Date(blog.createdAt).toLocaleString('en-IN', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '—'}</td>
-                          <td style={{ padding: '16px 20px', color: '#10B981', fontWeight: 600, fontSize: '13px' }}>+{blog.traffic || 0}</td>
+                          <td style={{ padding: '16px 20px', color: 'var(--text-muted)', fontSize: '11px' }}>{blog.createdAt ? new Date(blog.createdAt).toLocaleString('en-IN', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }).replace(',', '') : '—'}</td>
                           <td className="actions-cell" style={{ padding: '16px 20px' }}>
                             <div style={{ display: 'flex', gap: '8px' }}>
                               <button onClick={() => window.viewBlog && window.viewBlog(blog.id)} style={{ background: 'rgba(124,58,237,0.15)', border: 'none', color: '#A78BFA', borderRadius: '6px', padding: '6px 14px', fontSize: '11px', cursor: 'pointer', fontWeight: 600 }}>View</button>
@@ -2593,6 +2628,7 @@ Use clear headings and keep it actionable. Write in a professional consulting to
                 <option value="devto">Dev.to</option>
                 <option value="hashnode">Hashnode</option>
                 <option value="medium">Medium</option>
+                <option value="linkedin">LinkedIn</option>
               </select>
             </div>
 
