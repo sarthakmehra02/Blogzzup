@@ -36,7 +36,6 @@ const COMMANDS = [
       { id: 'publisher',  label: 'Publisher',            tag: 'Nav',   emoji: '📤' },
       { id: 'schedule',   label: 'Content Schedule',     tag: 'Nav',   emoji: '📅' },
       { id: 'analytics',  label: 'Analytics',            tag: 'Nav',   emoji: '📈' },
-      { id: 'brandvoice', label: 'Brand Voice',          tag: 'Nav',   emoji: '🎯' },
       { id: 'billing',    label: 'Billing & Plans',      tag: 'Settings', emoji: '💳' },
       { id: 'settings',   label: 'Settings',             tag: 'Settings', emoji: '⚙️' },
     ]

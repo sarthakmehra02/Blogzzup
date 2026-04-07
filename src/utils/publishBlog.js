@@ -224,6 +224,9 @@ export async function publishToBlogger({ title, content, tags, credentials }) {
   );
 
   if (!response.ok) {
+    if (response.status === 403) {
+      throw new Error('Permission denied. Please re-connect Blogger in your settings and ensure the Blogger API is enabled in your Google Cloud Console.');
+    }
     const err = await response.json();
     throw new Error(err.error?.message || 'Blogger publish failed');
   }

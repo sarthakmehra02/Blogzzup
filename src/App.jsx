@@ -1101,23 +1101,7 @@ const BlogPage = () => {
         { type: 'p', text: "This strategy allows you to capture long-tail traffic that is often high-intent. A user searching for 'marketing agency in Indiranagar' is much closer to a conversion than someone searching for 'global marketing agencies'. We give you the tools to win those local battles at scale." }
       ]
     },
-    { 
-      id: 4,
-      title: "The Soul of the Machine: How to Train AI to Mimic Your Unique Founder Voice", 
-      tag: "Brand Voice", 
-      emoji: "🎙️", 
-      image: "/assets/blog/brand_voice.png",
-      readTime: "7 min read",
-      grad: "linear-gradient(135deg,#3D1A0B,#5C2810)",
-      content: [
-        { type: 'p', text: "The biggest fear founders have with AI content is that it sounds 'soulless'. Generic AI writing is easy to spot—it's polite, repetitive, and lacks an opinion. To stand out in 2026, your content needs to reflect your unique 'Founder Voice'—the perspective that made your company special in the first place." },
-        { type: 'h2', text: "Injecting Personality into Pixels" },
-        { type: 'p', text: "Your brand isn't just what you sell; it's how you talk. Are you provocative? Authoritative? Friendly? We've built Brand Voice Control modules that allow you to feed your past newsletters, social posts, and manifestos directly into the AI to analyze your unique stylistic fingerprint." },
-        { type: 'h2', text: "Setting Constraints" },
-        { type: 'p', text: "Mimicking a voice is about what you *don't* say as much as what you do. Our tool lets you set negative keywords and stylistic constraints (e.g., 'Never use emojis' or 'Always use short, punchy sentences') to ensure every blog post feels like it came from your keyboard. This coherence across all channels is what builds lasting brand equity." },
-        { type: 'p', text: "By automating the drafting process while maintaining your voice, you can spend more time on strategic thinking and high-level editing, ensuring that every piece of content that leaves your dashboard is a true representation of your brand's philosophy." }
-      ]
-    },
+
     { 
       id: 5,
       title: "Beyond Generative AI: The Rise of Autonomous Content Agents in Digital Marketing", 
@@ -1196,7 +1180,7 @@ const HomeFeaturesSection = () => {
     { id: 'serp', icon: <Search size={20}/>, title: 'SERP Gap Scanner', desc: 'Analyze the top 10 search results to instantly find missing topics and keyword gaps.' },
     { id: 'seo', icon: <LineChart size={20}/>, title: 'Live SEO Scorer', desc: 'Get a real-time out-of-100 score on readability, keyword density, and snippet targeting.' },
     { id: 'publish', icon: <UploadCloud size={20}/>, title: 'Auto-Publisher', desc: 'Connect directly to WordPress, Webflow, or Shopify to automate your entire pipeline.' },
-    { id: 'voice', icon: <Mic size={20}/>, title: 'Brand Voice Control', desc: 'Train the AI on your exact tone of voice, target audience, and negative keywords.' }
+
   ];
 
   const renderMockup = (id) => {
@@ -1296,16 +1280,7 @@ const HomeFeaturesSection = () => {
              </div>
           </div>
         );
-      case 'voice':
-        return (
-          <div style={{display:'flex', flexDirection:'column', gap:'12px', width:'100%', height:'100%', background:'var(--bg-surface)', padding:'20px', boxSizing:'border-box', borderRadius:'0 0 16px 16px', flex:1}}>
-            <textarea readOnly style={{width:'100%', flex:1, background:'var(--bg-base)', border:'1px solid #334155', borderRadius:'8px', color:'#A78BFA', padding:'12px', fontSize:'11px', resize:'none', outline:'none', fontFamily:'monospace'}} value="CORE_DIRECTIVE: Always maintain a professional yet engaging tone. Avoid jargon where possible. Refer to the reader as 'you'." />
-            <div style={{display:'flex', justifyContent:'space-between', alignItems:'center'}}>
-              <div style={{fontSize:'11px', color:'var(--text-muted)'}}>Creativity Temperature: <span style={{color:'var(--text-primary)'}}>1.0</span></div>
-              <div style={{background:'rgba(124,58,237,0.1)', color:'#A78BFA', padding:'4px 8px', borderRadius:'4px', fontSize:'10px', border:'1px solid rgba(124,58,237,0.3)'}}>Active Profile</div>
-            </div>
-          </div>
-        );
+
       default:
         return null;
     }
@@ -1455,7 +1430,7 @@ function App() {
     { icon: <LineChart size={16} />, text: "SEO Scorer" },
     { icon: <Search size={16} />, text: "SERP Gap Finder" },
     { icon: <UploadCloud size={16} />, text: "Auto Publisher" },
-    { icon: <PenTool size={16} />, text: "Brand Voice AI" },
+
     { icon: <Globe size={16} />, text: "Search-first" },
     { icon: <Network size={16} />, text: "Cluster Map" },
   ];

@@ -12,7 +12,8 @@ import BlogEditor from './BlogEditor';
 import ClusterMapViewer from './ClusterMapViewer';
 import { useAuth } from './AuthContext';
 import { callGemini } from './utils/gemini';
-import { db } from './firebase';
+import { auth, db, googleProvider } from './firebase';
+import { signInWithPopup } from 'firebase/auth';
 import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { initializeRazorpayPayment } from './utils/razorpay';
 
@@ -221,8 +222,13 @@ const VoiceToBlogSection = () => {
 
     recognition.onend = () => {
       if (isRecording) {
-        // Auto-restart if still supposed to be recording (browser timeout)
-        try { recognition.start(); } catch (_e) { /* ignore */ }
+        // Use a small timeout to let the browser fully release the hardware
+        // and avoid 'already started' errors on rapid silence/pause.
+        setTimeout(() => {
+          if (recognitionRef.current && isRecording) {
+            try { recognitionRef.current.start(); } catch (_e) { /* ignore */ }
+          }
+        }, 300);
       }
     };
 
@@ -626,50 +632,86 @@ JSON schema (all numbers 0-100, recommendations max 60 chars each):
 const SerpGapSection = () => {
   const [keyword, setKeyword] = useState('');
   const [domain, setDomain] = useState('');
+  const [competitors, setCompetitors] = useState(['', '']);
   const [isScanning, setIsScanning] = useState(false);
   const [results, setResults] = useState(null);
   const [error, setError] = useState(null);
+  const [activeTab, setActiveTab] = useState('gaps');
+
+  const addCompetitor = () => setCompetitors(prev => [...prev, '']);
+  const removeCompetitor = i => setCompetitors(prev => prev.filter((_, idx) => idx !== i));
+  const updateCompetitor = (i, val) => setCompetitors(prev => prev.map((c, idx) => idx === i ? val : c));
 
   const runSerpScan = async () => {
     if (!keyword.trim()) {
       const el = document.getElementById('serp-keyword');
-      if (el) el.style.borderColor = '#EF4444';
+      if (el) { el.style.borderColor = '#EF4444'; el.focus(); }
       return;
     }
+    setIsScanning(true); setError(null); setResults(null);
 
-    setIsScanning(true);
-    setError(null);
-    setResults(null);
+    const filledCompetitors = competitors.filter(c => c.trim());
+    const competitorStr = filledCompetitors.length > 0
+      ? `Competitor domains to analyze: ${filledCompetitors.join(', ')}`
+      : 'No specific competitors — analyze top SERP leaders for this keyword.';
+    const domainStr = domain.trim() ? `Your domain: "${domain.trim()}"` : '';
 
-    const prompt = `You are a senior SEO strategist analyzing SERP data for Indian digital marketers.
+    const prompt = `You are a senior SEO strategist with 15 years experience. Give a deeply actionable SERP gap analysis.
 
-For the keyword "${keyword.trim()}"${domain.trim() ? ' and website "' + domain.trim() + '"' : ''}, provide a detailed SERP gap analysis.
+Keyword: "${keyword.trim()}"
+${domainStr}
+${competitorStr}
 
-Return ONLY a valid JSON object with exactly this structure, no explanation:
+Return ONLY valid JSON — no markdown, no explanation:
 {
   "keyword": "${keyword.trim()}",
-  "searchVolume": "estimated monthly searches as string e.g. 8,100/mo",
+  "searchVolume": "estimated monthly searches e.g. 12,100/mo",
   "difficulty": "Easy or Medium or Hard",
+  "aiDetectionRisk": <integer 0-100, how heavily AI-generated content dominates this SERP>,
+  "naturalnessScore": <integer 0-100, how well humanized/conversational content outperforms robotic content here>,
   "topicGaps": [
-    { "topic": "specific gap topic", "coverage": "Low or Medium", "opportunity": "High or Medium", "suggestedTitle": "ready to use blog title" },
-    { "topic": "...", "coverage": "...", "opportunity": "...", "suggestedTitle": "..." },
-    { "topic": "...", "coverage": "...", "opportunity": "...", "suggestedTitle": "..." },
-    { "topic": "...", "coverage": "...", "opportunity": "...", "suggestedTitle": "..." },
-    { "topic": "...", "coverage": "...", "opportunity": "...", "suggestedTitle": "..." }
+    { "topic": "specific uncovered topic", "coverage": "Low or Medium", "opportunity": "High or Medium", "suggestedTitle": "exact ready-to-write blog title", "competitorsCovering": ["domain.com"] },
+    { "topic": "...", "coverage": "...", "opportunity": "...", "suggestedTitle": "...", "competitorsCovering": [] },
+    { "topic": "...", "coverage": "...", "opportunity": "...", "suggestedTitle": "...", "competitorsCovering": [] },
+    { "topic": "...", "coverage": "...", "opportunity": "...", "suggestedTitle": "...", "competitorsCovering": [] },
+    { "topic": "...", "coverage": "...", "opportunity": "...", "suggestedTitle": "...", "competitorsCovering": [] }
   ],
-  "featuredSnippetOpportunities": ["opportunity 1", "opportunity 2", "opportunity 3"],
-  "recommendedLSI": ["keyword1", "keyword2", "keyword3", "keyword4", "keyword5", "keyword6"]
+  "competitorAnalysis": [
+    { "domain": "competitor.com", "topicsOwned": 4, "estimatedTraffic": "35,000/mo", "weaknesses": ["no case studies", "thin content"], "strongTopics": ["topic A", "topic B"] }
+  ],
+  "missingKeywords": ["kw1","kw2","kw3","kw4","kw5","kw6","kw7","kw8"],
+  "featuredSnippetOpportunities": ["opportunity 1","opportunity 2","opportunity 3"],
+  "recommendedLSI": ["lsi1","lsi2","lsi3","lsi4","lsi5","lsi6"],
+  "insights": {
+    "yourDomainPosition": "estimated position or Not Ranking",
+    "quickWins": ["actionable win 1","actionable win 2","actionable win 3"],
+    "contentAngle": "The single best unique angle to win this keyword"
+  }
 }`;
 
     try {
-      const raw = await callGemini(prompt, 1500);
-      const res = JSON.parse(raw);
-      setResults(res);
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setIsScanning(false);
+      const raw = await callGemini(prompt, 2500);
+      // Clean the response: remove markdown blocks and find the first { and last }
+      let jsonStr = raw.trim();
+      if (jsonStr.includes('```')) {
+        jsonStr = jsonStr.replace(/```json\s*/gi, '').replace(/```\s*/gi, '').trim();
+      }
+      const firstBrace = jsonStr.indexOf('{');
+      const lastBrace = jsonStr.lastIndexOf('}');
+      if (firstBrace !== -1 && lastBrace !== -1) {
+        jsonStr = jsonStr.substring(firstBrace, lastBrace + 1);
+      }
+      
+      // Fix potential trailing commas before closing braces/brackets
+      jsonStr = jsonStr.replace(/,\s*([\}\]])/g, '$1');
+
+      const res = JSON.parse(jsonStr);
+      setResults(res); setActiveTab('gaps');
+    } catch (err) { 
+      console.error("SERP Parse Error:", err, raw);
+      setError("Failed to parse analysis data. Please try again."); 
     }
+    finally { setIsScanning(false); }
   };
 
   const handleGapTopic = (title) => {
@@ -678,11 +720,8 @@ Return ONLY a valid JSON object with exactly this structure, no explanation:
       const kwInput = document.getElementById('bf-keyword');
       if (kwInput) {
         kwInput.value = title;
-        const nativeInputValueSetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, "value").set;
-        if (nativeInputValueSetter) {
-          nativeInputValueSetter.call(kwInput, title);
-          kwInput.dispatchEvent(new Event('input', { bubbles: true }));
-        }
+        const nativeInputValueSetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value').set;
+        if (nativeInputValueSetter) { nativeInputValueSetter.call(kwInput, title); kwInput.dispatchEvent(new Event('input', { bubbles: true })); }
         kwInput.focus();
       }
     }, 150);
@@ -691,112 +730,318 @@ Return ONLY a valid JSON object with exactly this structure, no explanation:
   const opColor = op => op === 'High' ? '#10B981' : '#F59E0B';
   const covColor = cov => cov === 'Low' ? '#10B981' : '#F59E0B';
   const diffColor = d => d === 'Easy' ? '#10B981' : d === 'Medium' ? '#F59E0B' : '#EF4444';
+  const scoreColor = s => s >= 70 ? '#10B981' : s >= 45 ? '#F59E0B' : '#EF4444';
+  const aiRiskColor = s => s <= 35 ? '#10B981' : s <= 65 ? '#F59E0B' : '#EF4444';
+  const inp = { width: '100%', background: 'var(--bg-surface)', border: '1px solid var(--border-default)', borderRadius: '10px', padding: '11px 14px', color: 'var(--text-primary)', fontSize: '14px', outline: 'none', boxSizing: 'border-box' };
 
   return (
     <div id="dash-serpgap" className="dash-section" style={{ display: 'none', padding: '40px', color: 'var(--text-primary)' }}>
       <div style={{ marginBottom: '28px' }}>
-        <h2 style={{ fontSize: '24px', fontWeight: 700, color: 'var(--text-primary)', margin: 0 }}>SERP Gap Scanner</h2>
-        <p style={{ fontSize: '14px', color: 'var(--text-muted)', marginTop: '4px' }}>Find content gaps your competitors aren't covering</p>
+        <h2 style={{ fontSize: '24px', fontWeight: 700, margin: 0 }}>SERP Gap Scanner</h2>
+        <p style={{ fontSize: '14px', color: 'var(--text-muted)', marginTop: '4px' }}>AI-powered competitor gap analysis — find what your rivals aren't covering</p>
       </div>
 
-      <div style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border-default)', borderRadius: '16px', padding: '28px', marginBottom: '24px' }}>
-        <div style={{ marginBottom: '16px' }}>
-          <label style={{ fontSize: '13px', color: 'var(--text-muted)', fontWeight: 500, display: 'block', marginBottom: '8px' }}>Target Keyword *</label>
-          <input id="serp-keyword" type="text" placeholder="e.g. project management tools India"
-            value={keyword} onChange={e => { setKeyword(e.target.value); e.target.style.borderColor = 'var(--border-default)'; }}
-            style={{ width: '100%', background: 'var(--bg-surface)', border: '1px solid var(--border-default)', borderRadius: '10px', padding: '12px 16px', color: 'var(--text-primary)', fontSize: '14px', outline: 'none', boxSizing: 'border-box' }}
-            onFocus={e => e.target.style.borderColor = '#7C3AED'} onBlur={e => e.target.style.borderColor = 'var(--border-default)'}
-          />
-        </div>
-        <div style={{ marginBottom: '20px' }}>
-          <label style={{ fontSize: '13px', color: 'var(--text-muted)', fontWeight: 500, display: 'block', marginBottom: '8px' }}>Your Domain (optional)</label>
-          <input id="serp-domain" type="text" placeholder="e.g. myblog.com"
-            value={domain} onChange={e => setDomain(e.target.value)}
-            style={{ width: '100%', background: 'var(--bg-surface)', border: '1px solid var(--border-default)', borderRadius: '10px', padding: '12px 16px', color: 'var(--text-primary)', fontSize: '14px', outline: 'none', boxSizing: 'border-box' }}
-            onFocus={e => e.target.style.borderColor = '#7C3AED'} onBlur={e => e.target.style.borderColor = 'var(--border-default)'}
-          />
-        </div>
-        <button onClick={runSerpScan} id="serp-btn" disabled={isScanning}
-          style={{ width: '100%', background: 'var(--color-accent-gradient)', color: 'white', border: 'none', borderRadius: '10px', padding: '14px', fontSize: '15px', fontWeight: 600, cursor: isScanning ? 'not-allowed' : 'pointer', transition: 'all 0.2s', opacity: isScanning ? 0.7 : 1, boxShadow: 'var(--shadow-glow-primary)' }}
-          onMouseOver={e => !isScanning && (e.target.style.opacity = '0.9')} onMouseOut={e => !isScanning && (e.target.style.opacity = '1')}>
-          {isScanning ? '⏳ Scanning SERP...' : results ? '🔍 Scan Again' : '🔍 Scan SERP Gaps'}
-        </button>
-      </div>
+      <div style={{ display: 'grid', gridTemplateColumns: '300px 1fr', gap: '24px', alignItems: 'start' }}>
+        {/* ── LEFT PANEL ── */}
+        <div style={{ position: 'sticky', top: '24px' }}>
+          <div style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border-default)', borderRadius: '16px', padding: '22px' }}>
 
-      {error && (
-        <div style={{ background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.2)', borderRadius: '12px', padding: '20px', color: '#EF4444', fontSize: '14px', marginBottom: '24px' }}>
-          ❌ Error: {error}
-        </div>
-      )}
+            {/* Keyword */}
+            <div style={{ marginBottom: '14px' }}>
+              <label style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: 700, display: 'block', marginBottom: '7px', textTransform: 'uppercase', letterSpacing: '0.6px' }}>Target Keyword *</label>
+              <input id="serp-keyword" type="text" placeholder="e.g. project management tools India"
+                value={keyword} onChange={e => { setKeyword(e.target.value); e.target.style.borderColor = 'var(--border-default)'; }}
+                style={inp} onFocus={e => e.target.style.borderColor = '#7C3AED'} onBlur={e => e.target.style.borderColor = 'var(--border-default)'} />
+            </div>
 
-      {results && (
-        <div id="serp-results">
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '16px', marginBottom: '24px' }}>
-            <div style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border-default)', borderRadius: '12px', padding: '20px', textAlign: 'center' }}>
-              <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Search Volume</div>
-              <div style={{ fontSize: '24px', fontWeight: 700, color: '#A78BFA' }}>{results.searchVolume}</div>
+            {/* Your Domain */}
+            <div style={{ marginBottom: '14px' }}>
+              <label style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: 700, display: 'block', marginBottom: '7px', textTransform: 'uppercase', letterSpacing: '0.6px' }}>
+                Your Domain <span style={{ textTransform: 'none', fontWeight: 400 }}>(optional)</span>
+              </label>
+              <input id="serp-domain" type="text" placeholder="yourblog.com" value={domain} onChange={e => setDomain(e.target.value)}
+                style={inp} onFocus={e => e.target.style.borderColor = '#7C3AED'} onBlur={e => e.target.style.borderColor = 'var(--border-default)'} />
             </div>
-            <div style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border-default)', borderRadius: '12px', padding: '20px', textAlign: 'center' }}>
-              <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Difficulty</div>
-              <div style={{ fontSize: '24px', fontWeight: 700, color: diffColor(results.difficulty) }}>{results.difficulty}</div>
-            </div>
-            <div style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border-default)', borderRadius: '12px', padding: '20px', textAlign: 'center' }}>
-              <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Gaps Found</div>
-              <div style={{ fontSize: '24px', fontWeight: 700, color: '#06B6D4' }}>{results.topicGaps.length}</div>
-            </div>
-          </div>
 
-          <div style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border-default)', borderRadius: '16px', overflow: 'hidden', marginBottom: '24px' }}>
-            <div style={{ padding: '16px 20px', borderBottom: '1px solid var(--border-default)' }}>
-              <h3 style={{ fontSize: '15px', fontWeight: 600, color: 'var(--text-primary)', margin: 0 }}>📊 Content Gap Opportunities</h3>
-            </div>
-            <div style={{ overflowX: 'auto' }}>
-              <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: '600px' }}>
-                <thead>
-                  <tr style={{ background: 'var(--bg-surface)' }}>
-                    <th style={{ textAlign: 'left', padding: '12px 20px', fontSize: '11px', color: 'var(--text-muted)', fontWeight: 600, letterSpacing: '0.5px' }}>TOPIC GAP</th>
-                    <th style={{ padding: '12px 20px', fontSize: '11px', color: 'var(--text-muted)', fontWeight: 600, textAlign: 'center' }}>COVERAGE</th>
-                    <th style={{ padding: '12px 20px', fontSize: '11px', color: 'var(--text-muted)', fontWeight: 600, textAlign: 'center' }}>OPPORTUNITY</th>
-                    <th style={{ textAlign: 'left', padding: '12px 20px', fontSize: '11px', color: 'var(--text-muted)', fontWeight: 600 }}>SUGGESTED TITLE</th>
-                    <th style={{ padding: '12px 20px', fontSize: '11px', color: 'var(--text-muted)', fontWeight: 600 }}></th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {results.topicGaps.map((gap, i) => (
-                    <tr key={i} style={{ borderTop: '1px solid var(--border-default)', transition: 'background 0.15s' }} onMouseOver={e => e.currentTarget.style.background = 'rgba(124,58,237,0.05)'} onMouseOut={e => e.currentTarget.style.background = 'transparent'}>
-                      <td style={{ padding: '14px 20px', fontSize: '14px', color: 'var(--text-primary)', fontWeight: 500 }}>{gap.topic}</td>
-                      <td style={{ padding: '14px 20px', textAlign: 'center' }}><span style={{ background: 'rgba(16,185,129,0.1)', color: covColor(gap.coverage), borderRadius: '999px', padding: '3px 12px', fontSize: '12px', fontWeight: 600 }}>{gap.coverage}</span></td>
-                      <td style={{ padding: '14px 20px', textAlign: 'center' }}><span style={{ background: 'rgba(16,185,129,0.1)', color: opColor(gap.opportunity), borderRadius: '999px', padding: '3px 12px', fontSize: '12px', fontWeight: 600 }}>{gap.opportunity}</span></td>
-                      <td style={{ padding: '14px 20px', fontSize: '13px', color: 'var(--text-secondary)', maxWidth: '250px' }}>{gap.suggestedTitle}</td>
-                      <td style={{ padding: '14px 20px' }}><button onClick={() => handleGapTopic(gap.suggestedTitle)} style={{ background: 'rgba(124,58,237,0.2)', border: '1px solid rgba(124,58,237,0.3)', color: '#A78BFA', borderRadius: '6px', padding: '6px 14px', fontSize: '12px', cursor: 'pointer', whiteSpace: 'nowrap', transition: 'all 0.2s' }}>Write This →</button></td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
-            <div style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border-default)', borderRadius: '12px', padding: '20px' }}>
-              <h4 style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)', margin: '0 0 14px' }}>⭐ Featured Snippet Opportunities</h4>
-              {results.featuredSnippetOpportunities.map((s, i) => (
-                <div key={i} style={{ fontSize: '13px', color: 'var(--text-secondary)', padding: '8px 0', borderBottom: '1px solid var(--border-default)', display: 'flex', gap: '10px', alignItems: 'flex-start' }}><span style={{ color: '#7C3AED', flexShrink: 0, marginTop: '1px' }}>✦</span>{s}</div>
-              ))}
-            </div>
-            <div style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border-default)', borderRadius: '12px', padding: '20px' }}>
-              <h4 style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)', margin: '0 0 14px' }}>🔑 Recommended LSI Keywords</h4>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-                {results.recommendedLSI.map((k, i) => (
-                  <span key={i} style={{ background: 'rgba(124,58,237,0.1)', color: '#A78BFA', border: '1px solid rgba(124,58,237,0.2)', borderRadius: '999px', padding: '5px 14px', fontSize: '12px', fontWeight: 500 }}>{k}</span>
+            {/* Competitor Domains */}
+            <div style={{ marginBottom: '18px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                <label style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.6px' }}>Competitor Domains</label>
+                <button onClick={addCompetitor} style={{ background: 'rgba(124,58,237,0.12)', border: '1px solid rgba(124,58,237,0.25)', color: '#A78BFA', borderRadius: '6px', padding: '3px 9px', fontSize: '11px', cursor: 'pointer', fontWeight: 700 }}>+ Add</button>
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '7px' }}>
+                {competitors.map((c, i) => (
+                  <div key={i} style={{ display: 'flex', gap: '7px', alignItems: 'center' }}>
+                    <input type="text" placeholder={`competitor${i + 1}.com`} value={c}
+                      onChange={e => updateCompetitor(i, e.target.value)}
+                      style={{ ...inp, padding: '9px 12px', fontSize: '13px' }}
+                      onFocus={e => e.target.style.borderColor = '#7C3AED'} onBlur={e => e.target.style.borderColor = 'var(--border-default)'} />
+                    {competitors.length > 1 && (
+                      <button onClick={() => removeCompetitor(i)} style={{ background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.2)', color: '#EF4444', width: '30px', height: '30px', borderRadius: '6px', cursor: 'pointer', fontSize: '13px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>✕</button>
+                    )}
+                  </div>
                 ))}
               </div>
             </div>
+
+            {/* Scan Button */}
+            <button onClick={runSerpScan} id="serp-btn" disabled={isScanning}
+              style={{ width: '100%', background: isScanning ? 'var(--bg-surface)' : 'var(--color-accent-gradient)', color: isScanning ? 'var(--text-muted)' : 'white', border: 'none', borderRadius: '10px', padding: '13px', fontSize: '14px', fontWeight: 700, cursor: isScanning ? 'not-allowed' : 'pointer', transition: 'all 0.2s', boxShadow: isScanning ? 'none' : 'var(--shadow-glow-primary)' }}
+              onMouseOver={e => !isScanning && (e.target.style.opacity = '0.9')} onMouseOut={e => !isScanning && (e.target.style.opacity = '1')}>
+              {isScanning ? '⏳ Scanning SERP...' : results ? '🔄 Scan Again' : '🔍 Scan SERP Gaps'}
+            </button>
+
+            {/* Score Meters — shown after scan */}
+            {results && (
+              <div style={{ marginTop: '18px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                <div style={{ background: 'var(--bg-surface)', borderRadius: '10px', padding: '13px', border: '1px solid var(--border-default)' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '7px' }}>
+                    <span style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: 600 }}>🤖 AI Content Risk</span>
+                    <span style={{ fontSize: '14px', fontWeight: 800, color: aiRiskColor(results.aiDetectionRisk) }}>{results.aiDetectionRisk}%</span>
+                  </div>
+                  <div style={{ height: '5px', background: 'var(--bg-elevated)', borderRadius: '999px', overflow: 'hidden', marginBottom: '5px' }}>
+                    <div style={{ height: '100%', width: `${results.aiDetectionRisk}%`, background: aiRiskColor(results.aiDetectionRisk), borderRadius: '999px', transition: 'width 0.9s ease' }} />
+                  </div>
+                  <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
+                    {results.aiDetectionRisk <= 35 ? '✅ Low AI saturation — great opportunity' : results.aiDetectionRisk <= 65 ? '⚠️ Moderate — go deeper than competitors' : '🔴 High AI saturation — humanize heavily'}
+                  </div>
+                </div>
+
+                <div style={{ background: 'var(--bg-surface)', borderRadius: '10px', padding: '13px', border: '1px solid var(--border-default)' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '7px' }}>
+                    <span style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: 600 }}>✨ Naturalness Score</span>
+                    <span style={{ fontSize: '14px', fontWeight: 800, color: scoreColor(results.naturalnessScore) }}>{results.naturalnessScore}/100</span>
+                  </div>
+                  <div style={{ height: '5px', background: 'var(--bg-elevated)', borderRadius: '999px', overflow: 'hidden', marginBottom: '5px' }}>
+                    <div style={{ height: '100%', width: `${results.naturalnessScore}%`, background: 'linear-gradient(90deg,#7C3AED,#06B6D4)', borderRadius: '999px', transition: 'width 0.9s ease' }} />
+                  </div>
+                  <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>How well conversational content ranks here</div>
+                </div>
+
+                {results.insights?.contentAngle && (
+                  <div style={{ background: 'rgba(124,58,237,0.08)', border: '1px solid rgba(124,58,237,0.2)', borderRadius: '10px', padding: '13px' }}>
+                    <div style={{ fontSize: '10px', color: '#A78BFA', fontWeight: 800, letterSpacing: '0.6px', marginBottom: '5px' }}>💡 WINNING ANGLE</div>
+                    <div style={{ fontSize: '12px', color: 'var(--text-secondary)', lineHeight: 1.6 }}>{results.insights.contentAngle}</div>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         </div>
-      )}
+
+        {/* ── RIGHT PANEL ── */}
+        <div>
+          {error && (
+            <div style={{ background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.2)', borderRadius: '12px', padding: '20px', color: '#EF4444', fontSize: '14px', marginBottom: '20px' }}>❌ Error: {error}</div>
+          )}
+
+          {!results && !isScanning && !error && (
+            <div style={{ background: 'var(--bg-elevated)', border: '1px dashed var(--border-default)', borderRadius: '16px', padding: '80px 40px', textAlign: 'center' }}>
+              <div style={{ fontSize: '48px', marginBottom: '16px' }}>🔍</div>
+              <div style={{ fontSize: '18px', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '8px' }}>Ready to Analyze</div>
+              <div style={{ fontSize: '14px', color: 'var(--text-muted)', maxWidth: '400px', margin: '0 auto', lineHeight: 1.6 }}>Enter your keyword, add competitor domains, and hit Scan to discover gaps, AI detection risk, and content opportunities.</div>
+            </div>
+          )}
+
+          {isScanning && (
+            <div style={{ background: 'var(--bg-elevated)', borderRadius: '16px', padding: '80px', textAlign: 'center', border: '1px solid var(--border-default)' }}>
+              <div style={{ width: '44px', height: '44px', border: '3px solid rgba(124,58,237,0.25)', borderTopColor: '#7C3AED', borderRadius: '50%', margin: '0 auto 18px', animation: 'spin 0.8s linear infinite' }} />
+              <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
+              <div style={{ fontSize: '16px', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '6px' }}>Analyzing SERP Data...</div>
+              <div style={{ fontSize: '13px', color: 'var(--text-muted)' }}>Mapping competitor positions and content gaps</div>
+            </div>
+          )}
+
+          {results && (
+            <>
+              {/* Stat Cards */}
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '12px', marginBottom: '18px' }}>
+                {[
+                  { label: 'Search Volume', value: results.searchVolume, color: '#A78BFA' },
+                  { label: 'Difficulty', value: results.difficulty, color: diffColor(results.difficulty) },
+                  { label: 'Gaps Found', value: String((results.topicGaps || []).length), color: '#06B6D4' },
+                ].map((s, i) => (
+                  <div key={i} style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border-default)', borderRadius: '12px', padding: '16px', textAlign: 'center' }}>
+                    <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>{s.label}</div>
+                    <div style={{ fontSize: '22px', fontWeight: 800, color: s.color }}>{s.value}</div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Tabs */}
+              <div style={{ display: 'flex', gap: '4px', marginBottom: '16px', background: 'var(--bg-elevated)', borderRadius: '12px', padding: '4px', border: '1px solid var(--border-default)' }}>
+                {[
+                  { id: 'gaps', label: '📊 Content Gaps' },
+                  { id: 'competitors', label: '🎯 Competitor Intel' },
+                  { id: 'keywords', label: '🔑 Keywords' },
+                  { id: 'quickwins', label: '⚡ Quick Wins' },
+                ].map(tab => (
+                  <button key={tab.id} onClick={() => setActiveTab(tab.id)}
+                    style={{ flex: 1, padding: '8px 4px', fontSize: '12px', fontWeight: 600, border: 'none', borderRadius: '8px', cursor: 'pointer', transition: 'all 0.15s', background: activeTab === tab.id ? 'linear-gradient(135deg,#7C3AED,#06B6D4)' : 'transparent', color: activeTab === tab.id ? 'white' : 'var(--text-muted)' }}>
+                    {tab.label}
+                  </button>
+                ))}
+              </div>
+
+              {/* Tab: Content Gaps */}
+              {activeTab === 'gaps' && (
+                <div style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border-default)', borderRadius: '16px', overflow: 'hidden' }}>
+                  <div style={{ padding: '14px 20px', borderBottom: '1px solid var(--border-default)' }}>
+                    <h3 style={{ fontSize: '14px', fontWeight: 700, color: 'var(--text-primary)', margin: 0 }}>📊 Content Gap Opportunities</h3>
+                  </div>
+                  <div style={{ overflowX: 'auto' }}>
+                    <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: '560px' }}>
+                      <thead>
+                        <tr style={{ background: 'var(--bg-surface)' }}>
+                          <th style={{ textAlign: 'left', padding: '11px 16px', fontSize: '11px', color: 'var(--text-muted)', fontWeight: 700, letterSpacing: '0.5px' }}>TOPIC GAP</th>
+                          <th style={{ padding: '11px 16px', fontSize: '11px', color: 'var(--text-muted)', fontWeight: 700, textAlign: 'center' }}>COVERAGE</th>
+                          <th style={{ padding: '11px 16px', fontSize: '11px', color: 'var(--text-muted)', fontWeight: 700, textAlign: 'center' }}>OPPORTUNITY</th>
+                          <th style={{ textAlign: 'left', padding: '11px 16px', fontSize: '11px', color: 'var(--text-muted)', fontWeight: 700 }}>SUGGESTED TITLE</th>
+                          <th style={{ padding: '11px 16px', fontSize: '11px' }}></th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {(results.topicGaps || []).map((gap, i) => (
+                          <tr key={i} style={{ borderTop: '1px solid var(--border-default)', transition: 'background 0.15s' }}
+                            onMouseOver={e => e.currentTarget.style.background = 'rgba(124,58,237,0.04)'}
+                            onMouseOut={e => e.currentTarget.style.background = 'transparent'}>
+                            <td style={{ padding: '13px 16px', fontSize: '13px', color: 'var(--text-primary)', fontWeight: 600 }}>
+                              {gap.topic}
+                              {(gap.competitorsCovering || []).length > 0 && (
+                                <div style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: 400, marginTop: '2px' }}>Owned by: {gap.competitorsCovering.join(', ')}</div>
+                              )}
+                            </td>
+                            <td style={{ padding: '13px 16px', textAlign: 'center' }}>
+                              <span style={{ background: 'rgba(16,185,129,0.1)', color: covColor(gap.coverage), borderRadius: '999px', padding: '3px 10px', fontSize: '11px', fontWeight: 700 }}>{gap.coverage}</span>
+                            </td>
+                            <td style={{ padding: '13px 16px', textAlign: 'center' }}>
+                              <span style={{ background: 'rgba(16,185,129,0.1)', color: opColor(gap.opportunity), borderRadius: '999px', padding: '3px 10px', fontSize: '11px', fontWeight: 700 }}>{gap.opportunity}</span>
+                            </td>
+                            <td style={{ padding: '13px 16px', fontSize: '12px', color: 'var(--text-secondary)', maxWidth: '220px' }}>{gap.suggestedTitle}</td>
+                            <td style={{ padding: '13px 16px' }}>
+                              <button onClick={() => handleGapTopic(gap.suggestedTitle)} style={{ background: 'rgba(124,58,237,0.2)', border: '1px solid rgba(124,58,237,0.3)', color: '#A78BFA', borderRadius: '6px', padding: '5px 12px', fontSize: '11px', cursor: 'pointer', whiteSpace: 'nowrap', fontWeight: 700, transition: 'all 0.2s' }}>Write This →</button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', padding: '20px', borderTop: '1px solid var(--border-default)' }}>
+                    <div>
+                      <h4 style={{ fontSize: '12px', fontWeight: 700, color: 'var(--text-primary)', margin: '0 0 10px' }}>⭐ Featured Snippet Opportunities</h4>
+                      {(results.featuredSnippetOpportunities || []).map((s, i) => (
+                        <div key={i} style={{ fontSize: '12px', color: 'var(--text-secondary)', padding: '6px 0', borderBottom: i < (results.featuredSnippetOpportunities || []).length - 1 ? '1px solid var(--border-default)' : 'none', display: 'flex', gap: '8px' }}>
+                          <span style={{ color: '#7C3AED', flexShrink: 0 }}>✦</span>{s}
+                        </div>
+                      ))}
+                    </div>
+                    <div>
+                      <h4 style={{ fontSize: '12px', fontWeight: 700, color: 'var(--text-primary)', margin: '0 0 10px' }}>🔑 Recommended LSI Keywords</h4>
+                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+                        {(results.recommendedLSI || []).map((k, i) => (
+                          <span key={i} style={{ background: 'rgba(124,58,237,0.1)', color: '#A78BFA', border: '1px solid rgba(124,58,237,0.2)', borderRadius: '999px', padding: '4px 10px', fontSize: '11px', fontWeight: 600 }}>{k}</span>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Tab: Competitor Intel */}
+              {activeTab === 'competitors' && (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                  {(results.competitorAnalysis || []).length === 0 ? (
+                    <div style={{ background: 'var(--bg-elevated)', border: '1px dashed var(--border-default)', borderRadius: '14px', padding: '48px', textAlign: 'center' }}>
+                      <div style={{ fontSize: '32px', marginBottom: '10px' }}>🎯</div>
+                      <div style={{ fontSize: '14px', color: 'var(--text-muted)' }}>Add competitor domains in the left panel and scan again to see detailed intel.</div>
+                    </div>
+                  ) : (results.competitorAnalysis || []).map((comp, i) => (
+                    <div key={i} style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border-default)', borderRadius: '14px', padding: '20px' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '14px' }}>
+                        <div>
+                          <div style={{ fontWeight: 800, fontSize: '15px', color: 'var(--text-primary)' }}>{comp.domain}</div>
+                          <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '3px' }}>Est. traffic: <span style={{ color: '#10B981', fontWeight: 700 }}>{comp.estimatedTraffic}</span></div>
+                        </div>
+                        <span style={{ background: 'rgba(124,58,237,0.1)', color: '#A78BFA', borderRadius: '8px', padding: '5px 12px', fontSize: '12px', fontWeight: 700 }}>{comp.topicsOwned} topics</span>
+                      </div>
+                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                        <div>
+                          <div style={{ fontSize: '10px', color: '#10B981', fontWeight: 800, letterSpacing: '0.5px', marginBottom: '8px' }}>STRONG TOPICS</div>
+                          {(comp.strongTopics || []).map((t, j) => (
+                            <div key={j} style={{ fontSize: '12px', color: 'var(--text-secondary)', padding: '3px 0', display: 'flex', gap: '6px' }}><span style={{ color: '#10B981' }}>✓</span>{t}</div>
+                          ))}
+                        </div>
+                        <div>
+                          <div style={{ fontSize: '10px', color: '#EF4444', fontWeight: 800, letterSpacing: '0.5px', marginBottom: '8px' }}>WEAKNESSES TO EXPLOIT</div>
+                          {(comp.weaknesses || []).map((w, j) => (
+                            <div key={j} style={{ fontSize: '12px', color: 'var(--text-secondary)', padding: '3px 0', display: 'flex', gap: '6px' }}><span style={{ color: '#EF4444' }}>✗</span>{w}</div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* Tab: Keywords */}
+              {activeTab === 'keywords' && (
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                  <div style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border-default)', borderRadius: '14px', padding: '20px' }}>
+                    <h4 style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-primary)', margin: '0 0 12px' }}>⚡ Missing Keywords</h4>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                      {(results.missingKeywords || []).map((k, i) => (
+                        <span key={i} onClick={() => handleGapTopic(k)}
+                          style={{ background: 'rgba(239,68,68,0.08)', color: '#EF4444', border: '1px solid rgba(239,68,68,0.2)', borderRadius: '999px', padding: '5px 12px', fontSize: '12px', fontWeight: 600, cursor: 'pointer', transition: 'all 0.15s' }}
+                          onMouseOver={e => e.currentTarget.style.background = 'rgba(239,68,68,0.15)'}
+                          onMouseOut={e => e.currentTarget.style.background = 'rgba(239,68,68,0.08)'}>{k}</span>
+                      ))}
+                    </div>
+                  </div>
+                  <div style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border-default)', borderRadius: '14px', padding: '20px' }}>
+                    <h4 style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-primary)', margin: '0 0 12px' }}>🔑 LSI Keywords</h4>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                      {(results.recommendedLSI || []).map((k, i) => (
+                        <span key={i} style={{ background: 'rgba(124,58,237,0.1)', color: '#A78BFA', border: '1px solid rgba(124,58,237,0.2)', borderRadius: '999px', padding: '5px 12px', fontSize: '12px', fontWeight: 600 }}>{k}</span>
+                      ))}
+                    </div>
+                  </div>
+                  <div style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border-default)', borderRadius: '14px', padding: '20px', gridColumn: '1 / -1' }}>
+                    <h4 style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-primary)', margin: '0 0 12px' }}>⭐ Featured Snippet Opportunities</h4>
+                    {(results.featuredSnippetOpportunities || []).map((s, i) => (
+                      <div key={i} style={{ fontSize: '13px', color: 'var(--text-secondary)', padding: '8px 0', borderBottom: i < (results.featuredSnippetOpportunities || []).length - 1 ? '1px solid var(--border-default)' : 'none', display: 'flex', gap: '10px' }}>
+                        <span style={{ color: '#7C3AED', flexShrink: 0 }}>✦</span>{s}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Tab: Quick Wins */}
+              {activeTab === 'quickwins' && (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                  {(results.insights?.quickWins || []).map((win, i) => (
+                    <div key={i} style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border-default)', borderRadius: '12px', padding: '16px 20px', display: 'flex', gap: '14px', alignItems: 'flex-start' }}>
+                      <div style={{ width: '28px', height: '28px', borderRadius: '50%', background: 'linear-gradient(135deg,#7C3AED,#06B6D4)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 800, fontSize: '12px', flexShrink: 0 }}>{i + 1}</div>
+                      <div style={{ fontSize: '14px', color: 'var(--text-primary)', lineHeight: 1.65 }}>{win}</div>
+                    </div>
+                  ))}
+                  {results.insights?.yourDomainPosition && domain.trim() && (
+                    <div style={{ background: 'rgba(6,182,212,0.06)', border: '1px solid rgba(6,182,212,0.2)', borderRadius: '12px', padding: '16px 20px' }}>
+                      <div style={{ fontSize: '10px', color: '#06B6D4', fontWeight: 800, letterSpacing: '0.5px', marginBottom: '4px' }}>YOUR ESTIMATED POSITION</div>
+                      <div style={{ fontSize: '16px', color: 'var(--text-primary)', fontWeight: 700 }}>{results.insights.yourDomainPosition}</div>
+                    </div>
+                  )}
+                </div>
+              )}
+            </>
+          )}
+        </div>
+      </div>
     </div>
   );
 };
+
+
 
 const SeoScoresSection = () => {
   const [keyword, setKeyword] = useState('');
@@ -1082,6 +1327,35 @@ const AutoPublisherSection = () => {
     setCredentials(updated);
   };
 
+  const handleConnectBlogger = async () => {
+    try {
+      setSaveStatus('Connecting to Blogger...');
+      const result = await signInWithPopup(auth, googleProvider);
+      const token = result.credential.accessToken;
+      
+      if (!token) throw new Error('Failed to retrieve access token from Google.');
+      
+      updateCred('blogger', 'accessToken', token);
+      setSaveStatus('Blogger connected! Saving...');
+      
+      // Auto-save the new token
+      const updatedCreds = {
+        ...credentials,
+        blogger: {
+          ...(credentials.blogger || {}),
+          accessToken: token
+        }
+      };
+      await saveCredentials(currentUser.uid, updatedCreds);
+      setSaveStatus('Connected & Saved successfully!');
+      setTimeout(() => setSaveStatus(''), 3000);
+    } catch (err) {
+      console.error('Blogger Connection Error:', err);
+      setSaveError(err.message || 'Blogger connection failed.');
+      setSaveStatus('');
+    }
+  };
+
   const handleManualSave = async (e) => {
     e.preventDefault();
     setSaveStatus('Verifying & Saving...');
@@ -1174,11 +1448,38 @@ const AutoPublisherSection = () => {
           )}
           {activeTab === 'blogger' && (
             <div className="animation-fade-in">
+              <div style={{ background: 'rgba(124,58,237,0.05)', border: '1px solid rgba(124,58,237,0.2)', borderRadius: '12px', padding: '20px', marginBottom: '24px' }}>
+                <h4 style={{ margin: '0 0 8px', fontSize: '15px', color: '#A78BFA' }}>🔗 Automate Blogger Connection</h4>
+                <p style={{ margin: '0 0 16px', fontSize: '13px', color: 'var(--text-muted)', lineHeight: 1.5 }}>
+                  Click below to authorize BlogForge to post to your Blogger account. This ensures you have the correct permissions and fixes the "403 Forbidden" error.
+                </p>
+                <button 
+                  type="button"
+                  onClick={handleConnectBlogger}
+                  style={{ background: 'var(--color-accent-gradient)', color: 'white', border: 'none', padding: '10px 20px', borderRadius: '8px', cursor: 'pointer', fontWeight: 600, fontSize: '13px', display: 'flex', alignItems: 'center', gap: '8px shadow-glow-primary' }}
+                >
+                  🅱️ Connect Blogger Account
+                </button>
+              </div>
+
               <label style={labelStyle}>Blog ID</label>
               <input value={(credentials.blogger?.blogId) || ''} onChange={e => updateCred('blogger', 'blogId', e.target.value)} placeholder="1234567890" style={inputStyle} required />
 
               <label style={labelStyle}>OAuth Access Token</label>
-              <input value={(credentials.blogger?.accessToken) || ''} onChange={e => updateCred('blogger', 'accessToken', e.target.value)} type="password" placeholder="ya29.a0A..." style={inputStyle} required />
+              <div style={{ position: 'relative' }}>
+                <input 
+                  value={(credentials.blogger?.accessToken) || ''} 
+                  onChange={e => updateCred('blogger', 'accessToken', e.target.value)} 
+                  type="password" 
+                  placeholder="Will be filled automatically after connecting..." 
+                  style={{ ...inputStyle, paddingRight: '100px' }} 
+                  required 
+                />
+                {credentials.blogger?.accessToken && (
+                  <span style={{ position: 'absolute', right: '12px', top: '12px', color: '#10B981', fontSize: '11px', fontWeight: 700 }}>✓ Connected</span>
+                )}
+              </div>
+              <p style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '-8px', marginBottom: '16px' }}>Note: Tokens expire after 60 mins. Re-connect if you get a 403 error.</p>
             </div>
           )}
           {activeTab === 'devto' && (
@@ -1906,7 +2207,6 @@ Use clear headings and keep it actionable. Write in a professional consulting to
     { id: 'schedule', title: 'Schedule Queue' },
 
     { id: 'traffic', title: 'Traffic Tracker' },
-    { id: 'brandvoice', title: 'Brand Voice' },
     { id: 'billing', title: 'Billing' },
   ];
 
@@ -1973,19 +2273,12 @@ Use clear headings and keep it actionable. Write in a professional consulting to
 
           <div className="nav-group">
             <h4 className="nav-label" id="nav-label-settings">Settings</h4>
-            <a role="button" tabIndex={0} className="nav-item sidebar-link" data-section="brandvoice" onClick={() => window.showDashboardSection('brandvoice')} onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && window.showDashboardSection('brandvoice')} style={{ cursor: 'pointer' }}><Settings size={18} aria-hidden="true" /> Brand Voice</a>
             <a role="button" tabIndex={0} className="nav-item sidebar-link" data-section="billing" onClick={() => window.showDashboardSection('billing')} onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && window.showDashboardSection('billing')} style={{ cursor: 'pointer' }}><CreditCard size={18} aria-hidden="true" /> Billing</a>
           </div>
         </nav>
 
         <div className="sidebar-footer">
-          <div style={{ background: 'rgba(16,185,129,0.08)', border: '1px solid rgba(16,185,129,0.15)', borderRadius: '10px', padding: '12px 14px', margin: '12px 8px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
-              <span style={{ width: '8px', height: '8px', background: '#10B981', borderRadius: '50%', display: 'inline-block' }}></span>
-              <span style={{ fontSize: '12px', color: '#10B981', fontWeight: 600 }}>AI Engine Active</span>
-            </div>
-            <div style={{ fontSize: '11px', color: 'var(--text-subtle)' }}>Gemini 2.5 Flash</div>
-          </div>
+
 
           <div style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-color)', borderRadius: '12px', padding: '14px', margin: '8px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
