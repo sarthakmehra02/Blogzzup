@@ -1229,18 +1229,20 @@ const AutoPublisherSection = () => {
 };
 const planHierarchy = { 'Free': 0, 'Starter': 1, 'Growth': 2, 'Scale': 3 };
 
-const getButtonText = (planName, loadingPlan, userPlan) => {
+const getButtonText = (planName, loadingPlan, userPlan, currentCycle, userCycle) => {
   if (loadingPlan === planName) return 'Processing...';
-  if (userPlan === planName) return 'Current Plan';
+  // Force "Buy Now" for Starter and Growth to allow testing/re-buying
   if (planName === 'Starter' || planName === 'Growth') return 'Buy Now';
+  if (userPlan === planName && currentCycle === userCycle) return 'Current Plan';
   if (planHierarchy[userPlan] > planHierarchy[planName]) return 'Downgrade';
   return 'Upgrade';
 };
 
-const isButtonDisabled = (planName, loadingPlan, userPlan) => {
-  if (loadingPlan === planName || userPlan === planName) return true;
-  // Allow switching between Starter and Growth (Buy Now)
+const isButtonDisabled = (planName, loadingPlan, userPlan, currentCycle, userCycle) => {
+  if (loadingPlan === planName) return true;
+  // Never disable Starter or Growth so the user can always test the payment flow
   if (planName === 'Starter' || planName === 'Growth') return false;
+  if (userPlan === planName && currentCycle === userCycle) return true;
   return planHierarchy[userPlan] > planHierarchy[planName];
 };
 
@@ -1256,6 +1258,7 @@ const Dashboard = ({ onLogout }) => {
   const [viewDate, setViewDate] = useState(new Date());
 
   const [userPlan, setUserPlan] = useState('Free');
+  const [userBillingCycle, setUserBillingCycle] = useState('monthly');
   const [billingCycle, setBillingCycle] = useState('monthly');
 
   useEffect(() => {
@@ -1263,8 +1266,9 @@ const Dashboard = ({ onLogout }) => {
       if (currentUser) {
         try {
           const userDoc = await getDoc(doc(db, 'users', currentUser.uid));
-          if (userDoc.exists() && userDoc.data().plan) {
-            setUserPlan(userDoc.data().plan);
+          if (userDoc.exists()) {
+            if (userDoc.data().plan) setUserPlan(userDoc.data().plan);
+            if (userDoc.data().billingCycle) setUserBillingCycle(userDoc.data().billingCycle);
           }
         } catch (error) {
           console.error('Error fetching plan:', error);
@@ -1304,6 +1308,7 @@ const Dashboard = ({ onLogout }) => {
 
             await setDoc(doc(db, 'users', currentUser.uid), {
               plan: planName,
+              billingCycle: billingCycle,
               amount: amount,
               razorpayPaymentId: response.razorpay_payment_id,
               planActivatedAt: serverTimestamp(),
@@ -1313,7 +1318,8 @@ const Dashboard = ({ onLogout }) => {
             }, { merge: true });
             
             setUserPlan(planName);
-            alert(`🎉 Successfully upgraded to ${planName} plan!`);
+            setUserBillingCycle(billingCycle);
+            alert(`🎉 Successfully upgraded to ${planName} plan (${billingCycle})!`);
           } catch (error) {
             console.error('Error saving plan to Firestore:', error);
             alert('Payment successful, but failed to update your plan in our system. Please contact support.');
@@ -2508,7 +2514,6 @@ Use clear headings and keep it actionable. Write in a professional consulting to
                 <div className="pricing-grid-3">
                   {/* Starter */}
                   <div className="pc-card" style={{ opacity: (planHierarchy[userPlan] > planHierarchy['Starter'] && userPlan !== 'Starter') ? 0.6 : 1 }}>
-                    {userPlan === 'Starter' && <div style={{ position: 'absolute', top: '-12px', left: '50%', transform: 'translateX(-50%)', background: 'var(--color-primary-500)', color: 'white', fontSize: '11px', fontWeight: 'bold', padding: '4px 12px', borderRadius: '99px' }}>Current Plan</div>}
                     <h3 className="pc-header">Starter</h3>
                     <div className="pc-price-wrap">
                       <span className="pc-price">{billingCycle === 'yearly' ? '₹16,790' : '₹1,999'}</span>
@@ -2526,16 +2531,16 @@ Use clear headings and keep it actionable. Write in a professional consulting to
                       <li className="pc-feat"><span className="pc-feat-check">✓</span> Email support</li>
                     </ul>
                     <button
-                      className={userPlan === 'Starter' ? 'pc-btn-solid' : 'pc-btn-outline'}
+                      className={userPlan === 'Starter' && billingCycle === userBillingCycle ? 'pc-btn-solid' : 'pc-btn-outline'}
                       onClick={() => handlePlanUpgrade('Starter', billingCycle === 'yearly' ? 16790 : 1999)}
-                      disabled={userPlan === 'Starter' || isButtonDisabled('Starter', loadingPlan, userPlan)}
-                      style={{ opacity: loadingPlan === 'Starter' ? 0.7 : 1, cursor: (userPlan === 'Starter' || isButtonDisabled('Starter', loadingPlan, userPlan)) ? 'not-allowed' : 'pointer' }}
-                    >{getButtonText('Starter', loadingPlan, userPlan)}</button>
+                      disabled={isButtonDisabled('Starter', loadingPlan, userPlan, billingCycle, userBillingCycle)}
+                      style={{ opacity: loadingPlan === 'Starter' ? 0.7 : 1, cursor: isButtonDisabled('Starter', loadingPlan, userPlan, billingCycle, userBillingCycle) ? 'not-allowed' : 'pointer' }}
+                    >{getButtonText('Starter', loadingPlan, userPlan, billingCycle, userBillingCycle)}</button>
                   </div>
 
                   {/* Growth */}
                   <div className="pc-card popular" style={{ opacity: (planHierarchy[userPlan] > planHierarchy['Growth'] && userPlan !== 'Growth') ? 0.6 : 1 }}>
-                    {userPlan === 'Growth' ? <div style={{ position: 'absolute', top: '-12px', left: '50%', transform: 'translateX(-50%)', background: 'var(--color-primary-500)', color: 'white', fontSize: '11px', fontWeight: 'bold', padding: '4px 12px', borderRadius: '99px' }}>Current Plan</div> : <div className="pc-most-pop">Most Popular</div>}
+                    <div className="pc-most-pop">Most Popular</div>
                     <h3 className="pc-header">Growth</h3>
                     <div className="pc-price-wrap">
                       <span className="pc-price">{billingCycle === 'yearly' ? '₹41,990' : '₹4,999'}</span>
@@ -2556,9 +2561,9 @@ Use clear headings and keep it actionable. Write in a professional consulting to
                     <button
                       className="pc-btn-solid"
                       onClick={() => handlePlanUpgrade('Growth', billingCycle === 'yearly' ? 41990 : 4999)}
-                      disabled={userPlan === 'Growth' || isButtonDisabled('Growth', loadingPlan, userPlan)}
-                      style={{ opacity: loadingPlan === 'Growth' ? 0.7 : 1, cursor: (userPlan === 'Growth' || isButtonDisabled('Growth', loadingPlan, userPlan)) ? 'not-allowed' : 'pointer' }}
-                    >{getButtonText('Growth', loadingPlan, userPlan)}</button>
+                      disabled={isButtonDisabled('Growth', loadingPlan, userPlan, billingCycle, userBillingCycle)}
+                      style={{ opacity: loadingPlan === 'Growth' ? 0.7 : 1, cursor: isButtonDisabled('Growth', loadingPlan, userPlan, billingCycle, userBillingCycle) ? 'not-allowed' : 'pointer' }}
+                    >{getButtonText('Growth', loadingPlan, userPlan, billingCycle, userBillingCycle)}</button>
                   </div>
 
                   {/* Scale */}
