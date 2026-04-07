@@ -45,7 +45,8 @@
 
 ---
 
-## 🏗️ Technical Stack
+## Technical Stack
+<img width="757" height="316" alt="Screenshot 2026-04-07 at 1 59 09 PM" src="https://github.com/user-attachments/assets/dc19bd57-c2e6-4362-afcf-88ae0c40187d" />
 
 | Component | Technology | Role |
 | :--- | :--- | :--- |
@@ -59,8 +60,20 @@
 | **Payments** | Razorpay | Subscription billing |
 
 ---
+## Pricing Plans
 
-## 📁 Project Structure
+| Plan | Price | Blogs/Month |
+| :--- | :--- | :--- |
+| **Free** | ₹0 | Limited |
+| **Starter** | ₹1,999/mo | 15 |
+| **Growth** | ₹4,999/mo | 50 |
+| **Scale** | Custom | Unlimited |
+
+Payments powered by Razorpay with monthly and yearly billing cycles.
+
+---
+
+## Project Structure
 
 ```
 blogzzup/
@@ -106,12 +119,12 @@ blogzzup/
 
 ---
 
-## 🛠️ Quick Start
+## Quick Start
 
 ### 1. Clone and Install
 
 ```bash
-git clone https://github.com/nmnroy/blogforge-ai.git
+git clone https://github.com/sarthakmehra02/Blogzzup.git
 cd Blogzzup
 npm install
 ```
@@ -150,7 +163,7 @@ Access at `http://localhost:5173`
 
 ---
 
-## 🚀 Deployment
+## Deployment
 
 Deployed on **Netlify** with automatic CI/CD from the main branch.
 
@@ -159,27 +172,13 @@ Push to `main` → Netlify builds and deploys automatically.
 ```toml
 # netlify.toml handles SPA routing redirects
 ```
-
----
-
-## 💳 Pricing Plans
-
-| Plan | Price | Blogs/Month |
-| :--- | :--- | :--- |
-| **Free** | ₹0 | Limited |
-| **Starter** | ₹1,999/mo | 15 |
-| **Growth** | ₹4,999/mo | 50 |
-| **Scale** | Custom | Unlimited |
-
-Payments powered by Razorpay with monthly and yearly billing cycles.
-
 ---
 
 ## 👥 Team Twinkle
 
 Built for **Bizmark '26 — Prompt & Profit** Hackathon
 
-Hosted by DTU Consulting Group × Blogy
+Hosted by **DTU Consulting Group × Blogy**
 
 ---
 
