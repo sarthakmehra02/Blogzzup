@@ -440,21 +440,21 @@ const FeaturesPage = () => {
               <tr>
                 <td>SERP Gap Scanner</td>
                 <td><span className="comp-mark-yes">✓</span></td>
-                <td><span className="comp-mark-no">✗</span></td>
+                <td><span className="comp-mark-yes">✓</span></td>
                 <td><span className="comp-mark-no">✗</span></td>
                 <td><span className="comp-mark-no">✗</span></td>
               </tr>
               <tr>
                 <td>Live SEO Scorer</td>
                 <td><span className="comp-mark-yes">✓</span></td>
-                <td><span className="comp-mark-no">✗</span></td>
+                <td><span className="comp-mark-yes">✓</span></td>
                 <td><span className="comp-mark-partial">Partial</span></td>
                 <td><span className="comp-mark-no">✗</span></td>
               </tr>
               <tr>
                 <td>SEO Optimization</td>
                 <td><span className="comp-mark-yes">✓</span></td>
-                <td><span className="comp-mark-no">✗</span></td>
+                <td><span className="comp-mark-yes">✓</span></td>
                 <td><span className="comp-mark-no">✗</span></td>
                 <td><span className="comp-mark-no">✗</span></td>
               </tr>
@@ -475,7 +475,7 @@ const FeaturesPage = () => {
               <tr>
                 <td>Content Cluster Map</td>
                 <td><span className="comp-mark-yes">✓</span></td>
-                <td><span className="comp-mark-no">✗</span></td>
+                <td><span className="comp-mark-yes">✓</span></td>
                 <td><span className="comp-mark-no">✗</span></td>
                 <td><span className="comp-mark-no">✗</span></td>
               </tr>
@@ -489,7 +489,7 @@ const FeaturesPage = () => {
               <tr>
                 <td>ROI Tracker</td>
                 <td><span className="comp-mark-yes">✓</span></td>
-                <td><span className="comp-mark-no">✗</span></td>
+                <td><span className="comp-mark-yes">✓</span></td>
                 <td><span className="comp-mark-no">✗</span></td>
                 <td><span className="comp-mark-no">✗</span></td>
               </tr>
