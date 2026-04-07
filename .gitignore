@@ -36,3 +36,6 @@ error.log
 
 .env
 .env.*
+
+#agents
+agents
