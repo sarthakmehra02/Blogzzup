@@ -88,7 +88,7 @@ const fmtDate = iso =>
 // ─── Sub-components ──────────────────────────────────────────────────────────
 
 /** Animated step-based progress indicator */
-const GenerationStepper = ({ steps, currentPct, currentText }) => (
+const GenerationStepper = ({ steps, currentPct, _currentText }) => (
   <div className="be-stepper">
     {steps.map((step, i) => {
       const done = currentPct > step.pct;
@@ -233,13 +233,13 @@ const BlogEditor = ({ callGemini, publishBlog, uid }) => {
 
   const keywordRef = useRef(null);
   const bodyRef = useRef(null);
-  const progressRef = useRef(null);
+  const _progressRef = useRef(null);
 
   // ── Load version history from localStorage ──
   useEffect(() => {
     const saved = JSON.parse(localStorage.getItem('bf_versions') || '[]');
     setVersions(saved);
-  }, []);
+  }, []); // eslint-disable-next-line react-hooks/exhaustive-deps
 
   // ── Auto-save body edits ──
   useEffect(() => {
@@ -267,25 +267,9 @@ const BlogEditor = ({ callGemini, publishBlog, uid }) => {
       }
     }, 1200);
     return () => clearTimeout(t);
-  }, [editableTitle, editableBody, editableMeta]);
+  }, [editableTitle, editableBody, editableMeta, stage, output, uid]); // eslint-disable-next-line react-hooks/exhaustive-deps
 
-  // ── Global keyboard shortcuts ──
-  useEffect(() => {
-    const handleKey = e => {
-      const mod = e.metaKey || e.ctrlKey;
-      if (mod && e.key === 'Enter' && stage === 'configure') {
-        e.preventDefault(); generateBlog();
-      }
-      if (mod && e.key === 's' && stage === 'review') {
-        e.preventDefault(); handleSaveDraft();
-      }
-      if (mod && e.key === 'c' && stage === 'review' && e.shiftKey) {
-        e.preventDefault(); handleCopy();
-      }
-    };
-    window.addEventListener('keydown', handleKey);
-    return () => window.removeEventListener('keydown', handleKey);
-  }, [stage, output, editableTitle, editableBody, editableMeta]);
+
 
   // ── Validate ──
   const [kwError, setKwError] = useState('');
@@ -361,7 +345,7 @@ STRICT RULES for the body field:
       let blogData;
       try {
         blogData = JSON.parse(cleaned);
-      } catch (parseErr) {
+      } catch (_parseErr) {
         // Gemini truncated the JSON — extract fields manually
         const extractField = (text, field) => {
           const regex = new RegExp('"' + field + '"\\s*:\\s*"((?:[^"\\\\]|\\\\.)*)');
@@ -484,6 +468,25 @@ STRICT RULES for the body field:
     });
   }, [output, editableTitle, editableMeta, editableBody]);
 
+  // ── Global keyboard shortcuts ──
+  useEffect(() => {
+    const handleKey = e => {
+      const mod = e.metaKey || e.ctrlKey;
+      if (mod && e.key === 'Enter' && stage === 'configure') {
+        e.preventDefault(); generateBlog();
+      }
+      if (mod && e.key === 's' && stage === 'review') {
+        e.preventDefault(); handleSaveDraft();
+      }
+      if (mod && e.key === 'c' && stage === 'review' && e.shiftKey) {
+        e.preventDefault(); handleCopy();
+      }
+    };
+    window.addEventListener('keydown', handleKey);
+    return () => window.removeEventListener('keydown', handleKey);
+  }, [stage, output, editableTitle, editableBody, editableMeta, generateBlog, handleSaveDraft, handleCopy]);
+
+
   const handlePublish = async () => {
     if (!output) return;
 
@@ -504,7 +507,7 @@ STRICT RULES for the body field:
     let allCreds = {};
     try {
       allCreds = await fetchCredentials(uid);
-    } catch (e) {
+    } catch (_e) {
       setPubStatus('Error: Could not load credentials. Check your connection.');
       return;
     }

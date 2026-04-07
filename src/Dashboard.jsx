@@ -9,6 +9,7 @@ import './BlogEditor.css';
 import { publishBlog } from './utils/publishBlog';
 import { fetchUserBlogs, createBlog, updateBlog, deleteBlog, saveCredentials, fetchCredentials, verifyAndClaimCredential } from './utils/blogStorage';
 import BlogEditor from './BlogEditor';
+import ClusterMapViewer from './ClusterMapViewer';
 import { useAuth } from './AuthContext';
 import { callGemini } from './utils/gemini';
 import { db } from './firebase';
@@ -34,7 +35,7 @@ const MyBlogsSection = () => {
         delete window.loadMyBlogs;
       }
     };
-  }, []);
+  }, []); // eslint-disable-next-line react-hooks/exhaustive-deps
 
   const copyBlogFromModal = (blog, e) => {
     const text = blog.title + '\n\n' + blog.metaDescription + '\n\n' + blog.body;
@@ -221,7 +222,7 @@ const VoiceToBlogSection = () => {
     recognition.onend = () => {
       if (isRecording) {
         // Auto-restart if still supposed to be recording (browser timeout)
-        try { recognition.start(); } catch (e) { }
+        try { recognition.start(); } catch (_e) { /* ignore */ }
       }
     };
 
@@ -234,7 +235,7 @@ const VoiceToBlogSection = () => {
     setIsRecording(false);
     setInterimText('');
     if (recognitionRef.current) {
-      try { recognitionRef.current.stop(); } catch (e) { }
+      try { recognitionRef.current.stop(); } catch (_e) { /* ignore */ }
       recognitionRef.current = null;
     }
     // After stopping, auto-trigger SEO analysis if there's content
@@ -671,7 +672,7 @@ Return ONLY a valid JSON object with exactly this structure, no explanation:
     }
   };
 
-  const useGapTopic = (title) => {
+  const handleGapTopic = (title) => {
     if (window.showDashboardSection) window.showDashboardSection('newblog');
     setTimeout(() => {
       const kwInput = document.getElementById('bf-keyword');
@@ -767,7 +768,7 @@ Return ONLY a valid JSON object with exactly this structure, no explanation:
                       <td style={{ padding: '14px 20px', textAlign: 'center' }}><span style={{ background: 'rgba(16,185,129,0.1)', color: covColor(gap.coverage), borderRadius: '999px', padding: '3px 12px', fontSize: '12px', fontWeight: 600 }}>{gap.coverage}</span></td>
                       <td style={{ padding: '14px 20px', textAlign: 'center' }}><span style={{ background: 'rgba(16,185,129,0.1)', color: opColor(gap.opportunity), borderRadius: '999px', padding: '3px 12px', fontSize: '12px', fontWeight: 600 }}>{gap.opportunity}</span></td>
                       <td style={{ padding: '14px 20px', fontSize: '13px', color: 'var(--text-secondary)', maxWidth: '250px' }}>{gap.suggestedTitle}</td>
-                      <td style={{ padding: '14px 20px' }}><button onClick={() => useGapTopic(gap.suggestedTitle)} style={{ background: 'rgba(124,58,237,0.2)', border: '1px solid rgba(124,58,237,0.3)', color: '#A78BFA', borderRadius: '6px', padding: '6px 14px', fontSize: '12px', cursor: 'pointer', whiteSpace: 'nowrap', transition: 'all 0.2s' }}>Write This →</button></td>
+                      <td style={{ padding: '14px 20px' }}><button onClick={() => handleGapTopic(gap.suggestedTitle)} style={{ background: 'rgba(124,58,237,0.2)', border: '1px solid rgba(124,58,237,0.3)', color: '#A78BFA', borderRadius: '6px', padding: '6px 14px', fontSize: '12px', cursor: 'pointer', whiteSpace: 'nowrap', transition: 'all 0.2s' }}>Write This →</button></td>
                     </tr>
                   ))}
                 </tbody>
@@ -1381,7 +1382,7 @@ const Dashboard = ({ onLogout }) => {
     let allCreds = {};
     try {
       allCreds = await fetchCredentials(uid);
-    } catch (e) {
+    } catch (_e) {
       setPublishStatus('Error: Could not load credentials. Check your connection.');
       return;
     }
@@ -1427,7 +1428,7 @@ const Dashboard = ({ onLogout }) => {
 
     setPublishStatus('Publishing...');
     try {
-      const response = await publishBlog(publishingPlatform, {
+      await publishBlog(publishingPlatform, {
         title: publishModalBlog.title,
         content: publishModalBlog.body || publishModalBlog.content,
         tags: [publishModalBlog.keyword].filter(Boolean),
@@ -2116,7 +2117,7 @@ Use clear headings and keep it actionable. Write in a professional consulting to
                         <td colSpan="5" style={{ padding: '40px', textAlign: 'center', color: 'var(--text-muted)', fontSize: '14px' }}>No blogs generated yet.</td>
                       </tr>
                     ) : (
-                      blogs.map((blog, idx) => (
+                      blogs.map((blog, _idx) => (
                         <tr key={blog.id} style={{ borderBottom: '1px solid var(--border-default)', transition: 'background 0.2s' }} onMouseOver={(e) => e.currentTarget.style.backgroundColor = 'var(--color-bg-hover)'} onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}>
                           <td className="title-cell" style={{ padding: '16px 20px', fontWeight: 600, color: 'var(--text-primary)', fontSize: '14px' }}>{blog.title}</td>
                           <td style={{ padding: '16px 20px' }}>
@@ -2278,20 +2279,21 @@ Use clear headings and keep it actionable. Write in a professional consulting to
             );
           } else if (sec.id === 'clustermap') {
             content = (
-              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', background: 'var(--bg-elevated)', border: '1px solid var(--border-default)', borderRadius: '16px', padding: '60px', position: 'relative' }}>
-                <div style={{ background: 'var(--color-accent-gradient)', padding: '16px 32px', borderRadius: '12px', color: 'white', fontWeight: 'bold', fontSize: '18px', zIndex: 2 }}>Pillar: Artificial Intelligence</div>
-                <div style={{ height: '40px', width: '2px', background: 'var(--border-default)' }}></div>
-                <div style={{ width: '600px', height: '2px', background: 'var(--border-default)', display: 'flex', justifyContent: 'space-between' }}>
-                  <div style={{ width: '2px', height: '40px', background: 'var(--border-default)' }}></div>
-                  <div style={{ width: '2px', height: '40px', background: 'var(--border-default)' }}></div>
-                  <div style={{ width: '2px', height: '40px', background: 'var(--border-default)' }}></div>
-                </div>
-                <div style={{ width: '640px', display: 'flex', justifyContent: 'space-between', marginTop: '40px' }}>
-                  <div style={{ background: 'var(--bg-surface)', border: '1px solid var(--color-success-border)', padding: '12px 16px', borderRadius: '8px', color: 'var(--color-success-500)', fontSize: '13px' }}>Generative AI Tools</div>
-                  <div style={{ background: 'var(--bg-surface)', border: '1px solid var(--color-warning-border)', padding: '12px 16px', borderRadius: '8px', color: 'var(--color-warning-500)', fontSize: '13px' }}>AI Content Detection</div>
-                  <div style={{ background: 'var(--bg-surface)', border: '1px dashed var(--border-default)', padding: '12px 16px', borderRadius: '8px', color: 'var(--text-muted)', fontSize: '13px' }}>+ Add Cluster</div>
-                </div>
-              </div>
+              <ClusterMapViewer onGenerateBlog={(kw) => {
+                if (window.showDashboardSection) window.showDashboardSection('newblog');
+                setTimeout(() => {
+                  const kwInput = document.getElementById('bf-keyword');
+                  if (kwInput) {
+                    kwInput.value = kw;
+                    const nativeInputValueSetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, "value").set;
+                    if (nativeInputValueSetter) {
+                      nativeInputValueSetter.call(kwInput, kw);
+                      kwInput.dispatchEvent(new Event('input', { bubbles: true }));
+                    }
+                    kwInput.focus();
+                  }
+                }, 150);
+              }} />
             );
           } else if (sec.id === 'keywords') {
             content = (

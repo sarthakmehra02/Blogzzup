@@ -576,7 +576,7 @@ window.sendDemoMessage = async function() {
     const raw = await callGemini(prompt, 300, 'text/plain');
     thinkingDiv.remove();
     container.appendChild(window.renderDemoMessage({ role: 'ai', text: raw }));
-  } catch(err) {
+  } catch(_err) {
     thinkingDiv.remove();
     container.appendChild(window.renderDemoMessage({ 
       role: 'ai', 
@@ -650,8 +650,8 @@ Return ONLY valid JSON with this exact structure:
     const quoteCount = (cleaned.match(/(?<!\\)"/g) || []).length;
     if (quoteCount % 2 !== 0) cleaned += '"';
     // Fix unterminated brackets
-    const opens = (cleaned.match(/[\[{]/g) || []).length;
-    const closes = (cleaned.match(/[\]\}]/g) || []).length;
+    const opens = (cleaned.match(/[[{]/g) || []).length;
+    const closes = (cleaned.match(/[\]}]/g) || []).length;
     for (let k = closes; k < opens; k++) {
       cleaned += cleaned.lastIndexOf('[') > cleaned.lastIndexOf('{') ? ']' : '}';
     }
@@ -671,9 +671,9 @@ Return ONLY valid JSON with this exact structure:
     blogHTML += '</div>';
 
     if (data.sections && data.sections.length > 0) {
-      data.sections.forEach(function(sec, idx) {
+      data.sections.forEach(function(sec, _idx) {
         blogHTML += '<div style="margin-bottom:20px;">';
-        blogHTML += '<h3 style="font-size:16px;color:#E2E8F0;font-weight:600;margin:0 0 8px;display:flex;align-items:center;gap:8px;"><span style="color:#7C3AED;">§</span> ' + (sec.heading || 'Section ' + (idx + 1)) + '</h3>';
+        blogHTML += '<h3 style="font-size:16px;color:#E2E8F0;font-weight:600;margin:0 0 8px;display:flex;align-items:center;gap:8px;"><span style="color:#7C3AED;">§</span> ' + (sec.heading || 'Section ' + (_idx + 1)) + '</h3>';
         blogHTML += '<p style="font-size:14px;color:#94A3B8;line-height:1.8;margin:0;">' + (sec.content || '') + '</p>';
         blogHTML += '</div>';
       });
@@ -690,8 +690,8 @@ Return ONLY valid JSON with this exact structure:
       resultsEl.innerHTML = blogHTML;
     }
 
-  } catch(err) {
-    console.error('Gemini error:', err.message);
+  } catch(_err) {
+    console.error('Gemini error:', _err.message);
     // Show error with retry option instead of hardcoded fallback
     if (resultsEl) {
       resultsEl.style.display = 'block';
@@ -1410,7 +1410,7 @@ function App() {
   }, []);
 
   const [scrolled, setScrolled] = useState(false);
-  const [annualBilling, setAnnualBilling] = useState(false);
+  const [_annualBilling, _setAnnualBilling] = useState(false);
   const [view, setView] = useState('landing');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [showTop, setShowTop] = useState(false);
@@ -1451,7 +1451,7 @@ function App() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const pills = [
+  const _pills = [
     { icon: <LineChart size={16} />, text: "SEO Scorer" },
     { icon: <Search size={16} />, text: "SERP Gap Finder" },
     { icon: <UploadCloud size={16} />, text: "Auto Publisher" },
@@ -1460,7 +1460,7 @@ function App() {
     { icon: <Network size={16} />, text: "Cluster Map" },
   ];
 
-  const avatars = [
+  const _avatars = [
     "https://i.pravatar.cc/100?img=11",
     "https://i.pravatar.cc/100?img=12",
     "https://i.pravatar.cc/100?img=33",
@@ -1468,7 +1468,7 @@ function App() {
     "https://i.pravatar.cc/100?img=45",
   ];
 
-  const stats = [
+  const _stats = [
     { value: 92, suffix: "%", label: "Time Saved Per Blog", desc: "vs 6-8 hours manually", icon: <Clock size={24} /> },
     { value: 4, suffix: "x", label: "Better Organic ROI", desc: "vs traditional methods", icon: <TrendingUp size={24} /> },
     { value: 15, suffix: "x", label: "Publishing Speed", desc: "vs manual workflows", icon: <Zap size={24} /> },
@@ -1477,11 +1477,11 @@ function App() {
     { value: 98, suffix: "%", label: "Human-Score Rating", desc: "passes all AI detection", icon: <UserCheck size={24} /> },
   ];
 
-  const logos = [
+  const _logos = [
     "wordpress", "webflow", "shopify", "ghost", "strapi", "sanity", "medium", "linkedin"
   ];
 
-  const integrationsList = [
+  const _integrationsList = [
     { name: "WordPress", subtitle: "REST API + Application Password", icon: "wordpress" },
     { name: "Webflow", subtitle: "CMS API", icon: "webflow" },
     { name: "Shopify", subtitle: "Admin API + Blog Posts", icon: "shopify" },
@@ -1977,7 +1977,14 @@ function App() {
                       if (window.showDashboardSection) window.showDashboardSection('overview');
                       window.scrollTo(0, 0);
                     } catch(e) {
-                      if (e.code !== 'auth/popup-closed-by-user') setAuthMsg({ type: 'error', text: e.message });
+                      if (e.code === 'auth/popup-closed-by-user') return;
+                      let msg = e.message;
+                      if (e.code === 'auth/operation-not-allowed') {
+                        msg = 'Google Sign-In is not enabled in your Firebase Console. Under Authentication > Sign-in method, ensure "Google" is enabled.';
+                      } else if (e.code === 'auth/unauthorized-domain') {
+                        msg = 'This domain is not authorized in your Firebase Console. Add it under Authentication > Settings > Authorized Domains.';
+                      }
+                      setAuthMsg({ type: 'error', text: msg });
                     } finally { setAuthLoading(false); }
                   }}
                 >

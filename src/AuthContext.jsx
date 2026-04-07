@@ -78,8 +78,14 @@ export function AuthProvider({ children }) {
     const user = result.user;
 
     // Check if the email was used previously with email/password
-    const methods = await fetchSignInMethodsForEmail(auth, user.email);
-    const usedEmailBefore = methods.some(m => m === 'password');
+    // fetchSignInMethodsForEmail might fail if Email Enumeration Protection is enabled
+    let usedEmailBefore = false;
+    try {
+      const methods = await fetchSignInMethodsForEmail(auth, user.email);
+      usedEmailBefore = methods.some(m => m === 'password');
+    } catch (_e) {
+      // Ignore enumeration errors
+    }
 
     const userRef = doc(db, 'users', user.uid);
     const snap = await getDoc(userRef);

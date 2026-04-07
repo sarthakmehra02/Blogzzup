@@ -1,0 +1,132 @@
+/* Cluster Map - Absolute Pixel-Perfect Alignment Fix */
+
+.cluster-viewer-container {
+  width: 1000px !important; /* FORCED FIXED WIDTH */
+  margin: 0 auto !important; /* CENTERED ON PAGE */
+  height: 620px;
+  background-color: transparent !important;
+  border-radius: 16px;
+  overflow: visible;
+  position: relative;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* static dot grid - centered to origin */
+.cluster-viewer-container::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(rgba(148, 163, 184, 0.1) 1px, transparent 1px);
+  background-size: 32px 32px;
+  pointer-events: none;
+}
+
+/* Pillar Node - PIXEL CENTERED (500px is target center) */
+.cluster-node-pillar {
+  background: linear-gradient(135deg, #6366f1, #06b6d4) !important;
+  box-shadow: 0 0 25px rgba(6, 182, 212, 0.4) !important;
+  border: none !important;
+  position: absolute;
+  /* (500px Center) - (120px Half-Width) = 380px */
+  left: 380px !important; 
+  width: 240px;
+  transform: translateZ(0); /* High-perf only, no X/Y transform */
+  pointer-events: auto;
+}
+
+/* Cluster Card - PIXEL CENTERED (500px is target center) */
+.cluster-node-card {
+  background: #0d1117 !important;
+  border-radius: 12px;
+  color: #fff;
+  user-select: none;
+  border: 1.5px solid transparent;
+  position: absolute;
+  /* (Target Center) - (80px Half-Width) = Xpx (calculated in JS) */
+  width: 160px;
+  backface-visibility: hidden;
+  pointer-events: auto;
+  transition: background-color 0.15s, border-color 0.15s;
+  contain: layout paint;
+}
+
+.cluster-node-card:hover {
+  background: #161b22 !important;
+  border-color: rgba(255, 255, 255, 0.5) !important;
+  z-index: 50 !important;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.6);
+}
+
+.cluster-node-card.teal { border-color: #2dd4bf !important; color: #2dd4bf !important; }
+.cluster-node-card.amber { border-color: #fbbf24 !important; color: #fbbf24 !important; }
+.cluster-node-card.green { border-color: #4ade80 !important; color: #4ade80 !important; }
+.cluster-node-card.purple { border-color: #a855f7 !important; color: #a855f7 !important; }
+.cluster-node-card.blue { border-color: #3b82f6 !important; color: #3b82f6 !important; }
+.cluster-node-card.pink { border-color: #ec4899 !important; color: #ec4899 !important; }
+.cluster-node-card.navy { border-color: #3b82f6 !important; color: #60a5fa !important; }
+.cluster-node-card.gold { border-color: #a16207 !important; color: #fbbf24 !important; }
+
+/* Performance SVG Paths */
+.cluster-path {
+  stroke: rgba(148, 163, 184, 0.18) !important;
+  stroke-width: 1.5;
+  fill: none;
+}
+
+[data-theme="light"] .cluster-node-card { background: #FFFFFF !important; color: #1a1a1a !important; }
+[data-theme="light"] .cluster-path { stroke: rgba(0, 0, 0, 0.12) !important; }
+
+/* Additional layout styles for detail panel if needed */
+.cluster-detail-panel {
+  position: absolute;
+  background: rgba(13, 17, 23, 0.95);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,0.1);
+  padding: 24px;
+  border-radius: 16px;
+  width: 280px;
+  z-index: 100;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+}
+
+.cluster-detail-title {
+  color: white;
+  font-size: 16px;
+  margin: 0 0 16px 0;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.cluster-generate-btn {
+  width: 100%;
+  background: linear-gradient(135deg, #6366f1, #06b6d4);
+  color: white;
+  border: none;
+  padding: 12px;
+  border-radius: 10px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.cluster-generate-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(6, 182, 212, 0.3);
+}
+
+.cluster-add-button-fixed {
+  background: rgba(255,255,255,0.03);
+  border: 1px dashed rgba(255,255,255,0.2);
+  color: #94a3b8;
+  transition: all 0.2s;
+}
+
+.cluster-add-button-fixed:hover {
+  background: rgba(255,255,255,0.06);
+  border-color: rgba(255,255,255,0.4);
+  color: white;
+}
+
+[data-theme="light"] .cluster-detail-panel { background: #FFFFFF; border-color: rgba(0,0,0,0.08); }
+[data-theme="light"] .cluster-detail-title { color: #1a1a1a; }
+[data-theme="light"] .cluster-add-button-fixed { background: rgba(0,0,0,0.02); border-color: rgba(0,0,0,0.15); color: #64748b; }
